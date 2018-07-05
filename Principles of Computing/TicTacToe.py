@@ -9,7 +9,7 @@ import poc_ttt_provided as provided
 # Constants for Monte Carlo simulator
 # You may change the values of these constants as desired, but
 #  do not change their names.
-NTRIALS = 100        # Number of trials to run
+NTRIALS = 300        # Number of trials to run
 SCORE_CURRENT = 1.0 # Score for squares played by the current player
 SCORE_OTHER = 1.0   # Score for squares played by the other player
 
@@ -86,4 +86,5 @@ def mc_move(board,player,trials):
 # for testing to save time.
 
 #provided.play_game(mc_move, NTRIALS, False)        
-poc_ttt_gui.run_gui(3, provided.PLAYERX, mc_move, NTRIALS, False)
+player = random.choice([provided.PLAYERO, provided.PLAYERX])
+poc_ttt_gui.run_gui(3, player, mc_move, NTRIALS, False)
