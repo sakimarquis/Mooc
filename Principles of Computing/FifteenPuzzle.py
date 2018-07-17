@@ -173,57 +173,44 @@ class Puzzle:
         solution = ""
         row_diff = abs(target_row - tile_row)
         col_diff = abs(target_col - tile_col)
+        # place tile0 on the same row as target
+        solution += "u" * row_diff
 
-        # deal with col
-        if col_diff == 0:
-            # place tile0 on target above(move above 1 times)
-            solution += "u" * row_diff
-            for _ in range(row_diff - 1):
-                solution += "lddru"
-            if tile_row != target_row:
-                solution += "ld"  
-        else:
-            # place tile0 on the same row as target
-            solution += "u" * row_diff
-            # when tile on tile0 left
-            if tile_col < target_col:
-                # place tile0 on target left(move left 1 times)
-                solution += "l" * col_diff
-                # move the target
+        # when tile on tile0 left
+        if tile_col < target_col:
+            # place tile0 on target left(move left 1 times)
+            solution += "l" * col_diff
+            # move the target
+            for _ in range(col_diff - 1):
                 if tile_row == 0:
-                    for _ in range(col_diff - 1):
-                        solution += "drrul"
+                    solution += "drrul"
                 else:
-                    for _ in range(col_diff - 1):
-                        solution += "urrdl"
-                # deal with row
-                if row_diff > 0:
-                    # place tile0 on target above(move up 1 times)   
-                    solution += "dru"
-                    for _ in range(row_diff - 1):
-                        solution += "lddru"
-                # go home
-                if tile_row != target_row:
-                    solution += "ld"                 
-            # when tile on tile0 left
-            elif tile_col > target_col:
-                # place tile0 on target right(move right 1 times)
-                solution += "r" * col_diff                
-                # move the target
+                    solution += "urrdl"
+            # deal with row
+            if row_diff > 0:
+                # place tile0 on target above(move up 1 times)   
+                solution += "dru" 
+                
+        # when tile on tile0 left
+        elif tile_col > target_col:
+            # place tile0 on target right(move right 1 times)
+            solution += "r" * col_diff                
+            # move the target
+            for _ in range(col_diff - 1):
                 if tile_row == 0:
-                    for _ in range(col_diff - 1):
-                        solution += "dllur"
+                    solution += "dllur"
                 else:
-                    for _ in range(col_diff - 1):
-                        solution += "ulldr"                
-                # deal with row
-                if row_diff > 0:
-                    # place tile0 on target above(move up 1 times)   
-                    solution += "dlu"
-                    for _ in range(row_diff - 1):
-                        solution += "lddru"
-                if tile_row != target_row:
-                    solution += "ld"
+                    solution += "ulldr"                
+            # deal with row
+            if row_diff > 0:
+                # place tile0 on target above(move up 1 times)   
+                solution += "dlu"
+                
+        for _ in range(row_diff - 1):
+            solution += "lddru"                
+        # go home             
+        if tile_row != target_row:
+            solution += "ld"              
         return solution
     
     def solve_interior_tile(self, target_row, target_col):
