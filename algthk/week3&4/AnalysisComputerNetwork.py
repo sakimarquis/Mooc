@@ -67,8 +67,6 @@ def targeted_order(ugraph):
         order.append(max_degree_node)
     return order
     
-
-
 ##########################################################
 # Code for loading computer network graph
 
@@ -100,12 +98,12 @@ def load_graph(graph_url):
     return answer_graph
 
 
-"""
-Provided code for application portion of module 2
-
-Helper class for implementing efficient version
-of UPA algorithm
-"""
+# =============================================================================
+# Provided code for application portion of module 2
+# 
+# Helper class for implementing efficient version
+# of UPA algorithm
+# =============================================================================
 
 import random
 
@@ -161,36 +159,160 @@ class UPATrial:
         return new_node_neighbors
 
 ##########################################################
-# my implement
-def random_order(graph):
-    """
-    takes a graph and returns a list of the nodes in 
-    the graph in some random order. 
-    """
-    random_order = []
-    graph_copy = copy_graph(graph)
-    for dummy_node in graph:
-        node = random.choice(list(graph_copy))
-        random_order.append(node)
-        graph_copy.pop(node)
-    return random_order
- 
-
-       
-ugraph = {0:set([1,4,5]),
-          1:set([0,2,6]),
-          2:set([1,3]),
-          3:set([2]),
-          4:set([0]),
-          5:set([0,6]),
-          6:set([1,5]),
-          7:set([]),
-          8:set([9]),
-          9:set([8])}
-
-#network = load_graph(NETWORK_URL)
-        
+# distribution
+##########################################################       
     
+def make_complete_graph(num_nodes):
+    """
+    Takes the number of nodes and returns a dictionary 
+    corresponding to a complete directed graph with 
+    the specified number of nodes. 
+    
+    A complete graph contains all possible edges subject to 
+    the restriction that self-loops are not allowed. The 
+    nodes of the graph should be numbered 0 to num_nodes-1 
+    when num_nodes is positive. Otherwise, the function 
+    returns a dictionary corresponding to the empty graph.
+    """
+    if num_nodes <= 1:
+        return {0: set([])}
+    else:
+        graph = {}
+        graph_set = set([node for node in range(num_nodes)])
+        for node in range(num_nodes):
+            tmp = graph_set.copy()
+            tmp.discard(node)
+            graph[node] = tmp       
+        return graph        
+
+def compute_in_degrees(digraph):
+    """
+    Takes a directed graph digraph (represented as a dictionary)
+    and computes the in-degrees for the nodes in the graph. The
+    function should return a dictionary with the same set of keys 
+    (nodes) as digraph whose corresponding values are the number 
+    of edges whose head matches a particular node.
+    """
+    in_degrees = {}
+    for key in digraph.keys():
+        in_degrees[key] = 0
+    for value in digraph.values():
+        for node in value:
+            in_degrees[node] += 1
+    return in_degrees       
+
+def in_degree_distribution(digraph):
+    """
+    Takes a directed graph digraph (represented as a dictionary)
+    and computes the unnormalized distribution of the in-degrees
+    of the graph. The function should return a dictionary whose 
+    keys correspond to in-degrees of nodes in the graph. The value
+    associated with each particular in-degree is the number of 
+    nodes with that in-degree. In-degrees with no corresponding 
+    nodes in the graph are not included in the dictionary.
+    """
+    in_degree = compute_in_degrees(digraph)
+    distribution = {}
+    for value in in_degree.values():
+        if value in distribution:
+            distribution[value] += 1
+        else:
+            distribution[value] = 1
+    return distribution
+
+def normalize_distribution(distribution):
+    """
+    normalize the distribution
+    (make the values in the dictionary sum to one)
+    """
+    all_dis = 0.0
+    ans = {}
+    for value in distribution.values():
+        all_dis += value
+    for key, value in distribution.items():
+        ans[key] = value / all_dis
+    return ans
+
+# =============================================================================
+# bfs and compute_resilience
+# =============================================================================
+
+from collections import deque
+
+def bfs_visited(ugraph,start_node):
+    """
+    Takes undirected graph and the start_node 
+    and returns the set of all nodes that are 
+    visited by a breadth-first search
+    """
+    visited = set()
+    queue = deque([])
+    queue.append(start_node)
+    
+    while len(queue) > 0:
+        parent = queue.pop()
+        if len(ugraph[parent]) == 0 and parent not in visited:
+            visited.add(parent)
+            queue.append(parent)
+        for child in ugraph[parent]:
+            if child not in visited:
+                visited.add(child)
+                queue.append(child)
+    return visited
+
+def cc_visited(ugraph):
+    """
+    Takes undirected graph and returns a list
+    of sets, where each set consists of all 
+    the nodes in a connected component
+    """
+    remain_nodes = set(ugraph.keys())
+    connected_components = []
+    while len(remain_nodes) != 0:    
+        start_node = list(remain_nodes)[0]
+        connected_component = bfs_visited(ugraph, start_node)
+        connected_components.append(connected_component)
+        remain_nodes.difference_update(connected_component)
+    return connected_components
+        
+def largest_cc_size(ugraph):
+    """
+    Takes undirected graph and returns the size
+    of the largest connected component in ugraph.
+    """
+    largest = 0
+    for ele in cc_visited(ugraph):
+        if len(ele) > largest:
+            largest = len(ele)
+    return largest
+    
+def compute_resilience(ugraph,attack_order):
+    """
+    Takes undirected graph, a list of node. For each node 
+    in the list, the function removes the given node and 
+    its edges from the graph and then computes the size of 
+    the largest connected component for the resulting graph. 
+
+    The function should return a list whose (k + 1)th entry 
+    is the size of the largest connected component in the 
+    graph after the removal of the first k nodes in attack_order.
+    The first entry (indexed by zero) is the size of the largest 
+    connected component in the original graph.
+    """
+    largest = [largest_cc_size(ugraph)]
+    for node in attack_order:
+        ugraph.pop(node,"No node")
+        for key, value in ugraph.items():
+            value.discard(node)
+            ugraph[key] = value
+        largest.append(largest_cc_size(ugraph))
+    return largest
+
+
+# =============================================================================
+# make graph
+# =============================================================================
+
 def make_ergraph(num_nodes, prob):
     """
     creating undirected ER graphs
@@ -215,6 +337,64 @@ def make_ergraph(num_nodes, prob):
             er_graph[edge[1]] = er_graph[edge[1]].union([edge[0]])
     return er_graph
 
+
+def make_upa(n, m):
+    """
+    creating undirected PA graphs
+    """
+    dpa_graph = make_complete_graph(m)
+    
+    obj = UPATrial(m-1)
+    for idx in range(m,n):
+        dpa_graph[obj._num_nodes] = obj.run_trial(m)
+    
+    return dpa_graph
+
+
+def random_order(graph):
+    """
+    takes a graph and returns a list of the nodes in 
+    the graph in some random order. 
+    """
+    random_order = []
+    graph_copy = copy_graph(graph)
+    for dummy_node in graph:
+        node = random.choice(list(graph_copy))
+        random_order.append(node)
+        graph_copy.pop(node)
+    return random_order
+
+ugraph = {0:set([1,4,5]),
+          1:set([0,2,6]),
+          2:set([1,3]),
+          3:set([2]),
+          4:set([0]),
+          5:set([0,6]),
+          6:set([1,5]),
+          7:set([]),
+          8:set([9]),
+          9:set([8])}
+
+
+NODES = 1239.0
+EDGES = 3047.0
+prob = EDGES / (NODES * (NODES - 1) / 2)
+n = int(NODES)
+m = int(math.ceil(EDGES / NODES))
+
+
+network = load_graph(NETWORK_URL)
+ER = make_ergraph(n, prob)
+UPA = make_upa(n, m)
+
+order = random_order(n)
+compute_resilience(ugraph,attack_order)
+
+
+
+
+
+        
 
 
 
