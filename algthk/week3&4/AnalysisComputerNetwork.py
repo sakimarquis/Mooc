@@ -12,8 +12,8 @@ Provided code for Application portion of Module 2
 # general imports
 import urllib2
 import random
-import time
 import math
+import time
 
 # Desktop imports
 import matplotlib.pyplot as plt
@@ -51,9 +51,11 @@ def targeted_order(ugraph):
     # copy the graph
     new_graph = copy_graph(ugraph)
     
-    order = []    
+    order = []
+    # O(n)
     while len(new_graph) > 0:
         max_degree = -1
+        # O(n)
         for node in new_graph:
             if len(new_graph[node]) > max_degree:
                 max_degree = len(new_graph[node])
@@ -61,6 +63,7 @@ def targeted_order(ugraph):
         
         neighbors = new_graph[max_degree_node]
         new_graph.pop(max_degree_node)
+        # O(m/n)
         for neighbor in neighbors:
             new_graph[neighbor].remove(max_degree_node)
 
@@ -183,7 +186,7 @@ def make_complete_graph(num_nodes):
             graph[node] = tmp       
         return graph        
 
-def compute_in_degrees(digraph):
+def compute_in_degrees(graph):
     """
     Takes a directed graph digraph (represented as a dictionary)
     and computes the in-degrees for the nodes in the graph. The
@@ -191,6 +194,8 @@ def compute_in_degrees(digraph):
     (nodes) as digraph whose corresponding values are the number 
     of edges whose head matches a particular node.
     """
+    digraph = copy_graph(graph)
+    
     in_degrees = {}
     for key in digraph.keys():
         in_degrees[key] = 0
@@ -243,16 +248,18 @@ def bfs_visited(ugraph,start_node):
     and returns the set of all nodes that are 
     visited by a breadth-first search
     """
+    graph = copy_graph(ugraph)
+    
     visited = set()
     queue = deque([])
     queue.append(start_node)
     
     while len(queue) > 0:
         parent = queue.pop()
-        if len(ugraph[parent]) == 0 and parent not in visited:
+        if len(graph[parent]) == 0 and parent not in visited:
             visited.add(parent)
             queue.append(parent)
-        for child in ugraph[parent]:
+        for child in graph[parent]:
             if child not in visited:
                 visited.add(child)
                 queue.append(child)
@@ -264,11 +271,12 @@ def cc_visited(ugraph):
     of sets, where each set consists of all 
     the nodes in a connected component
     """
-    remain_nodes = set(ugraph.keys())
+    graph = copy_graph(ugraph)
+    remain_nodes = set(graph.keys())
     connected_components = []
     while len(remain_nodes) != 0:    
         start_node = list(remain_nodes)[0]
-        connected_component = bfs_visited(ugraph, start_node)
+        connected_component = bfs_visited(graph, start_node)
         connected_components.append(connected_component)
         remain_nodes.difference_update(connected_component)
     return connected_components
@@ -278,34 +286,34 @@ def largest_cc_size(ugraph):
     Takes undirected graph and returns the size
     of the largest connected component in ugraph.
     """
+    graph = copy_graph(ugraph)
+    
     largest = 0
-    for ele in cc_visited(ugraph):
+    for ele in cc_visited(graph):
         if len(ele) > largest:
             largest = len(ele)
     return largest
     
 def compute_resilience(ugraph,attack_order):
     """
-    Takes undirected graph, a list of node. For each node 
-    in the list, the function removes the given node and 
-    its edges from the graph and then computes the size of 
-    the largest connected component for the resulting graph. 
+    Takes undirected graph. For each node removes the given node 
+    and its edges from graph and computes the size of the largest 
+    connected component for the resulting graph. 
 
-    The function should return a list whose (k + 1)th entry 
-    is the size of the largest connected component in the 
-    graph after the removal of the first k nodes in attack_order.
-    The first entry (indexed by zero) is the size of the largest 
-    connected component in the original graph.
+    return a list (k + 1)th entry is the size of the largest 
+    connected component in the graph after removal of the first k 
+    nodes in attack_order.First is the largest connected component 
+    in the original graph.
     """
-    largest = [largest_cc_size(ugraph)]
+    graph = copy_graph(ugraph)
+    largest = [largest_cc_size(graph)]
     for node in attack_order:
-        ugraph.pop(node,"No node")
-        for key, value in ugraph.items():
+        graph.pop(node,"No node")
+        for key, value in graph.items():
             value.discard(node)
-            ugraph[key] = value
-        largest.append(largest_cc_size(ugraph))
+            graph[key] = value
+        largest.append(largest_cc_size(graph))
     return largest
-
 
 # =============================================================================
 # make graph
@@ -402,15 +410,59 @@ def q1_plot():
     plt.ylabel("size of the largest cc")
     plt.plot(network_resil, '-b', label='Computer')
     plt.plot(ER_resil, '-r', label='ER Graph, p = 0.00397')
-    plt.plot( UPA_resil, '-g', label='UPA Graph, m = 3')
+    plt.plot(UPA_resil, '-g', label='UPA Graph, m = 3')
     plt.legend(loc='upper right')
     plt.show()
 
+def fast_targeted_order(ugraph):
+    # copy the graph
+    # graph = copy_graph(ugraph)
+    
+    graph = copy_graph(ugraph)
+    # O(n)
+    degree_sets = [set() for idx in range(len(graph))]
+    # O(n) kth element is the set of nodes of degree k
+    for node in graph:
+        degree_sets[len(graph[node])].add(node)
+    targeted_order = []
+    # iterates degree_sets descendingly
+    # O(1) for complete graph, 
+    for degree in range(len(graph))[::-1]:
+        while len(degree_sets[degree]):
+            # chooses node from first set,deletes that node 
+            # from graph, updates degree_sets
+            max_deg_node = degree_sets[degree].pop()
+            # O(n/2) for complete graph,
+            for neighbor in graph[max_deg_node]:
+                neighbor_deg = len(graph[neighbor])
+                degree_sets[neighbor_deg].discard(neighbor)
+                degree_sets[neighbor_deg - 1].add(neighbor)
+            targeted_order.append(max_deg_node)
+            # O(n) or O(2*edges)
+            delete_node(graph, max_deg_node) 
+    return targeted_order
 
 
+network_attack_order = targeted_order(network)
+ER_attack_order = targeted_order(ER)
+UPA_attack_order = targeted_order(UPA)
 
+targ_network_resil = compute_resilience(network,network_attack_order)
+targ_ER_resil = compute_resilience(ER,ER_attack_order)
+targ_UPA_resil = compute_resilience(UPA,UPA_attack_order)
 
-
+def q4_plot():
+    """
+    Plot the answer!!!!
+    """
+    plt.title("Resilience of graph under targeted attack")
+    plt.xlabel("number of nodes removed")
+    plt.ylabel("size of the largest cc")
+    plt.plot(targ_network_resil, '-b', label='Computer')
+    plt.plot(targ_ER_resil, '-r', label='ER Graph, p = 0.00397')
+    plt.plot(targ_UPA_resil, '-g', label='UPA Graph, m = 3')
+    plt.legend(loc='upper right')
+    plt.show()
 
         
 
