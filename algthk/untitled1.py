@@ -29,7 +29,6 @@ def make_complete_graph(num_nodes):
         return graph
 
 l = list(range(10))
-l = "an"
 edge=[]  
 for i in l:
     for j in l[i+1:]:

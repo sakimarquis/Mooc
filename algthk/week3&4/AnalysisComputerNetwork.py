@@ -195,33 +195,25 @@ def make_ergraph(num_nodes, prob):
     """
     creating undirected ER graphs
     """
+    nodes = list(range(num_nodes))
     assert prob <= 1 and prob >= 0 and num_nodes >= 0
     er_graph = {}
     # build nodes
-    for node in range(num_nodes):
-        er_graph[node] = {0: set([])}
-    # build edges
-    [tuple([x,y]) for x in range(10) for y in range(10)]
-    for node in er_graph:
+    for node in nodes:
+        er_graph[node] = set([])
         
-        
+    # count edges
+    edges=[]  
+    for i in nodes:
+        for j in nodes[i+1:]:
+            edges.append(tuple([i,j]))
+            
+    # use ER_algo to add edges
+    for edge in edges:
+        if prob > random.random():
+            er_graph[edge[0]] = er_graph[edge[0]].union([edge[1]])
+            er_graph[edge[1]] = er_graph[edge[1]].union([edge[0]])
     return er_graph
-    
-    
-"""    
-    if num_nodes <= 1:
-        return {0: set([])}
-    else:
-        graph = {}
-        for node in graph:
-        graph_set = set([node for node in range(num_nodes)])
-        for node in range(num_nodes):
-            tmp = graph_set.copy()
-            tmp.discard(node)
-            graph[node] = tmp       
-        return graph
-"""    
-
 
 
 
