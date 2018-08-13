@@ -33,6 +33,43 @@ edge=[]
 for i in l:
     for j in l[i+1:]:
         edge.append(tuple([i,j]))
-print edge
+#print edge
+
+"""
+Short example of creating a legend in matplotlib
+"""
+
+import matplotlib.pyplot as plt
+
+
+def legend_example():
+    """
+    Plot an example with two curves with legends
+    """
+    xvals = [1, 2, 3, 4, 5]
+    yvals1 = [1, 2, 3, 4, 5]
+    yvals2 = [1, 4, 9, 16, 25]
+
+    plt.plot(xvals, yvals1, '-b', label='linear')
+    plt.plot(xvals, yvals2, '-r', label='quadratic')
+    plt.legend(loc='upper right')
+    plt.show()
+
+
+def q1_plot():
+    """
+    Plot an example with two curves with legends
+    """
+    plt.title("Resilience of graph under random attack")
+    plt.xlabel("number of nodes removed")
+    plt.ylabel("size of the largest cc")
+    plt.plot(network_resil, '-b', label='Computer')
+    plt.plot(ER_resil, '-r', label='ER Graph, p = 0.00397')
+    plt.plot( UPA_resil, '-g', label='UPA Graph, m = 3')
+    plt.legend(loc='upper right')
+    plt.show()
+    
+
+
         
         

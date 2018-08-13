@@ -105,8 +105,6 @@ def load_graph(graph_url):
 # of UPA algorithm
 # =============================================================================
 
-import random
-
 class UPATrial:
     """
     Simple class to encapsulate optimizated trials for the UPA algorithm
@@ -346,8 +344,11 @@ def make_upa(n, m):
     
     obj = UPATrial(m-1)
     for idx in range(m,n):
-        dpa_graph[obj._num_nodes] = obj.run_trial(m)
-    
+        new_node = obj._num_nodes
+        to_connect = obj.run_trial(m)
+        dpa_graph[new_node] = to_connect
+        for node in to_connect:
+            dpa_graph[node] = dpa_graph[node].union([new_node])
     return dpa_graph
 
 
@@ -387,8 +388,25 @@ network = load_graph(NETWORK_URL)
 ER = make_ergraph(n, prob)
 UPA = make_upa(n, m)
 
-order = random_order(n)
-compute_resilience(ugraph,attack_order)
+attack_order = random_order(network)
+network_resil = compute_resilience(network,attack_order)
+ER_resil = compute_resilience(ER,attack_order)
+UPA_resil = compute_resilience(UPA,attack_order)
+
+def q1_plot():
+    """
+    Plot the answer!!!!
+    """
+    plt.title("Resilience of graph under random attack")
+    plt.xlabel("number of nodes removed")
+    plt.ylabel("size of the largest cc")
+    plt.plot(network_resil, '-b', label='Computer')
+    plt.plot(ER_resil, '-r', label='ER Graph, p = 0.00397')
+    plt.plot( UPA_resil, '-g', label='UPA Graph, m = 3')
+    plt.legend(loc='upper right')
+    plt.show()
+
+
 
 
 
