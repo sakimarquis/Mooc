@@ -13,7 +13,6 @@ Provided code for Application portion of Module 2
 import urllib2
 import random
 import math
-import time
 
 # Desktop imports
 import matplotlib.pyplot as plt
@@ -350,7 +349,7 @@ def make_upa(n, m):
     """
     dpa_graph = make_complete_graph(m)
     
-    obj = UPATrial(m-1)
+    obj = UPATrial(m)
     for idx in range(m,n):
         new_node = obj._num_nodes
         to_connect = obj.run_trial(m)
@@ -391,7 +390,6 @@ prob = EDGES / (NODES * (NODES - 1) / 2)
 n = int(NODES)
 m = int(math.ceil(EDGES / NODES))
 
-
 network = load_graph(NETWORK_URL)
 ER = make_ergraph(n, prob)
 UPA = make_upa(n, m)
@@ -414,55 +412,6 @@ def q1_plot():
     plt.legend(loc='upper right')
     plt.show()
 
-def fast_targeted_order(ugraph):
-    # copy the graph
-    # graph = copy_graph(ugraph)
-    
-    graph = copy_graph(ugraph)
-    # O(n)
-    degree_sets = [set() for idx in range(len(graph))]
-    # O(n) kth element is the set of nodes of degree k
-    for node in graph:
-        degree_sets[len(graph[node])].add(node)
-    targeted_order = []
-    # iterates degree_sets descendingly
-    # O(1) for complete graph, 
-    for degree in range(len(graph))[::-1]:
-        while len(degree_sets[degree]):
-            # chooses node from first set,deletes that node 
-            # from graph, updates degree_sets
-            max_deg_node = degree_sets[degree].pop()
-            # O(n/2) for complete graph,
-            for neighbor in graph[max_deg_node]:
-                neighbor_deg = len(graph[neighbor])
-                degree_sets[neighbor_deg].discard(neighbor)
-                degree_sets[neighbor_deg - 1].add(neighbor)
-            targeted_order.append(max_deg_node)
-            # O(n) or O(2*edges)
-            delete_node(graph, max_deg_node) 
-    return targeted_order
-
-
-network_attack_order = targeted_order(network)
-ER_attack_order = targeted_order(ER)
-UPA_attack_order = targeted_order(UPA)
-
-targ_network_resil = compute_resilience(network,network_attack_order)
-targ_ER_resil = compute_resilience(ER,ER_attack_order)
-targ_UPA_resil = compute_resilience(UPA,UPA_attack_order)
-
-def q4_plot():
-    """
-    Plot the answer!!!!
-    """
-    plt.title("Resilience of graph under targeted attack")
-    plt.xlabel("number of nodes removed")
-    plt.ylabel("size of the largest cc")
-    plt.plot(targ_network_resil, '-b', label='Computer')
-    plt.plot(targ_ER_resil, '-r', label='ER Graph, p = 0.00397')
-    plt.plot(targ_UPA_resil, '-g', label='UPA Graph, m = 3')
-    plt.legend(loc='upper right')
-    plt.show()
 
         
 

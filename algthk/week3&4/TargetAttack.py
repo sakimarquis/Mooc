@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 """
+Created on Mon Aug 13 22:19:31 2018
+
+@author: Saki
+"""
+# -*- coding: utf-8 -*-
+"""
 Created on Fri Aug 10 23:04:28 2018
 
 @author: Saki
@@ -12,9 +18,8 @@ Created on Fri Aug 10 23:04:28 2018
 # =============================================================================
 import random
 import matplotlib.pyplot as plt
-import time
 import math
-
+import urllib2
 
 class UPATrial:
     """
@@ -67,21 +72,6 @@ class UPATrial:
         self._num_nodes += 1
         return new_node_neighbors
 
-def make_upa(n, m):
-    """
-    creating undirected PA graphs
-    """
-    dpa_graph = make_complete_graph(m)
-    
-    obj = UPATrial(m-1)
-    for idx in range(m,n):
-        new_node = obj._num_nodes
-        to_connect = obj.run_trial(m)
-        dpa_graph[new_node] = to_connect
-        for node in to_connect:
-            dpa_graph[node].update([new_node])
-    return dpa_graph
-
 # =============================================================================
 # helper function
 # =============================================================================
@@ -125,6 +115,85 @@ def make_complete_graph(num_nodes):
             tmp.discard(node)
             graph[node] = tmp       
         return graph
+    
+# =============================================================================
+# bfs and compute_resilience
+# =============================================================================
+
+from collections import deque
+
+def bfs_visited(ugraph,start_node):
+    """
+    Takes undirected graph and the start_node 
+    and returns the set of all nodes that are 
+    visited by a breadth-first search
+    """
+    graph = copy_graph(ugraph)
+    
+    visited = set()
+    queue = deque([])
+    queue.append(start_node)
+    
+    while len(queue) > 0:
+        parent = queue.pop()
+        if len(graph[parent]) == 0 and parent not in visited:
+            visited.add(parent)
+            queue.append(parent)
+        for child in graph[parent]:
+            if child not in visited:
+                visited.add(child)
+                queue.append(child)
+    return visited
+
+def cc_visited(ugraph):
+    """
+    Takes undirected graph and returns a list
+    of sets, where each set consists of all 
+    the nodes in a connected component
+    """
+    graph = copy_graph(ugraph)
+    remain_nodes = set(graph.keys())
+    connected_components = []
+    while len(remain_nodes) != 0:    
+        start_node = list(remain_nodes)[0]
+        connected_component = bfs_visited(graph, start_node)
+        connected_components.append(connected_component)
+        remain_nodes.difference_update(connected_component)
+    return connected_components
+        
+def largest_cc_size(ugraph):
+    """
+    Takes undirected graph and returns the size
+    of the largest connected component in ugraph.
+    """
+    graph = copy_graph(ugraph)
+    
+    largest = 0
+    for ele in cc_visited(graph):
+        if len(ele) > largest:
+            largest = len(ele)
+    return largest
+    
+def compute_resilience(ugraph,attack_order):
+    """
+    Takes undirected graph. For each node removes the given node 
+    and its edges from graph and computes the size of the largest 
+    connected component for the resulting graph. 
+
+    return a list (k + 1)th entry is the size of the largest 
+    connected component in the graph after removal of the first k 
+    nodes in attack_order.First is the largest connected component 
+    in the original graph.
+    """
+    graph = copy_graph(ugraph)
+    largest = [largest_cc_size(graph)]
+    for node in attack_order:
+        graph.pop(node,"No node")
+        for key, value in graph.items():
+            value.discard(node)
+            graph[key] = value
+        largest.append(largest_cc_size(graph))
+    return largest
 
 # =============================================================================
 # function to compare time 
@@ -185,35 +254,111 @@ def fast_targeted_order(ugraph):
             delete_node(graph, max_deg_node) 
     return targeted_order
 
-# =============================================================================
-# time it!
-# =============================================================================
-n_list = list(range(10,1000,10))
-m = 5
-def time_q3(n_list,m):
-    targeted = []
-    fast_targeted = []
-    for n in n_list:
-        upa = make_upa(n, m)
-
-        time1 = time.time()
-        targeted_order(upa)
-        time2 = time.time()
-        targeted.append(time2 - time1)
-        
-        
-        time1 = time.time()
-        fast_targeted_order(upa)
-        time2 = time.time()
-        targeted.append(time2 - time1)
-        
-    return tuple(targeted, fast_targeted)
-        
 
 # =============================================================================
-# plot
+# 3 graph!
 # =============================================================================
 
+NETWORK_URL = "http://storage.googleapis.com/codeskulptor-alg/alg_rf7.txt"
+
+def load_graph(graph_url):
+    """
+    Function that loads a graph given the URL
+    for a text representation of the graph
+    
+    Returns a dictionary that models a graph
+    """
+    graph_file = urllib2.urlopen(graph_url)
+    graph_text = graph_file.read()
+    graph_lines = graph_text.split('\n')
+    graph_lines = graph_lines[ : -1]
+    
+    print "Loaded graph with", len(graph_lines), "nodes"
+    
+    answer_graph = {}
+    for line in graph_lines:
+        neighbors = line.split(' ')
+        node = int(neighbors[0])
+        answer_graph[node] = set([])
+        for neighbor in neighbors[1 : -1]:
+            answer_graph[node].add(int(neighbor))
+
+    return answer_graph
+
+
+def make_ergraph(num_nodes, prob):
+    """
+    creating undirected ER graphs
+    """
+    nodes = list(range(num_nodes))
+    assert prob <= 1 and prob >= 0 and num_nodes >= 0
+    er_graph = {}
+    # build nodes
+    for node in nodes:
+        er_graph[node] = set([])
+        
+    # count edges
+    edges=[]  
+    for i in nodes:
+        for j in nodes[i+1:]:
+            edges.append(tuple([i,j]))
+            
+    # use ER_algo to add edges
+    for edge in edges:
+        if prob > random.random():
+            er_graph[edge[0]] = er_graph[edge[0]].union([edge[1]])
+            er_graph[edge[1]] = er_graph[edge[1]].union([edge[0]])
+    return er_graph
+
+
+def make_upa(n, m):
+    """
+    creating undirected PA graphs
+    """
+    dpa_graph = make_complete_graph(m)
+    
+    obj = UPATrial(m)
+    for idx in range(m,n):
+        new_node = obj._num_nodes
+        to_connect = obj.run_trial(m)
+        dpa_graph[new_node] = to_connect
+        for node in to_connect:
+            dpa_graph[node] = dpa_graph[node].union([new_node])
+    return dpa_graph
+
+# =============================================================================
+# resilience and plot
+# =============================================================================
+NODES = 1239.0
+EDGES = 3047.0
+prob = EDGES / (NODES * (NODES - 1) / 2)
+n = int(NODES)
+m = int(math.ceil(EDGES / NODES))
+
+network = load_graph(NETWORK_URL)
+ER = make_ergraph(n, prob)
+UPA = make_upa(n, m)
+
+network_attack_order = targeted_order(network)
+ER_attack_order = targeted_order(ER)
+UPA_attack_order = targeted_order(UPA)
+
+targ_network_resil = compute_resilience(network,network_attack_order)
+targ_ER_resil = compute_resilience(ER,ER_attack_order)
+targ_UPA_resil = compute_resilience(UPA,UPA_attack_order)
+
+def q4_plot():
+    """
+    Plot the answer!!!!
+    """
+    plt.title("Resilience of graph under targeted attack")
+    plt.xlabel("number of nodes removed")
+    plt.ylabel("size of the largest cc")
+    plt.plot(targ_network_resil, '-b', label='Computer network')
+    plt.plot(targ_ER_resil, '-r', label='ER Graph, p = 0.00397')
+    plt.plot(targ_UPA_resil, '-g', label='UPA Graph, m = 3')
+    plt.legend(loc='upper right')
+    plt.show()
 
 
 def legend_example():
@@ -229,21 +374,6 @@ def legend_example():
     plt.legend(loc='upper right')
     plt.show()
 
-
-def q1_plot():
-    """
-    Plot an example with two curves with legends
-    """
-    plt.title("Resilience of graph under random attack")
-    plt.xlabel("number of nodes removed")
-    plt.ylabel("size of the largest cc")
-    plt.plot(network_resil, '-b', label='Computer')
-    plt.plot(ER_resil, '-r', label='ER Graph, p = 0.00397')
-    plt.plot( UPA_resil, '-g', label='UPA Graph, m = 3')
-    plt.legend(loc='upper right')
-    plt.show()
-    
-
 ugraph = {0:set([1,4,5]),
           1:set([0,2,6]),
           2:set([1,3]),
@@ -254,6 +384,8 @@ ugraph = {0:set([1,4,5]),
           7:set([]),
           8:set([9]),
           9:set([8])}    
+
+
 
 
         
