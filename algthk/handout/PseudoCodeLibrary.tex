@@ -1,0 +1,150 @@
+\documentclass[10pt]{article}
+\usepackage{fullpage}
+\usepackage{times}
+\usepackage{fancyhdr,graphicx,amsmath,amssymb,color}
+\usepackage[ruled,vlined]{algorithm2e}
+\include{pythonlisting}
+
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{.4in}
+\addtolength{\headheight}{14pt}
+\addtolength{\headsep}{14pt}
+
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{claim}{Claim}
+\newcommand{\QED}{\nobreak\hfill\hbox{$\square$}}
+\newenvironment{proof}{\noindent {\bf Proof:}}{{\QED}\\}
+
+
+\pagestyle{fancy}
+
+\lhead{Algorithmic Thinking}
+\rhead{Pseudo-code}
+
+\sloppy
+
+\begin{document}
+
+\title{Algorithmic Thinking\\ Luay Nakhleh}
+\author{Pseudo-code: Syntax}
+\date{}
+\maketitle
+
+
+
+Pseudo-code is a high-level, abstract description of an algorithm that is intended to be read by humans and subsequently turned into 
+a program in a programming language of choice. As such, pseudo-code provides the details needed to understand the algorithm, but omits 
+many details that are left to the programmer to implement, since those may vary depending on the programming language and the choice 
+of implementation. 
+
+\section{General}
+\begin{itemize}
+\item {\color{blue} $v \leftarrow a$}: assign value $a$ to variable $v$
+\item {\color{blue} $v = w$}: testing whether $v$ equals $w$ (the value of which is True if $v$ equals $w$, and False otherwise)
+\item {\color{blue} $v \neq w$}: testing whether $v$ is not equal to $w$ (the value of which is True if $v$ is not equal to $w$, an False otherwise)
+\item {\color{blue} $a$ or $b$}: $a$ or $b$ (which is true if and only if at least one of $a$ and $b$ is true)
+\item {\color{blue} $a$ and $b$}: $a$ and $b$ (which is true if and only if both of $a$ and $b$ are true)
+\item {\color{blue} $random(a,b)$}: returns a random number in $[a,b)$ (that is, $a$ may be returned, but not $b$)
+\item {\color{blue} {\bf Break}}: breaks out of a loop
+\item {\color{blue} {\bf if} $c$ {\bf then} \\
+  ... \\
+  {\bf else}\\
+   ...} 
+\end{itemize}
+
+
+\section{Loops}
+\begin{itemize}
+\item {\color{blue} {\bf for} $i\leftarrow a$ {\bf to} $b$ {\bf do}}: loop over the values of $i$ that start at $a$ (integer) and end at $b$ (integer), while incrementing the value by $1$ after each iteration
+\item {\color{blue} {\bf while} $c$}: loop while condition $c$ is true 
+\end{itemize}
+
+\section{Functions}
+\begin{itemize}
+\item {\color{blue} {\bf return}}: returning a value from a function
+\item {\color{blue} $out \leftarrow {\bf foo}(params)$}: call function {\bf foo} on its parameters $params$ and store its output in $out$. For example: $distances \leftarrow {\bf BFS}(g, v)$. 
+\end{itemize}
+
+\section{Arrays, lists,  matrices, and numbers} 
+Let $A$ be an array, $L$ be a list, and $M$ be a matrix. 
+\begin{itemize}
+\item {\color{blue} $\lceil n \rceil$}: The ceiling of $n$. 
+\item {\color{blue} $\lfloor n \rfloor$}: The floor of $n$. 
+\item {\color{blue} $A[0..n-1]$}: Array $A$ has $n$ elements indexed at $0,1,\ldots,n-1$
+\item {\color{blue} $L[0..n-1]$}: List $L$ has $n$ elements indexed at $0,1,\ldots,n-1$
+\item {\color{blue} $M[0..n-1,0..m-1]$}: Matrix $M$ has $n$ rows, indexed at $0,1,\ldots,n-1$, and $m$ columns indexed at $0,1,\ldots,m-1$
+\item {\color{blue} $A[i]$}: the element of array $A$ at position $i$
+\item {\color{blue} $L[i]$}: the element of list $L$ at position $i$
+\item {\color{blue} $M[i,j]$}: the element of matrix $M$ at position $[i,j]$ 
+\item {\color{blue} $Copy(L[i..j],L'[p,q])$}: assign $L'[p]$ to $L[i]$, $L'[p+1]$ to $L[i+1]$, ... , $L'[q]$ t $L[j]$ (it is assumed here that $j-i = q-p$)
+\end{itemize}
+
+\section{Set notation}
+Let $A$, $B$, and $C$ be three sets. 
+\begin{itemize}
+\item {\color{blue} ${\mathbb R}$}: the set of all real numbers
+\item {\color{blue} ${\mathbb Z}$}: the set of all integers ($\ldots,-2,-1,0,1,2,\ldots$)
+\item {\color{blue} ${\mathbb N}$}: the set of all natural numbers ($1,2,\ldots,...$)
+\item {\color{blue} ${\mathbb R}^+$}: the set of all positive real numbers ($0$ is not included)
+\item {\color{blue} ${\mathbb Z}^+$}: the set of all positive integers ($0$ is not included)
+\item {\color{blue} $|A|$}: the size (number of elements) of set $A$
+\item {\color{blue} $a :\in A$}: let $a$ be an arbitrary element of $A$
+\item {\color{blue} $a \in A$}: $a$ is an element of $A$ 
+\item {\color{blue} $a \notin A$}: $a$ is not an element of $A$
+\item {\color{blue} $A \cup B$}: union of $A$ and $B$
+\item {\color{blue} $A \cap B$}: intersection of $A$ and $B$
+\item {\color{blue} $A \setminus B$}: the set difference between $A$ and $B$ (also, $A - B$)
+\item {\color{blue} {\bf foreach} $A \subseteq B$}: looping over each subset $A$ of $B$ (including $B$ itself)
+\item {\color{blue} {\bf foreach} $A \subset B$}: looping over each subset $A$ of $B$ (excluding $B$ itself)
+\item {\color{blue} {\bf foreach} non-empty $A \subset B$}: looping over each subset $A$ of $B$ (excluding $\emptyset$ and $B$)
+\item {\color{blue} {\bf foreach} $A \subseteq B$ of size $k$}: looping over each subset $A$ of $B$ such that $|A| = k$
+\item {\color{blue} $Perm(A)$}: the set of all permutations of the elements of $A$
+\item {\color{blue} $Random(A,m,p)$}: return a random set of $m$ elements from $A$, where the probability of choosing element 
+ $x \in A$ is given by $p$ (for example, $Random(A,m,1/|A|)$ returns a random set of $m$ elements from $A$ assuming a uniform distribution. Another example: $Random(V,m,deg(v)/(2|E|))$ returns a random set of $m$ nodes from set $V$ of nodes, where the 
+ probability of choosing a node is proportional to the node's degree, or, more precisely, it equals the degree of that node normalized 
+ by the sum of the degrees of all nodes)
+\item {\color{blue} ${\rm argmin}_{x \in A} w_x$}: the element of set $A$ whose weight is minimum among all elements of $A$ (it is assumed that each element $x$ in set $A$ has weight $w_x$, and more than one element has the minimum weight, then one of them is returned arbitrarily)
+\item {\color{blue} ${\rm argmax}_{x \in A} w_x$}: similar to ${\rm argmin}$, but returns the element of $A$ with maximum weight
+%\item {\color{blue} $Sort(A,w,$non-decreasing$)$}: returns the elements of $A$ sorted in non-decreasing order based on the weight function $w: A \rightarrow {\mathbb R}$
+%\item {\color{blue} $Sort(A,w,$non-increasing$)$}: returns the elements of $A$ sorted in non-increasing order based on the weight function  $w: A \rightarrow {\mathbb R}$
+\end{itemize}
+
+\section{Data structures}
+\begin{itemize}
+\item $queue()$: returns an empty queue
+\item $enqueue(Q,a)$: puts element $a$ in the queue $Q$
+\item $dequeue(Q)$: returns the element at the head of the queue $Q$
+\end{itemize}
+
+\section{Graph-theoretic notation}
+\begin{itemize}
+\item {\color{blue} $V(g)$}: the set of nodes of graph $g$
+\item {\color{blue} $E(g)$}: the set of edges of graph $g$
+\item {\color{blue} $n_g(v)$}: the set of neighbors of node $v$ in undirected graph $g$. If $g$ is clear from the context, we may drop the subscript (that is, just use $n(v)$)
+\item {\color{blue} $deg_g(v)$}: the quantity $|n_g(v)|$. If $g$ is clear from the context, we may drop the subscript
+\item {\color{blue} $in_g(v)$}: the set of nodes from which there are edges to node $v$ in directed graph $g$. If $g$ is clear from the context, we may drop the subscript (that is, just use $in(v)$)
+\item {\color{blue} $out_g(v)$}: the set of nodes to which there are edges from node $v$ in directed graph $g$. If $g$ is clear from the context, we may drop the subscript (that is, just use $out(v)$)
+\item {\color{blue} $indeg_g(v)$}: the quantity $|in_g(v)|$. If $g$ is clear from the context, we may drop the subscript
+\item {\color{blue} $outdeg_g(v)$}: the quantity $|out_g(v)|$. If $g$ is clear from the context, we may drop the subscript
+\item {\color{blue} $w_g(e)$}: the weight of edge $e$ in graph $g$. If $g$ is clear from the context, we may drop the subscript (that is, just use $w(e)$)
+\item  {\color{blue} ${\rm argmin}_{e}(A,B)$}:
+   the edge whose one endpoint is in set $A$ of nodes and the other endpoint is in set $B$, and has minimum weight of all such edges (it is assumed that $A,B \subseteq V(g)$ for some graph $g$, and $e \in E(g)$)
+\item {\color{blue} $nodes_g(E')$}: the set of nodes that are endpoints of at least one of the edges in $E'$ in graph $g$. If $g$ is clear from the context, we may drop the subscript
+\item {\color{blue} $edges_g(V')$}: the set of edges each of which has at least one of its endpoints in set $V'$ in graph $g$. If $g$ is clear from the context, we may drop the subscript
+\item {\color{blue} {\bf foreach} $v \in V(g)$}: looping over all nodes in graph $g$. 
+\item {\color{blue} {\bf foreach} $e \in E(g)$}: looping over all edges in graph $g$. 
+%\item {\color{blue} $IsAcyclic(V',E')$}: returns True if the graph defined by the sets $V'$ (nodes) and $E'$ (edges) is acyclic.
+%\item {\color{blue} $IsTree(V',E')$}: returns True if the graph defined by the sets $V'$ (nodes) and $E'$ (edges) is a tree.  
+\end{itemize}
+
+\section{String and sequence notation}
+Let $w$ be a string. We assume that the letters of $w$ are indexed starting at $0$ 
+\begin{itemize}
+\item {\color{blue} $|w|$}: the length of string/sequence $w$ (that is, the number of letters in $w$)
+\item {\color{blue} $w_i$}: letter at position $i$ in string $w$. It is assumed that $0 \leq i \leq |w|-1$
+
+\end{itemize}
+
+
+\end{document}
