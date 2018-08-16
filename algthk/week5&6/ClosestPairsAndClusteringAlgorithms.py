@@ -163,6 +163,8 @@ def slow_closest_pair(cluster_list):
     cluster_list[idx1] and cluster_list[idx2] have minimum distance dist.       
     """
     dist = float("inf")
+    closest = tuple([dist, -1, -1])
+    
     for idx1 in range(len(cluster_list)):
         for idx2 in range(len(cluster_list)):
             if idx1 != idx2:
@@ -170,7 +172,6 @@ def slow_closest_pair(cluster_list):
                       dist = cluster_list[idx1].distance(cluster_list[idx2])
                       closest = tuple([dist, idx1, idx2])
     return closest
-
 
 def fast_closest_pair(cluster_list):
     """
@@ -187,12 +188,28 @@ def fast_closest_pair(cluster_list):
     else:
         mid_idx = len(cluster_list)/2
         first = fast_closest_pair(cluster_list[:mid_idx])
-        last = fast_closest_pair(cluster_list[mid_idx:])
-        closest = first if first[0] >= last[0] else last
-        mid_x = (cluster_list[mid_idx - 1] + cluster_list[mid_idx - 1])/2
+        tmp = list(fast_closest_pair(cluster_list[mid_idx:]))
+        tmp[1] += mid_idx
+        tmp[2] += mid_idx
+        last = tuple(tmp)
+        closest = first if first[0] <= last[0] else last  
+        mid_x = (cluster_list[mid_idx - 1].horiz_center() + cluster_list[mid_idx - 1].horiz_center())/2
         mid =  closest_pair_strip(cluster_list, mid_x, closest[0])
-        closest = closest if closest[0] <= mid[0] else mid[0]     
+        closest = closest if closest[0] <= mid[0] else mid     
     return closest
+
+
+#c0 = Cluster(set([]), 0.02, 0.39, 1, 0)
+#c1 = Cluster(set([]), 0.19, 0.75, 1, 0)
+#c2 = Cluster(set([]), 0.35, 0.03, 1, 0)
+#c3 = Cluster(set([]), 0.73, 0.81, 1, 0)
+#c4 = Cluster(set([]), 0.76, 0.88, 1, 0)
+#c5 = Cluster(set([]), 0.78, 0.11, 1, 0)
+#c_list = [c0,c1,c2,c3,c4,c5]
+#ans = fast_closest_pair(c_list)
+
+# expected one of the tuples in set([(0.076157731058639044, 3, 4)])
+# but received (0.076157731058639044, 0, 1)
 
 
 def closest_pair_strip(cluster_list, horiz_center, half_width):
@@ -218,21 +235,11 @@ def closest_pair_strip(cluster_list, horiz_center, half_width):
     else:
         index.sort(key = lambda idx: cluster_list[idx].vert_center())
 
-    for idx1 in range(len(index) - 1):
-        for idx2 in range(idx1+1, min(idx1+4, len(index))):
+    for idx1 in range(len(index)-1):
+        for idx2 in range(idx1+1, min(idx1+3, len(index)-1)+1):
             if cluster_list[index[idx1]].distance(cluster_list[index[idx2]]) < dist:
                   dist = cluster_list[index[idx1]].distance(cluster_list[index[idx2]])
-                  closest = tuple([dist, min(index[idx1],index[idx2]), max(index[idx1],index[idx2])])
-    print index
-   
-    
-#    for idx1 in range(len(index) - 1):
-#        for idx2 in range(idx1+1, min(idx1+3, len(index))):
-#            print (index[idx1],index[idx2])
-#            if cluster_list[index[idx1]].distance(cluster_list[index[idx2]]) < dist:
-#                  dist = cluster_list[index[idx1]].distance(cluster_list[index[idx2]])
-#                  closest = tuple([dist, min(index[idx1],index[idx2]), max(index[idx1],index[idx2])])
-#    print index
+                  closest = tuple([dist, min(index[idx1],index[idx2]), max(index[idx1],index[idx2])])                 
     return closest 
 
  
@@ -251,7 +258,6 @@ def closest_pair_strip(cluster_list, horiz_center, half_width):
 #ans = closest_pair_strip(c_list, 1.0, 3.0) 
 #expected one of the tuples in set([(1.0, 1, 2)]) but received (1.0, 2, 1)
     
-
 #c1 = Cluster(set([]), -4.0, 0.0, 1, 0)
 #c2 = Cluster(set([]), 0.0, -1.0, 1, 0)
 #c3 = Cluster(set([]), 0.0, 1.0, 1, 0) 
