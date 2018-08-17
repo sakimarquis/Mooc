@@ -165,56 +165,37 @@ def kmeans_clustering(cluster_list, num_clusters, num_iterations):
     Input: List of clusters, integers number of clusters and number of iterations
     Output: List of clusters whose length is num_clusters
     """
-    sort_list = cluster_list[::]
+    clusters = cluster_list[::]
     # position initial clusters at the location of clusters with largest populations
-    sort_list.sort(key = lambda cluster: cluster.total_population())
-    centers = []
-    for cluster in sort_list[::-1][:num_clusters]:
-        centers.append(tuple([cluster.horiz_center(), 
-                              cluster.vert_center()]))
+    clusters.sort(key = lambda cluster: cluster.total_population(), reverse = True)
+    clusters = clusters[:num_clusters]
+   
     for _ in range(num_iterations):
-        # new center
-        clusters = []
-        for center in centers:
-            clusters.append(alg_cluster.Cluster(set([]), center[0], 
-                                                         center[1], 0, 0))
-        new_clusters = clusters[::]
+        new_clusters = [alg_cluster.Cluster(set(),0,0,0,0) for _ in range(num_clusters)]
         for cluster in cluster_list:
             # find closest center
             closest = float("inf")
-            for idx in range(num_clusters):
-                if clusters[idx].distance(cluster) < closest:
+            for idx in range(len(clusters)):
+                dist = clusters[idx].distance(cluster)
+                if dist < closest:
+                    closest = dist
                     center = idx
-                    closest = clusters[idx].distance(cluster)
-            # merge the cluster closest to new clusters
+            # merge the cluster closest to new_clusters
             new_clusters[center].merge_clusters(cluster)
-        
-        # store center cord
-        centers = []
-        for cluster in new_clusters:
-            centers.append(tuple([cluster.horiz_center(), 
-                                  cluster.vert_center()]))        
-           
-    return new_clusters
+        # store new center
+        clusters = new_clusters
+    return clusters
 
 
-TEST_CASE= [alg_cluster.Cluster(set(['00']), 0.0, 0.0, 1, 0.1),
-            alg_cluster.Cluster(set(['10']), 1.0, 0.0, 2, 0.1),
-            alg_cluster.Cluster(set(['11']), 1.0, 1.0, 3, 0.1),
-            alg_cluster.Cluster(set(['01']), 0.0, 1.0, 4, 0.1),
-            alg_cluster.Cluster(set(['1010']), 10.0, 10.0, 5, 0.1),
-            alg_cluster.Cluster(set(['1011']), 10.0, 11.0, 6, 0.1),
-            alg_cluster.Cluster(set(['1111']), 11.0, 11.0, 7, 0.1),
-            alg_cluster.Cluster(set(['1110']), 11.0, 10.0, 8, 0.1)]
-
-ans = kmeans_clustering(TEST_CASE, 2, 2)
-
-#If you run kmeans_clustering(test_list, 2, 2)
+#TEST_CASE= [alg_cluster.Cluster(set(['00']), 0.0, 0.0, 1, 0.1),
+#            alg_cluster.Cluster(set(['10']), 1.0, 0.0, 2, 0.1),
+#            alg_cluster.Cluster(set(['11']), 1.0, 1.0, 3, 0.1),
+#            alg_cluster.Cluster(set(['01']), 0.0, 1.0, 4, 0.1),
+#            alg_cluster.Cluster(set(['1010']), 10.0, 10.0, 5, 0.1),
+#            alg_cluster.Cluster(set(['1011']), 10.0, 11.0, 6, 0.1),
+#            alg_cluster.Cluster(set(['1111']), 11.0, 11.0, 7, 0.1),
+#            alg_cluster.Cluster(set(['1110']), 11.0, 10.0, 8, 0.1)]
+#
+#ans = kmeans_clustering(TEST_CASE, 2, 2)
 #(0,0),(0,1),(1,0),(11,) should be in a group
 #(10,10),(10,11),(11,10),(11,11) should be in a group
-    
-#Testing kmeans_custering on 24 county table, num_clusters = 15 num_iterations = 1
-#Student county tuples: set([('06071', '08031'), ('36005', '36061'), ('34013', '34039'), ('06037',), ('06059',), ('36047',), ('36081',), ('34017',), ('36059',), ('55079',), ('06075',), ('01073',), ('06029',), ('41051', '41067'), ('11001', '24510', '51013', '51760', '51840', '54009')])
-#Expected county tuples: set([('06071', '08031'), ('34013', '34039'), ('34017', '36061'), ('06037',), ('06059',), ('36047',), ('36081',), ('36059',), ('36005',), ('55079',), ('06075',), ('01073',), ('06029',), ('41051', '41067'), ('11001', '24510', '51013', '51760', '51840', '54009')]) Computed: False Expected: True
-
-
