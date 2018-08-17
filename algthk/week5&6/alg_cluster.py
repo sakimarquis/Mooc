@@ -1,6 +1,7 @@
 """
 Cluster class for Module 3
 """
+import math
 
 class Cluster:
     """
