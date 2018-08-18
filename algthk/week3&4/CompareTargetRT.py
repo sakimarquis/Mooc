@@ -189,7 +189,7 @@ def fast_targeted_order(ugraph):
 # =============================================================================
 n_list = list(range(10,1000,10))
 m = 5
-def time_q3(n_list,m):
+def a2q3_time(n_list,m):
     nodes = []
     targeted = []
     fast_targeted = []
@@ -219,7 +219,7 @@ nodes = time_q3(n_list,m)[0]
 targeted = time_q3(n_list,m)[1]
 fast_targeted = time_q3(n_list,m)[2]
 
-def q3_plot():
+def a2q3_plot():
     """
     Plot an example with two curves with legends
     """
