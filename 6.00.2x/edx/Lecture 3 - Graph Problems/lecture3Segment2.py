@@ -82,4 +82,28 @@ def buildCityGraph(graphType):
     g.addEdge(Edge(g.getNode('Los Angeles'), g.getNode('Boston')))
     return g
     
-print(buildCityGraph(Graph))
+#print(buildCityGraph(Graph))
+#print(buildCityGraph(Digraph))
+
+def ex2():
+    nodes = []
+    nodes.append(Node("ABC")) # nodes[0]
+    nodes.append(Node("ACB")) # nodes[1]
+    nodes.append(Node("BAC")) # nodes[2]
+    nodes.append(Node("BCA")) # nodes[3]
+    nodes.append(Node("CAB")) # nodes[4]
+    nodes.append(Node("CBA")) # nodes[5]
+    
+    g = Graph()
+    for n in nodes:
+        g.addNode(n)
+    
+    # solution
+    for node1 in nodes:
+        for node2 in nodes:
+            if node1 != node2 and node2 not in g.childrenOf(node1) and node1 not in g.childrenOf(node2):
+                if node1.getName()[0] == node2.getName()[0] or node1.getName()[-1] == node2.getName()[-1]:
+                    g.addEdge(Edge(g.getNode(node1.getName()), g.getNode(node2.getName())))
+    return g
+
+            
