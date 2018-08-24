@@ -103,6 +103,7 @@ def DFS(graph, start, end, path, shortest, toPrint = False):
         return path
     for node in graph.childrenOf(start):
         if node not in path: #avoid cycles
+            # 在任何情况下只要现在的path大于shortest则停止搜索
             if shortest == None or len(path) < len(shortest):
                 newPath = DFS(graph, node, end, path, shortest,
                               toPrint)
@@ -149,16 +150,44 @@ def BFS(graph, start, end, toPrint = False):
                 pathQueue.append(newPath)
     return None
 
-def shortestPath(graph, start, end, toPrint = False):
-    """Assumes graph is a Digraph; start and end are nodes
-       Returns a shortest path from start to end in graph"""
-    return BFS(graph, start, end, toPrint)
+#def shortestPath(graph, start, end, toPrint = False):
+#    """Assumes graph is a Digraph; start and end are nodes
+#       Returns a shortest path from start to end in graph"""
+#    return BFS(graph, start, end, toPrint)
     
 testSP('Boston', 'Phoenix')
     
     
+def ex2():
+    nodes = []
+    nodes.append(Node("ABC")) # nodes[0]
+    nodes.append(Node("ACB")) # nodes[1]
+    nodes.append(Node("BAC")) # nodes[2]
+    nodes.append(Node("BCA")) # nodes[3]
+    nodes.append(Node("CAB")) # nodes[4]
+    nodes.append(Node("CBA")) # nodes[5]
     
+    g = Graph()
+    for n in nodes:
+        g.addNode(n)
     
+    # solution
+    for node1 in nodes:
+        for node2 in nodes:
+            if node1 != node2 and node2 not in g.childrenOf(node1) and node1 not in g.childrenOf(node2):
+                if node1.getName()[0] == node2.getName()[0] or node1.getName()[-1] == node2.getName()[-1]:
+                    g.addEdge(Edge(g.getNode(node1.getName()), g.getNode(node2.getName())))
+    return g
+   
+def ex3(source, destination):
+    g = ex2()
+    sp = shortestPath(g, g.getNode(source), g.getNode(destination))
+    if sp != None:
+        print('Shortest path from', source, 'to',
+              destination, 'is', printPath(sp))
+    else:
+        print('There is no path from', source, 'to', destination)
+
     
     
     
