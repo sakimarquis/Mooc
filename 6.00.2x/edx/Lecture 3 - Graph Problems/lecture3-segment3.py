@@ -157,53 +157,7 @@ def BFS(graph, start, end, toPrint = False):
     
 testSP('Boston', 'Phoenix')
     
-    
-def ex2():
-    nodes = []
-    nodes.append(Node("ABC")) # nodes[0]
-    nodes.append(Node("ACB")) # nodes[1]
-    nodes.append(Node("BAC")) # nodes[2]
-    nodes.append(Node("BCA")) # nodes[3]
-    nodes.append(Node("CAB")) # nodes[4]
-    nodes.append(Node("CBA")) # nodes[5]
-    
-    g = Graph()
-    for n in nodes:
-        g.addNode(n)
-    
-    # solution
-    for node1 in nodes:
-        for node2 in nodes:
-            if node1 != node2 and node2 not in g.childrenOf(node1) and node1 not in g.childrenOf(node2):
-                if node1.getName()[0] == node2.getName()[0] or node1.getName()[-1] == node2.getName()[-1]:
-                    g.addEdge(Edge(g.getNode(node1.getName()), g.getNode(node2.getName())))
-    return g
-   
-def ex3(source, destination):
-    g = ex2()
-    sp = shortestPath(g, g.getNode(source), g.getNode(destination))
-    if sp != None:
-        print('Shortest path from', source, 'to',
-              destination, 'is', printPath(sp))
-    else:
-        print('There is no path from', source, 'to', destination)
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
 #def cost(path):
 #    result = 0
@@ -256,3 +210,47 @@ def ex3(source, destination):
 #    print('Shortest path found by BFS:', printPath(sp))
 #    
 #testSP()
+
+    
+def ex2():
+    nodes = []
+    nodes.append(Node("ABC")) # nodes[0]
+    nodes.append(Node("ACB")) # nodes[1]
+    nodes.append(Node("BAC")) # nodes[2]
+    nodes.append(Node("BCA")) # nodes[3]
+    nodes.append(Node("CAB")) # nodes[4]
+    nodes.append(Node("CBA")) # nodes[5]
+    
+    g = Graph()
+    for n in nodes:
+        g.addNode(n)
+    
+    # solution
+    for node1 in nodes:
+        for node2 in nodes:
+            if node1 != node2 and node2 not in g.childrenOf(node1) and node1 not in g.childrenOf(node2):
+                if node1.getName()[0] == node2.getName()[0] or node1.getName()[-1] == node2.getName()[-1]:
+                    g.addEdge(Edge(g.getNode(node1.getName()), g.getNode(node2.getName())))
+    return g
+   
+def ex3(source, destination):
+    g = ex2()
+    sp = shortestPath(g, g.getNode(source), g.getNode(destination))
+    if sp != None:
+        print('Shortest path from', source, 'to',
+              destination, 'is', printPath(sp))
+    else:
+        print('There is no path from', source, 'to', destination)
+
+
+    
+class WeightedEdge(Edge):
+    def __init__(self, src, dest, weight):
+        Edge.__init__(self, src, dest)
+        self.weight = weight
+    def getWeight(self):
+        return self.weight
+    def __str__(self):
+        return Edge.__str__(self) + " (" + str(self.weight) + ")"
+    
+    

@@ -54,8 +54,19 @@ def greedy_cow_transport(cows,limit=10):
     transported on a particular trip and the overall list containing all the
     trips
     """
-    # TODO: Your code here
-    pass
+    trips = []
+    sort_cows = sorted(cows, key = lambda x: -cows[x])
+    limit_left = limit
+    while len(sort_cows) > 0:
+        a_trip = []
+        for cow in sort_cows[::]:
+            if cows[cow] <= limit_left:
+                a_trip.append(cow)
+                limit_left -= cows[cow]
+                sort_cows.remove(cow)
+        limit_left = limit
+        trips.append(a_trip)
+    return trips
 
 
 # Problem 2
@@ -79,8 +90,13 @@ def brute_force_cow_transport(cows,limit=10):
     transported on a particular trip and the overall list containing all the
     trips
     """
-    # TODO: Your code here
-    pass
+#    keys = list(cows)
+#    values = list(cows.values())
+#    for idx in len(cows):
+#        
+#    
+#    for k, v in cows.items():
+        
 
         
 # Problem 3
@@ -113,5 +129,4 @@ print(cows)
 
 print(greedy_cow_transport(cows, limit))
 print(brute_force_cow_transport(cows, limit))
-
 
