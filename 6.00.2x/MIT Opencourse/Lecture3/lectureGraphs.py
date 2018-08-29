@@ -127,10 +127,10 @@ def testSP(source, destination):
     else:
         print('There is no path from', source, 'to', destination)
 
-testSP('Chicago', 'Boston')
-print()
-#testSP('Boston', 'Phoenix')
+#testSP('Chicago', 'Boston')
 #print()
+testSP('Boston', 'Phoenix')
+print()
 
 printQueue = True 
 

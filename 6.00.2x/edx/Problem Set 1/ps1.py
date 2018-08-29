@@ -1,6 +1,6 @@
 ###########################
 # 6.00.2x Problem Set 1: Space Cows 
-
+import itertools as iter
 from ps1_partition import get_partitions
 import time
 
@@ -89,15 +89,21 @@ def brute_force_cow_transport(cows,limit=10):
     A list of lists, with each inner list containing the names of cows
     transported on a particular trip and the overall list containing all the
     trips
+    
+    永远会给一个optimal solution
     """
-#    keys = list(cows)
-#    values = list(cows.values())
-#    for idx in len(cows):
-#        
-#    
-#    for k, v in cows.items():
-        
-
+    for partition in get_partitions(cows):
+        to_add = True
+        for a_trip in partition:
+            weight = 0
+            for item in a_trip:
+                weight += cows[item]
+            if weight > limit:
+                to_add = False
+                break
+        if to_add:
+            return partition
+            
         
 # Problem 3
 def compare_cow_transport_algorithms():
@@ -113,8 +119,18 @@ def compare_cow_transport_algorithms():
     Returns:
     Does not return anything.
     """
-    # TODO: Your code here
-    pass
+    start = time.time()
+    greedy_cow_transport(cows,limit=10)
+    end = time.time()
+    greedy_time = end - start
+    
+    start = time.time()
+    brute_force_cow_transport(cows,limit=10)
+    end = time.time()
+    brute_force_time = end - start
+    
+    return (greedy_time, brute_force_time)
+    
 
 
 """
@@ -129,4 +145,8 @@ print(cows)
 
 print(greedy_cow_transport(cows, limit))
 print(brute_force_cow_transport(cows, limit))
+
+
+
+
 

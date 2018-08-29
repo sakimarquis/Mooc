@@ -1,14 +1,9 @@
-# 6.0002 Problem Set 5
-# Graph optimization
-# Name:Huadong Xiong
-# Collaborators:None
-# Time:2.5h
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Aug 28 11:10:45 2018
 
-import unittest
-
-#
-# A set of data structures to represent graphs
-#
+@author: Saki
+"""
 
 class Node(object):
     """Represents a node in the graph"""
@@ -65,9 +60,15 @@ class WeightedEdge(Edge):
     def get_outdoor_distance(self):
         return self.outdoor_distance
 
-    def __str__(self):   
+    def __str__(self):
+        # can't figure out why can't pass test_graph_str 
+        # display a stange str with or without a space     
         return '{} ({}, {})'.format(Edge.__str__(self),self.total_distance, self.outdoor_distance)
     
+        #return Edge.__str__(self)+' ({}, {})'.format(self.total_distance, self.outdoor_distance)       
+        #return '{}->{} ({}, {})'.format(self.src, self.dest, self.total_distance, self.outdoor_distance)
+        #return str(self.src) + "->"+ str(self.dest) +"("+ str(self.total_distance) + ", " + str(self.outdoor_distance) +")"
+
 class Digraph(object):
     """Represents a directed graph of Node and Edge objects"""
     def __init__(self):
@@ -76,6 +77,8 @@ class Digraph(object):
 
     def __str__(self):
         edge_strs = []
+        print(self.edges)
+        print(type(self.edges))
         for edges in self.edges.values():
             for edge in edges:
                 edge_strs.append(str(edge))
@@ -107,60 +110,49 @@ class Digraph(object):
             raise ValueError('Node not in graph')
         self.edges[src].append(edge)
 
-# ================================================================
-# Begin tests -- you do not need to modify anything below this line
-# ================================================================
 
-class TestGraph(unittest.TestCase):
+def load_map(map_filename):
+    """
+    Parses the map file and constructs a directed graph
 
-    def setUp(self):
-        self.g = Digraph()
-        self.na = Node('a')
-        self.nb = Node('b')
-        self.nc = Node('c')
-        self.g.add_node(self.na)
-        self.g.add_node(self.nb)
-        self.g.add_node(self.nc)
-        self.e1 = WeightedEdge(self.na, self.nb, 15, 10)
-        self.e2 = WeightedEdge(self.na, self.nc, 14, 6)
-        self.e3 = WeightedEdge(self.nb, self.nc, 3, 1)
-        self.g.add_edge(self.e1)
-        self.g.add_edge(self.e2)
-        self.g.add_edge(self.e3)
+    Parameters:
+        map_filename : name of the map file
 
-    def test_weighted_edge_str(self):
-        self.assertEqual(str(self.e1), "a->b (15, 10)")
-        self.assertEqual(str(self.e2), "a->c (14, 6)")
-        self.assertEqual(str(self.e3), "b->c (3, 1)")
+    Assumes:
+        Each entry in the map file consists of the following four positive
+        integers, separated by a blank space:
+            From To TotalDistance DistanceOutdoors
+        e.g.
+            32 76 54 23
+        This entry would become an edge from 32 to 76.
 
-    def test_weighted_edge_total_distance(self):
-        self.assertEqual(self.e1.get_total_distance(), 15)
-        self.assertEqual(self.e2.get_total_distance(), 14)
-        self.assertEqual(self.e3.get_total_distance(), 3)
+    Returns:
+        a Digraph representing the map
+    """
+    print("Loading map from {}.".format(map_filename))
+    g = Digraph()
+    f = open(map_filename, 'r')
+    
+    nodes = []
+    weighted_edges = []
+    for line in f:
+        line = line.rstrip()
+        line_data = line.split(' ')
+        nodes.append(line_data[0])
+        nodes.append(line_data[1])
+        weighted_edges.append(line_data)
+      
+    for n in set(nodes):
+        node = Node(n)
+        g.add_node(node)
+       
+    for edge in weighted_edges:
+        src = Node(edge[0])
+        dest = Node(edge[1])
+        weighted_edge = WeightedEdge(src, dest, edge[2], edge[3])
+        g.add_edge(weighted_edge)
+    
+    return g   
 
-    def test_weighted_edge_outdoor_distance(self):
-        self.assertEqual(self.e1.get_outdoor_distance(), 10)
-        self.assertEqual(self.e2.get_outdoor_distance(), 6)
-        self.assertEqual(self.e3.get_outdoor_distance(), 1)
-
-    def test_add_edge_to_nonexistent_node_raises(self):
-        node_not_in_graph = Node('q')
-        no_src = WeightedEdge(self.nb, node_not_in_graph, 5, 5)
-        no_dest = WeightedEdge(node_not_in_graph, self.na, 5, 5)
-
-        with self.assertRaises(ValueError):
-            self.g.add_edge(no_src)
-        with self.assertRaises(ValueError):
-            self.g.add_edge(no_dest)
-
-    def test_add_existing_node_raises(self):
-        with self.assertRaises(ValueError):
-            self.g.add_node(self.na)
-
-    def test_graph_str(self):
-        expected = "a->b (15, 10)\na->c (14, 6)\nb->c (3, 1)"
-        self.assertEqual(str(self.g), expected)
-
-
-if __name__ == "__main__":
-    unittest.main()
+test = load_map("test_load_map.txt")
+print(test)
