@@ -1,3 +1,39 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Aug 29 12:28:28 2018
+
+@author: Saki
+
+
+There are questions confused me.
+
+
+1,same call: shortest_path = get_best_path(digraph, start, end, [[], 0, 0], 
+                                  max_dist_outdoors, None, None, max_total_dist)
+# this is right
+get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist, best_path, max_total_dist = 99999):
+# this the compiler tells me needs argument max_total_dist
+get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist, best_path, max_total_dist):   
+
+2,
+# this is right
+path = [path[0] + [start], path[1]]
+# but this is wrong
+path[0] += [start]
+
+3,
+# this is right
+elif start == end:
+    return path[0]
+# this is wrong
+elif start == end:
+    return [start]
+
+"""
+
+
+
+
 # 6.0002 Problem Set 5
 # Graph optimization
 # Name:Huadong Xiong
@@ -88,7 +124,7 @@ def load_map(map_filename):
 # 
 
 # Problem 3b: Implement get_best_path
-    
+   
 def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist, best_path):
     """
     Finds the shortest path between buildings subject to constraints.
@@ -133,14 +169,17 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist, best_
         for edge in digraph.get_edges_for_node(start):
             node = edge.get_destination()
             if node not in path[0]:
-                if best_dist == None or path[1] < best_dist:
-                    totol_dist = path[1] + int(edge.get_total_distance())
-                    outdoor_dist = path[2] + int(edge.get_outdoor_distance())
+                totol_dist = path[1] + int(edge.get_total_distance())
+                outdoor_dist = path[2] + int(edge.get_outdoor_distance())                
+                if (best_dist == None or totol_dist < best_dist) and (outdoor_dist <= max_dist_outdoors):
                     new_path = get_best_path(digraph, node, end, [path[0], totol_dist, outdoor_dist], 
                                              max_dist_outdoors, best_dist, best_path)
-                    if new_path[1] != totol_dist and new_path[1] is not None:
-                        print(new_path, totol_dist)
-                    if (new_path[0] != None) and (new_path[1] <= max_dist_outdoors) and (best_dist == None or new_path[1] < best_dist):
+                    # new_path[1] always >= totol_dist
+                    # because totol_dist is every trial from a node in path 
+                    # but it cannot reach the destination so it's discard.
+#                    if new_path[1] is not None and new_path[1] >= totol_dist:
+#                        print(new_path, totol_dist) 
+                    if new_path[0] != None:
                         best_path = new_path[0]
                         best_dist = new_path[1]
     return (best_path, best_dist)
@@ -184,7 +223,8 @@ def directed_dfs(digraph, start, end, max_total_dist, max_dist_outdoors):
         raise ValueError('No path') 
     else:
         return [str(node) for node in shortest_path[0]]
-  
+
+
 
 # ================================================================
 # Begin tests -- you do not need to modify anything below this line
