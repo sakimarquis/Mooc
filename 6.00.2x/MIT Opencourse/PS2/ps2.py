@@ -175,9 +175,8 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist, best_
                     new_path = get_best_path(digraph, node, end, [path[0], totol_dist, outdoor_dist], 
                                              max_dist_outdoors, best_dist, best_path)
                     # new_path[1] always >= totol_dist
-                    # because totol_dist is every trial from a node in path 
-                    # but it cannot reach the destination so it's discard.
-#                    if new_path[1] is not None and new_path[1] >= totol_dist:
+                    # because totol_dist is [current path] + [one of the children]
+#                    if new_path[1] is not None and new_path[1] < totol_dist:
 #                        print(new_path, totol_dist) 
                     if new_path[0] != None:
                         best_path = new_path[0]

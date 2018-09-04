@@ -24,8 +24,12 @@ def load_cows(filename):
     Returns:
     a dictionary of cow name (string), weight (int) pairs
     """
-    # TODO: Your code here
-    pass
+    cow_dict = dict()
+    f = open(filename, 'r')
+    for line in f:
+        line_data = line.split(',')
+        cow_dict[line_data[0]] = int(line_data[1])
+    return cow_dict
 
 # Problem 2
 def greedy_cow_transport(cows,limit=10):
@@ -50,8 +54,19 @@ def greedy_cow_transport(cows,limit=10):
     transported on a particular trip and the overall list containing all the
     trips
     """
-    # TODO: Your code here
-    pass
+    trips = []
+    sort_cows = sorted(cows, key = lambda x: -cows[x])
+    limit_left = limit
+    while len(sort_cows) > 0:
+        a_trip = []
+        for cow in sort_cows[::]:
+            if cows[cow] <= limit_left:
+                a_trip.append(cow)
+                limit_left -= cows[cow]
+                sort_cows.remove(cow)
+        limit_left = limit
+        trips.append(a_trip)
+    return trips
 
 # Problem 3
 def brute_force_cow_transport(cows,limit=10):
@@ -75,8 +90,17 @@ def brute_force_cow_transport(cows,limit=10):
     transported on a particular trip and the overall list containing all the
     trips
     """
-    # TODO: Your code here
-    pass
+    for partition in get_partitions(cows):
+        to_add = True
+        for a_trip in partition:
+            weight = 0
+            for item in a_trip:
+                weight += cows[item]
+            if weight > limit:
+                to_add = False
+                break
+        if to_add:
+            return partition
         
 # Problem 4
 def compare_cow_transport_algorithms():
@@ -92,5 +116,14 @@ def compare_cow_transport_algorithms():
     Returns:
     Does not return anything.
     """
-    # TODO: Your code here
-    pass
+    start = time.time()
+    greedy_cow_transport(cows,limit=10)
+    end = time.time()
+    greedy_time = end - start
+    
+    start = time.time()
+    brute_force_cow_transport(cows,limit=10)
+    end = time.time()
+    brute_force_time = end - start
+    
+    return (greedy_time, brute_force_time)
