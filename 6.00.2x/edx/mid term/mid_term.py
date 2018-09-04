@@ -46,10 +46,10 @@ def max_contig_sum(L):
     Returns the maximum sum of a contiguous subsequence in L """
     # a O(n^2) implement
     l_copy = L[::]
-    l_copy.sort(reverse = True)
+    l_copy.sort()
     max_val = 0
     for idx in range(len(L)):
-        if L[idx] > 0:
+        if L[idx] > 0 and sum(l_copy[idx:]) > max_val:
             max_now = 0
             for i in L[idx:]:
                 max_now += i
