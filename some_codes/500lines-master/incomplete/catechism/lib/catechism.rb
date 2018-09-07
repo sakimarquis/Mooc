@@ -1,5 +1,0 @@
-require "catechism/version"
-require "catechism/describe_block"
-require "catechism/subject_wrapper"
-require "catechism/trial"
-require "catechism/cli"
