@@ -6,6 +6,7 @@
 
 import pylab
 import re
+import numpy as np
 
 # cities in our weather data
 CITIES = [
@@ -163,8 +164,7 @@ def generate_models(x, y, degs):
         a list of pylab arrays, where each array is a 1-d array of coefficients
         that minimizes the squared error of the fitting polynomial
     """
-    # TODO
-    pass
+    return [np.polyfit(x, y, deg) for deg in degs]
 
 
 def r_squared(y, estimated):
@@ -180,8 +180,15 @@ def r_squared(y, estimated):
     Returns:
         a float for the R-squared error term
     """
-    # TODO
-    pass
+    SSE = 0
+    SST = 0
+    y_mean = sum(y)/len(y)
+    for idx in range(len(y)):
+        SSE += (y[idx] - estimated[idx])**2/len(y)
+        SST += (y[idx] - y_mean)**2/len(y)
+    R_square = 1 - SSE / SST
+    return R_square
+    
 
 def evaluate_models_on_training(x, y, models):
     """
@@ -209,8 +216,21 @@ def evaluate_models_on_training(x, y, models):
     Returns:
         None
     """
-    # TODO
-    pass
+    best_r_square = 0
+    best_estimated = None
+    for model in models:
+        estimated = np.polyval(model, x)
+        r_square = r_squared(y, estimated)
+        if r_square > best_r_square:
+            best_r_square = r_square
+            best_estimated = estimated
+
+    pylab.plot(x, y, 'bo', label = 'Observed') 
+    pylab.plot(x, best_estimated, 'r', label = 'Estimated')
+    pylab.title("Model is" + "\n" + "r^2 = " + str(r_square))
+    pylab.xlabel("Year")
+    pylab.ylabel("Temperature")
+    pylab.legend()
 
 def gen_cities_avg(climate, multi_cities, years):
     """
