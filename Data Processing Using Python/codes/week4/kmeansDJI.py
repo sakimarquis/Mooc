@@ -1,0 +1,55 @@
+# -*- coding: utf-8 -*-
+"""
+the k-Means Algorithm
+
+@author: Dazhuang
+"""
+
+# 本程序有一定的网络负载，可不运行程序根据结果理解程序
+# 某次聚类结果：[2 2 1 1 2 2 2 2 0 0]
+
+import requests
+import re
+import json
+import pandas as pd
+from sklearn.cluster import KMeans 
+import numpy as np
+
+#获取数据
+def retrieve_quotes_historical(stock_code):
+    quotes = []
+    url = 'https://finance.yahoo.com/quote/%s/history?p=%s' % (stock_code, stock_code)
+    r = requests.get(url)
+    m = re.findall('"HistoricalPriceStore":{"prices":(.*?),"isPending"', r.text)
+    if m:
+        quotes = json.loads(m[0])
+        quotes = quotes[::-1]
+    return  [item for item in quotes if not 'type' in item]
+
+#创造平均数的dataframe
+def create_df(stock_code):
+    quotes = retrieve_quotes_historical(stock_code)
+    list1 = ['close','date','high','low','open','volume']
+    df_totalvolume = pd.DataFrame(quotes,columns=list1)
+    # 用数据的平均值代替数据中的空值（NaN）
+    df_totalvolume = df_totalvolume.fillna(df_totalvolume.mean())
+    return df_totalvolume
+
+listDji = ['MMM','AXP','AAPL','BA','CAT','CVX','CSCO','KO','DIS','DD']
+listTemp = [0] * len(listDji)
+for i in range(len(listTemp)):
+    listTemp[i] = create_df(listDji[i]).close
+status = [0] * len(listDji)
+for i in range(len(status)):
+    status[i] = np.sign(np.diff(listTemp[i]))
+# 简单处理某一只或几只股票数据没有获得（值为[])的问题，删掉此数据
+for i in range(len(status)):
+    if len(status[i]) == 0:
+		     status.pop(i)
+		     break
+
+#设置k-means
+kmeans = KMeans(n_clusters = 3).fit(status)
+#计算k-means
+pred=kmeans.predict(status)
+print(pred)

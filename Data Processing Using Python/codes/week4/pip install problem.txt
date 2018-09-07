@@ -1,0 +1,5 @@
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple wordcloud
+
+1. lib\site-packages\pip\compat\__init__.py  change line 75 to "return s.decode('gb2312')"
+
+2. restart Python console of Anaconda
