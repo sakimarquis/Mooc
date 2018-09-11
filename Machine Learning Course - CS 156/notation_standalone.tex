@@ -1,0 +1,170 @@
+\documentclass[10pt]{book}
+
+\usepackage{fancyhdr}
+\usepackage{alltt,amsmath,amsthm,amssymb,stmaryrd,bm,epic,eepic}
+\usepackage{graphicx,psfrag}
+\usepackage{wrapfig,epsfig,array,enumerate}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{cancel}
+\usepackage{tikz}
+\usepackage{longtable}
+\usepackage{framed,fancybox}
+\usepackage{makeidx}
+\usepackage{multirow}
+\usepackage[T1]{fontenc}
+\usepackage[small,tight]{subfigure}
+\usepackage{environ}
+\usepackage{url}
+\usepackage{datetime}
+ 
+\DeclareMathSymbol{\N}{\mathbin}{AMSb}{"4E}
+\DeclareMathSymbol{\Z}{\mathbin}{AMSb}{"5A}
+\DeclareMathSymbol{\R}{\mathbin}{AMSb}{"52}
+\DeclareMathSymbol{\Q}{\mathbin}{AMSb}{"51}
+\DeclareMathSymbol{\I}{\mathbin}{AMSb}{"49}
+\DeclareMathSymbol{\C}{\mathbin}{AMSb}{"43}
+\DeclareMathSymbol{\Exp}{\mathbin}{AMSb}{"45}
+\DeclareMathSymbol{\Prob}{\mathbin}{AMSb}{"50}
+
+\begin{document}
+
+\chapter*{Notation}
+\begin{longtable}{lp{4.5in}}
+``$\ \cdot \ $'' & event (in probability)\\
+$\{ \cdots \}$ & set\\
+$| \cdot{} |$& absolute value of a number, or cardinality (number of elements) of a set, or determinant of a matrix\\
+${\|\cdot\|}^2$& square of the norm; sum of the squared components of a vector\\
+${\left\lfloor\,\cdot\,\right\rfloor}$ & floor; largest integer which is not larger than the argument
+\\ 
+$[a,b]$ & the interval of real numbers from $a$ to $b$\\
+${\left\llbracket\cdot\right\rrbracket}$ & evaluates to 1 if argument is true, and to 0 if it is false\\
+$\nabla$ & gradient operator, e.g., $\nabla{E_{\textrm{\textup{in}}}}$ (gradient of ${E_{\textrm{\textup{in}}}}({{\mathbf{w}}})$ with respect to ${{\mathbf{w}}}$) \\
+$(\cdot){^{-1}}$& inverse\\
+$(\cdot)^{\dagger}$ & pseudo-inverse\\
+$(\cdot){^{\text{\textsc{t}}}}$ & transpose (columns become rows and vice versa)\\
+$\left({{N}\atop{k}}\right)$ & number of ways to choose $k$ objects from $N$ distinct objects (equals ${N! \over {(N-k)! k!}}$ where `!' is the factorial)\\
+$A\setminus B$ & the set $A$ with the elements
+from set $B$ removed\\
+$\mathbf{0}$& zero vector; a column vector whose components are all zeros\\
+$\{1\}\times\R^d$& $d$-dimensional Euclidean space with an added 
+`zeroth coordinate' fixed to 1\\
+$\epsilon$& tolerance in approximating a target\\
+$\delta$& bound on the probability of exceeding $\epsilon$ (the approximation tolerance)\\
+$\eta$ & learning rate; multiplier of the gradient in gradient descent
+(less often, the step size in iterative learning)\\
+${\lambda}$ & regularization parameter\\
+${\lambda}_C$ & regularization parameter corresponding to weight budget $C$\\
+$\Omega$ & penalty for model complexity; either a bound on generalization error, or a regularization term\\
+${\theta}$ & logistic function ${\theta}(s)=e^s/(1+e^s)$\\
+$\Phi$ & feature transform, ${{\mathbf{z}}}=\Phi({{\mathbf{x}}})$\\
+$\Phi_{\textsc{q}}$ & $Q$th-order polynomial transform\\
+$\phi$ & a coordinate in the feature transform $\Phi$, $z_i=\phi_i({{\mathbf{x}}})$\\
+$\mu$ & probability of a binary outcome\\
+$\nu$ & fraction of a binary outcome in a sample\\
+$\sigma^2$ & variance of noise\\
+$\mathcal{A}$ & learning algorithm\\
+$\mathop{\hbox{argmin}}\limits\nolimits_a(\cdot)$ & the value of $a$ at which the minimum of the argument is achieved\\
+$\cal B$& an event (in probability), usually `bad' event\\
+$b$ & the bias term in a linear combination of inputs, also called $w_0$\\
+{\text{\sf bias}}{} & the bias term in bias-variance decomposition\\
+$B(N,k)$& maximum number of dichotomies on $N$ points with a break point $k$\\
+$C$ & bound on the size of weights in the soft order constraint\\
+$d$ & dimensionality of the input space ${{\cal X}} = \R^d$ or ${{\cal X}} =\{1\}\times\R^d$\\
+$\tilde d$ & dimensionality of the transformed space $\cal Z$\\
+${d_{\textsc{vc}}}$,${d_{\textsc{vc}}}({\mathcal{H}})$ & VC dimension of hypothesis set ${\mathcal{H}}$\\
+$\mathcal{D}$ & data set $\mathcal{D} = ({{\mathbf{x}}}_1, y_1) , \cdots , ({{\mathbf{x}}}_N, y_N) $; technically not a set, but a vector of elements $({{\mathbf{x}}}_n,y_n)$. $\mathcal{D}$ is often the training set, but sometimes split into training and validation/test sets.\\
+${\mathcal{D}_{\textrm{train}}}$ & subset of $\mathcal{D}$ used for training when a validation or test set is used.\\ 
+${\mathcal{D}_{\textrm{val}}}$ & validation set; subset of $\mathcal{D}$ used for validation\\
+$E({h},{f})$ & error measure between hypothesis ${h}$ and target function ${f}$\\
+$e^{x}$& exponent of $x$ in the natural base
+$e=2.71828\cdots$\\
+${\textsf{e}}({h}({{\mathbf{x}}}),{f}({{\mathbf{x}}}))$ & pointwise version of $E({h},{f})$, e.g., $({h}({{\mathbf{x}}}) - {f}({{\mathbf{x}}}))^2$\\
+${\textsf{e}}_n$ & leave-one-out error on example $n$ when this $n$th
+example is excluded in training [cross validation]\\
+$\Exp [\cdot]$ & expected value of argument\\
+$\Exp_{{\mathbf{x}}} [\cdot]$ & expected value with respect to ${{\mathbf{x}}}$\\
+$\Exp [{y}|{{\mathbf{x}}}]$ & expected value of ${y}$ given ${{\mathbf{x}}}$\\
+${E_{\textrm{\textup{aug}}}}$ & augmented error (in-sample error plus regularization term)\\
+${E_{\textrm{\textup{in}}}}$, ${E_{\textrm{\textup{in}}}}({h})$& in-sample error (training error)
+for hypothesis ${h}$\\
+${E_{\textrm{cv}}}$ & cross validation error\\
+${E_{\textrm{\textup{out}}}}$, ${E_{\textrm{\textup{out}}}}({h})$
+& out-of-sample error for hypothesis ${h}$\\
+${E_{\textrm{\textup{out}}}}^\mathcal{D}$ & out-of-sample error when $\mathcal{D}$ is used for training\\
+${\bar{E}}_{\textrm{out}}$ & expected out-of-sample error\\
+$E_{\textrm{val}}$ & validation error\\
+${E_{\textrm{\textup{test}}}}$ & test error\\
+${f}$ & target function, ${f}\colon{\mathcal{X}} \to {\mathcal{Y}}$\\
+${g}$ & final hypothesis ${g}\in{\mathcal{H}}$ selected by the learning algorithm; ${g}\colon{\mathcal{X}} \to {\mathcal{Y}}$\\
+${g}^{(\mathcal{D})}$ & final hypothesis when the training set is $\mathcal{D}$\\
+$\bar{g}$ & average final hypothesis [bias-variance analysis]\\
+${g}^{\raisebox{1.1pt}{\hspace*{-0.4pt}{\rule{3pt}{0.3pt}}}}$ & final hypothesis when trained using 
+$\mathcal{D}$ \emph{minus} some points\\
+${\mathbf{g}}$ & gradient, e.g., ${\mathbf{g}}=\nabla{E_{\textrm{\textup{in}}}}$\\
+${h}$ & a hypothesis ${h}\in{\mathcal{H}}$; ${h}\colon{\mathcal{X}} \to {\mathcal{Y}}$\\
+$\tilde{{h}}$ & a hypothesis in transformed space $\cal Z$\\
+${\mathcal{H}}$ & hypothesis set\\
+${\mathcal{H}}_\Phi$ & hypothesis set that corresponds to perceptrons in $\Phi$-transformed space\\
+${\mathcal{H}}(C)$ & restricted hypothesis set by weight budget $C$ [soft order constraint]\\
+${\mathcal{H}}({{\mathbf{x}}}_1,\ldots,{{\mathbf{x}}}_N)$ & dichotomies (patterns of $\pm 1$) generated by ${\mathcal{H}}$ on the points ${{\mathbf{x}}}_1,\cdots,{{\mathbf{x}}}_N$\\
+${{\mathrm{H}}}$ & The hat matrix [linear regression]\\
+${{\mathrm{I}}}$& identity matrix; square matrix whose diagonal elements are $1$ and off-diagonal elements are $0$\\
+$K$ & size of validation set\\
+$L_q$ & $q$th-order Legendre polynomial\\
+$\ln$& logarithm in  base $e$\\
+$\log_2$& logarithm in base $2$\\
+$M$ & number of hypotheses\\
+$m_{\mathcal{H}}(N)$ & the growth function; maximum number of dichotomies generated by ${\mathcal{H}}$ on any $N$ points\\
+$\max(\cdot,\cdot)$ & maximum of the two arguments\\
+$N$ & number of examples (size of $\mathcal{D}$)\\
+$o(\cdot)$ & absolute value of this term is asymptotically negligible compared to the argument\\
+$O(\cdot)$ & absolute value of this term is asymptotically smaller than a constant multiple of the argument\\ 
+${P}({{\mathbf{x}}})$ & (marginal) probability or probability density of ${{\mathbf{x}}}$\\
+${P}({y} \mid {{\mathbf{x}}})$ & conditional probability or probability density of ${y}$ given ${{\mathbf{x}}}$\\
+${P}({{\mathbf{x}}},{y})$ & joint probability or probability density of ${{\mathbf{x}}}$ and ${y}$\\
+$\Prob [ \cdot ]$ & probability of an event\\
+$Q$ & order of polynomial transform\\
+$Q_{f}$ & complexity of ${f}$ (order of polynomial defining ${f}$)\\
+$\R$& the set of real numbers\\
+$\R^d$& $d$-dimensional Euclidean space\\
+${s}$ & signal ${s} = {\mathbf{w}}{^{\text{\textsc{t}}}}{{\mathbf{x}}}=\sum_iw_ix_i$ ($i$ goes from 0 to $d$ or $1$ to $d$ depending on whether
+${{\mathbf{x}}}$ has the $x_0=1$ coordinate or not)\\
+${\textrm{sign}}(\cdot)$ & sign function, returning $+1$ for positive and $-1$ for negative\\
+$\sup_a(.)$ & supremum; smallest value that is $\ge$ the argument for all $a$\\
+$T$ & number of iterations, number of epochs\\
+$t$ & iteration number or epoch number\\
+$\tanh(\cdot)$ & hyperbolic tangent function; $\tanh(s)=(e^s-e^{-s})/(e^s+e^{-s})$\\
+$\textrm{trace}(\cdot)$ & trace of square matrix (sum of diagonal elements)\\
+$V$ & number of subsets in $V$-fold cross validation ($V\times K=N$)\\
+${\mathbf{v}}$ & direction in gradient descent (not necessarily a unit vector)\\
+$\hat{\mathbf{v}}$ & unit vector version of ${\mathbf{v}}$ [gradient descent]\\
+{\text{\sf var}}{} & the variance term in bias-variance decomposition\\
+${{\mathbf{w}}}$ & weight vector (column vector)\\
+$\tilde{{\mathbf{w}}}$ & weight vector in transformed space $\cal Z$\\
+$\hat{{\mathbf{w}}}$ & selected weight vector [pocket algorithm]\\
+${{\mathbf{w}}}^*$ & weight vector that separates the data\\
+${{\mathbf{w}}}_\textrm{lin}$ & solution weight vector to linear regression\\
+${{\mathbf{w}}}_{\textrm{reg}}$ & regularized solution to linear regression with weight decay\\
+${{\mathbf{w}}}_\textrm{\tiny PLA}$ & solution weight vector of perceptron learning algorithm\\
+$w_0$ & added coordinate in weight vector ${{\mathbf{w}}}$ to represent bias~$b$\\
+${{\mathbf{x}}}$ & the input ${{\mathbf{x}}}\in{\mathcal{X}}$. Often a column vector ${{\mathbf{x}}} \in \R^d$ or ${{\mathbf{x}}} \in \{1\}\times\R^d$. ${x}$ is used if input is scalar. \\
+${x}_0$ & added coordinate to ${{\mathbf{x}}}$, fixed at ${x}_0=1$ to
+absorb the  bias term in linear expressions\\
+${\mathcal{X}}$ & input space whose elements are ${{\mathbf{x}}} \in {\mathcal{X}}$\\
+${{\mathrm{X}}}$ & matrix whose rows are the data inputs ${{\mathbf{x}}}_n$ [linear regression]\\
+$\rm XOR$ & exclusive OR function (returns 1 if the number of 1's in its input is odd)\\
+${y}$ & the output ${y}\in{\mathcal{Y}}$ \\
+${{\mathbf{y}}}$ & column vector whose components are the data set outputs ${y}_n$ [linear regression]\\
+$\hat {{\mathbf{y}}}$ & estimate of ${{\mathbf{y}}}$ [linear regression]\\
+${\mathcal{Y}}$ & output space whose elements are ${y} \in {\mathcal{Y}}$\\
+$\cal Z$ & transformed input space whose elements are ${{\mathbf{z}}} = \Phi({{\mathbf{x}}})$\\
+${{\mathrm{Z}}}$ & matrix whose rows are the transformed inputs ${{\mathbf{z}}}_n
+=\Phi({{\mathbf{x}}}_n)$ [linear regression]\\
+\end{longtable}
+ 
+
+
+
+
+\end{document}
