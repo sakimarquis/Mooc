@@ -6,8 +6,6 @@ Consider a function in Python whose execution terminates with the statement
 
 None
 
-
-
 ## Questions 2
 
 Consider the following snippet of Python code:
@@ -20,39 +18,29 @@ def var0(var1, var2):
     global var4
     var4 = 17
     return var3 + var4
-    
+
 print var0(var1, var1)
 ```
 
 What global names are created during execution of this code snippet? What local names are created during execution of this code snippet?
 
-
-
 **Global**- var0, var1, var4
 
 **Local**- var2, var3
-
-
 
 ## Questions 3
 
 Which of the following Python expressions can be used as a key to a dictionary in Python?
 
-
-
 hashable: tuple, bool, int, string
 
 unhashable: list, set
-
-
 
 ## Questions 4
 
 In SimpleGUI(and most other GUIs), a point on the canvas is indexed by two coordinates. Which statement below correctly characterizes the change in the position of a point on the canvas as these coordinates are varied?
 
 Increasing the first coordinate moves the point right. Increasing the second coordinate moves the point downward.
-
-
 
 ## Questions 5
 
@@ -72,7 +60,7 @@ class BankAccount:
         Deposits the amount into the account.
         """
         self._account += amount
-        
+
 
     def withdraw(self, amount):
         """
@@ -140,15 +128,11 @@ Consider this[submitted solution](https://www.coursera.org/learn/fundamentals-of
 
 Modifying four consecutive lines of code fixes this problem and yields a working program. Enter the line number of the first line of code that needs to be modified. Again, the lines are numbered starting at one as done in IDLE or CodeSkulptor.
 
-
-
     # 64 ~ 67
     canvas.draw_line([HALF_PAD_WIDTH, HEIGHT / 2 - HALF_PAD_HEIGHT ],
                 [HALF_PAD_WIDTH, HEIGHT / 2 + HALF_PAD_HEIGHT], PAD_WIDTH , "White")
     canvas.draw_line([WIDTH - HALF_PAD_WIDTH, HEIGHT / 2 - HALF_PAD_HEIGHT],
                 [WIDTH - HALF_PAD_WIDTH, HEIGHT / 2 + HALF_PAD_HEIGHT], PAD_WIDTH, "White")
-
-
 
 ## Questions 9
 
@@ -156,14 +140,10 @@ Consider this[submitted solution](https://www.coursera.org/learn/fundamentals-of
 
 Modifying exactly one line of the program corrects this error and yields a program that works correctly. Enter the number of the line of code that needs to be modified. Again, the lines are numbered starting at one as done in IDLE or CodeSkulptor.
 
-
-
 ```python
 # 86 
 self.deck.append(Card(suit, rank))
 ```
-
-
 
 ## Question 10
 
@@ -174,3 +154,178 @@ Consider the following sequence of operations on a stack. In this sequence*Add*(
 Perform these operations on an initially empty stack. What are the contents of the stack after all of these operations are complete?
 
 Indicate your answer with a single number in which each digit is an element on the stack. The right-most element (the least significant digit) should be the next element to be popped. For example, 321 would indicate a stack with three elements (3, 2, and 1) and 1 would be the next element to be popped.
+
+
+
+```python
+class Stack():
+    def __init__(self):
+        self._stack = []
+        
+    def Add(self, ele):
+        self._stack += [ele]
+    
+    def Rem(self):
+        length = len(self._stack)
+        self._stack.pop(length - 1)
+        
+    def __str__(self):
+        return str(self._stack)
+        
+s = Stack()
+s.Add(4)
+s.Add(8)
+s.Rem()
+s.Add(7)
+s.Add(6)
+s.Add(5)
+s.Rem()
+s.Rem()
+s.Add(2)
+s.Rem()
+s.Add(3)
+s.Add(7)
+
+print s
+
+"""
+[4, 7, 3, 7]
+
+ans = 4737
+"""
+```
+
+## Questions 12
+
+Assume you have an unfair die. The die has a0.10.1probability of landing on 1, a0.20.2probability of landing on 2, a0.30.3probability of landing on 3, a0.150.15probability of landing on 4, a0.050.05probability of landing on 5, and a0.20.2probability of landing on 6.
+
+Write a function, $\color{red}{\verb|probability(outcomes)|}$ , that takes a list of numbers as input (where each number must be between 1 and 6 inclusive) and computes the probability of getting the given sequence of outcomes from rolling the unfair die. Assume the die is rolled exactly the number of times as the length of the $\color{red}{\verb|outcomes|}$.
+
+For example, the result of $\color{red}{\verb|probability([1])|}$ should be $\color{red}{\verb|.1|}$.
+
+What is the result of the following call to the function?
+
+```python
+probability([4, 2, 6, 4, 2, 4, 5, 5, 5, 5, 1, 2, 2, 6, 6, 4, 6, 2, 3, 5, 5, 2, 1, 5, 5, 3, 2, 1, 4, 4, 1, 6, 6, 4, 6, 2, 4, 3, 2, 5, 1, 3, 5, 4, 1, 2, 3, 6, 1])
+```
+
+Enter a single numerical answer with at least four significant digits of precision in the box below. Note that Coursera will accept floating point numbers formatted using Python's scientific notation.
+
+```python
+PROB = [0.1, 0.2, 0.3, 0.15, 0.05, 0.2]
+def probability(outcomes):
+    ans = 1
+    for i in outcomes:
+        ans = ans * PROB[i-1]
+    return ans
+
+print probability([1])
+print probability([6])
+
+print probability([4, 2, 6, 4, 2, 4, 5, 5, 5, 5, 1, 2, 2, 6, 6, 4, 6, 2, 3, 5, 5, 2, 1, 5, 5, 3, 2, 1, 4, 4, 1, 6, 6, 4, 6, 2, 4, 3, 2, 5, 1, 3, 5, 4, 1, 2, 3, 6, 1])
+
+'''
+ans = 2.3914845e-43
+'''
+```
+
+
+
+## Questions 13
+
+Consider a process that grows binary trees. At time step 0, the process starts with a tree, $T$, that consists of a single node. Thereafter, the following happens in each step of the process:
+
+1. The existing tree, $T$, is copied, creating an identical tree, $S$.
+2. A new root node, $R$, is created.
+3. The left child of $R$ is set to $T$.
+4. The right child of $R$ is set to $S$.
+5. The tree rooted atRRbecomes the new $T$ for the next step of the process.
+
+Which arithmetic sum models the number of nodes in $T$ after time step $n$?
+
+
+
+i think ans is $1+3+7+⋯+2^{n+1} − 1$
+
+but i choose  $1+2+4+⋯+2^n$
+
+
+
+## Questions 14
+
+Which math expression is equivalent to the sum that is the answer to the previous question?
+
+
+
+$2^{n+1} − 1$
+
+
+
+## Questions 15
+
+Consider rooted trees in which the number of children for each node is equal to the height of the subtree rooted by the node. If the height of the root of the tree isnn, enter a math expression for the maximum number of leaves in a tree that satisfies this property.
+
+
+
+$n!$
+
+
+
+## Questions 16
+
+Consider the following grid:
+
+![](https://d396qusza40orc.cloudfront.net/foccapstone/exam_figs/gridfoc.png)
+
+
+
+The neighbors of a particular grid square are the squares that are up, down, left, and right from that square. Black squares are blocked and cannot be searched. If you start a Breadth-first Search from square 15, which of the following are possible orders in which the squares could be searched?
+
+For this problem, you may assume that the neighbors of a cell are represented using a set as done in "Algorithmic Thinking".
+
+
+
+`15, 21, 9, 16, 14, 20, 10, 17, 13, 19, 4, 23, 12, 7, 5, 1, 0, 2`
+
+
+
+## Questions 17
+
+"Pick-A-Number" is a game in which the board consists of a list of numbers. On a player's turn, that player may pick a number on either end of the list. Turns alternate. When the list is exhausted, the winner is the player with the highest sum of the numbers they picked.
+
+For example, consider the following game board:
+
+3, 5, 2, 1
+
+Players P1 and P2 play optimally as follows:
+
+- P1 picks 1, leaving 3, 5, 2
+- P2 picks 3, leaving 5, 2
+- P1 picks 5, leaving 2
+- P2 picks 2
+
+P1 then wins 6 to 5.
+
+Write a recursive function, $\color{red}{\verb|pick_a_number(board)|}$ that takes a list representing the game board and returns a tuple that is the score of the game if both players play optimally. Here, optimal play means that the player maximizes his/her final score. The returned tuple should be ordered with the current player's score first and the other player's score second.
+
+Compute the value of the expression below:
+
+```python
+pick_a_number([12, 9, 7, 3, 4, 7, 4, 3, 16, 4, 8, 12, 1, 2, 7, 11, 6, 3, 9, 7, 1])
+```
+
+Enter just the two numbers with a space between them. For example, if your function returns $\color{red}{\verb|(6, 5)|}$ (as it should on the above example game), you should just enter $\color{red}{\verb|6 5|}$ in the answer box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
