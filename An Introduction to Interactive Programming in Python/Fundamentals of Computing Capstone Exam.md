@@ -155,23 +155,21 @@ Perform these operations on an initially empty stack. What are the contents of t
 
 Indicate your answer with a single number in which each digit is an element on the stack. The right-most element (the least significant digit) should be the next element to be popped. For example, 321 would indicate a stack with three elements (3, 2, and 1) and 1 would be the next element to be popped.
 
-
-
 ```python
 class Stack():
     def __init__(self):
         self._stack = []
-        
+
     def Add(self, ele):
         self._stack += [ele]
-    
+
     def Rem(self):
         length = len(self._stack)
         self._stack.pop(length - 1)
-        
+
     def __str__(self):
         return str(self._stack)
-        
+
 s = Stack()
 s.Add(4)
 s.Add(8)
@@ -194,6 +192,18 @@ print s
 ans = 4737
 """
 ```
+
+## Questions 11
+
+What is the probability of rolling a Yahtzee (five of a kind) on a single roll of 5 six-sided dice?
+
+Enter a single numerical answer with at least four significant digits of precision below
+
+
+
+$6×(1/6)^5 = 0.000771604938272$
+
+
 
 ## Questions 12
 
@@ -229,8 +239,6 @@ ans = 2.3914845e-43
 '''
 ```
 
-
-
 ## Questions 13
 
 Consider a process that grows binary trees. At time step 0, the process starts with a tree, $T$, that consists of a single node. Thereafter, the following happens in each step of the process:
@@ -243,33 +251,21 @@ Consider a process that grows binary trees. At time step 0, the process starts w
 
 Which arithmetic sum models the number of nodes in $T$ after time step $n$?
 
-
-
 i think ans is $1+3+7+⋯+2^{n+1} − 1$
 
 but i choose  $1+2+4+⋯+2^n$
-
-
 
 ## Questions 14
 
 Which math expression is equivalent to the sum that is the answer to the previous question?
 
-
-
 $2^{n+1} − 1$
-
-
 
 ## Questions 15
 
 Consider rooted trees in which the number of children for each node is equal to the height of the subtree rooted by the node. If the height of the root of the tree isnn, enter a math expression for the maximum number of leaves in a tree that satisfies this property.
 
-
-
 $n!$
-
-
 
 ## Questions 16
 
@@ -277,17 +273,11 @@ Consider the following grid:
 
 ![](https://d396qusza40orc.cloudfront.net/foccapstone/exam_figs/gridfoc.png)
 
-
-
 The neighbors of a particular grid square are the squares that are up, down, left, and right from that square. Black squares are blocked and cannot be searched. If you start a Breadth-first Search from square 15, which of the following are possible orders in which the squares could be searched?
 
 For this problem, you may assume that the neighbors of a cell are represented using a set as done in "Algorithmic Thinking".
 
-
-
 `15, 21, 9, 16, 14, 20, 10, 17, 13, 19, 4, 23, 12, 7, 5, 1, 0, 2`
-
-
 
 ## Questions 17
 
@@ -318,14 +308,78 @@ Enter just the two numbers with a space between them. For example, if your funct
 
 
 
+```python
+def pick_a_number(board):
+    player1 = []
+    player2 = []
+    board_copy = board[::]
+    turn = 1
+    while len(board_copy) > 0:
+        first = board_copy[0]
+        last = board_copy[-1]
+        if first > last:
+            best = first
+            board_copy.pop(0)
+        else:
+            best = last
+            board_copy.pop(-1)
+        if turn == 1:
+            player1.append(best)
+            turn = 2
+        else:
+            player2.append(best)
+            turn = 1   
+    return (sum(player1),sum(player2))
+    
+print pick_a_number([12, 9, 7, 3, 4, 7, 4, 3, 16, 4, 8, 12, 1, 2, 7, 11, 6, 3, 9, 7, 1])
+
+'''
+>>> (75, 61)
+
+ans = 75 61
+'''
+```
 
 
 
+## Questions 18
+
+Consider the following five functions:
+
+1.  $1^n+2^n+\cdots+1000^n$
+2.  $(n^3+2n)/(2n+1)$
+3.  $n^{1000}$
+4.  $(n^2+1)/(n+1)$
+5.  $(n!)^n$
+
+Your task is to reorder the functions in the list above so that each function is big-O of the functions below it. As these functions are reordered, the initial numbers assigned to each function should be preserved.
+
+Once you have successfully reordered the functions, enter the numbers associated with the reordered functions (ordered from top to bottom) in the box below. For example, if function 5 is big-O of function 4, function 4 is big-O of function 3,..., and function 2 is big-O of function 1, enter your answer as $\color{red}{\verb|5 4 3 2 1|}$ in the box below.
+
+1.  $1000^n$
+
+2.  $n^2$
+
+3.  $n^{1000}$
+
+4.  $n$
+
+5.  $n^n$
 
 
 
+5 1 3 2 4
 
 
 
+## Questions 19
+
+Let $G=(V,E)$ be an undirected graph with $n$ nodes and $m$ edges, and let $deg(v)$ , for $v \in V$, denote the degree of node $v$. Give an expression in terms of $m$, $n$, or both, for the term $\sum_{v \in V} deg(v)$.
 
 
+
+2*m
+
+
+
+## Questions 20
