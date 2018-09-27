@@ -6,6 +6,8 @@ Consider a function in Python whose execution terminates with the statement
 
 None
 
+
+
 ## Questions 2
 
 Consider the following snippet of Python code:
@@ -28,6 +30,18 @@ What global names are created during execution of this code snippet? What local 
 
 **Local**- var2, var3
 
+
+
+### False
+
+Val1 can be both global and local variable.
+
+**Global**- var0, var1, var4
+
+**Local**- var1, var2, var3
+
+
+
 ## Questions 3
 
 Which of the following Python expressions can be used as a key to a dictionary in Python?
@@ -35,6 +49,8 @@ Which of the following Python expressions can be used as a key to a dictionary i
 hashable: tuple, bool, int, string
 
 unhashable: list, set
+
+
 
 ## Questions 4
 
@@ -105,10 +121,25 @@ print account1.get_balance(), account1.get_fees(), account2.get_balance(), accou
 
 In IIPP, we used reference diagrams to visualize the behavior of Python programs that involved mutable objects such as lists. These reference diagrams can be viewed as instances of directed graphs (ala Algorithmic Thinking) in which nodes contain the data stored in the list and the directed edges correspond to references in the diagram.
 
+
+
 ```python
 crazy = [1, 1]
 crazy[1] = crazy[0]
 ```
+
+
+
+### False
+
+```python
+crazy = [1, 1]
+crazy[1] = crazy
+```
+
+
+
+
 
 ## Questions 7
 
@@ -275,6 +306,18 @@ For this problem, you may assume that the neighbors of a cell are represented us
 
 `15, 21, 9, 16, 14, 20, 10, 17, 13, 19, 4, 23, 12, 7, 5, 1, 0, 2`
 
+
+
+### False
+
+Consider the grid as a tree, so 13 and 20 are all 2 steps from 15.
+
+`15, 14, 21, 9, 16, 20, 13, 10, 17, 19, 7, 12, 4, 23, 1, 5, 2, 0`
+
+`15, 21, 9, 16, 14, 20, 10, 17, 13, 19, 4, 23, 12, 7, 5, 1, 0, 2`
+
+
+
 ## Questions 17
 
 "Pick-A-Number" is a game in which the board consists of a list of numbers. On a player's turn, that player may pick a number on either end of the list. Turns alternate. When the list is exhausted, the winner is the player with the highest sum of the numbers they picked.
@@ -358,7 +401,11 @@ Once you have successfully reordered the functions, enter the numbers associated
 
 5. $n^n$
 
-5 1 3 2 4
+
+
+4 2 3 1 5
+
+
 
 ## Questions 19
 
@@ -376,9 +423,9 @@ The fifth line is missing the term to be assigned to $R^{(k)}$. Which of the fol
 
 
 
+I guess is about how i connected to j through nodes in the graph
+
 $R^{(k−1)}[i,j]**or**(R^{(k-1)}[i,k]**and**R^{(k-1)}[k,j])$
-
-
 
 ## Questions 21
 
@@ -386,9 +433,61 @@ Questions 21 - 25 refer to the following pseudo-code of Algorithm **Mystery**:
 
 ![img](D:\Study\Mooc\An Introduction to Interactive Programming in Python\ExamMysteryAlgorithm.jpg)
 
-For some input graphs, the output of the algorithm might not be unique. If we use the following graph $g1$   as input to Algorithm **Mystery**, which of the following sets could Algorithm **Mystery** return as output?
+
+
+For some input graphs, the output of the algorithm might not be unique. If we use the following graph g1g1 as input to Algorithm **Mystery**, which of the following sets could Algorithm **Mystery** return as output?
 
 ![img](D:\Study\Mooc\An Introduction to Interactive Programming in Python\MystAlgFig1.jpg)
+
+
+
+{3, 5, 7}
+
+{2, 4, 6}
+
+
+
+## Questions 22
+
+If we use the following graph g2g2 as input to Algorithm **Mystery**, which of the following sets could Algorithm **Mystery** return as output?
+
+![img](D:\Study\Mooc\An Introduction to Interactive Programming in Python\MystAlgFig2.jpg)
+
+
+
+{1}
+
+
+
+## Questions 23
+
+Which of the following statements correctly specifies the output of Algorithm **Mystery**?
+
+
+
+A subset V'⊆ V of minimum size such that every edge in E has at least one of its endpoints in V'.
+
+
+
+## Questions 24
+
+For an input graph gg with nn nodes and mm edges, that is represented by its adjacency list, which of the following terms gives the tightest bound on the worst-case running time of Lines 5–7 in Algorithm **Mystery**? Assume that testing membership of an element in a set takes O(1) operations.
+
+
+
+O(mn)
+
+
+
+### False
+
+O(m + n)
+
+
+
+
+
+
 
 
 
