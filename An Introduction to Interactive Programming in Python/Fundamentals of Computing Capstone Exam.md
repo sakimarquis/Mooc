@@ -199,11 +199,7 @@ What is the probability of rolling a Yahtzee (five of a kind) on a single roll o
 
 Enter a single numerical answer with at least four significant digits of precision below
 
-
-
 $6×(1/6)^5 = 0.000771604938272$
-
-
 
 ## Questions 12
 
@@ -306,8 +302,6 @@ pick_a_number([12, 9, 7, 3, 4, 7, 4, 3, 16, 4, 8, 12, 1, 2, 7, 11, 6, 3, 9, 7, 1
 
 Enter just the two numbers with a space between them. For example, if your function returns $\color{red}{\verb|(6, 5)|}$ (as it should on the above example game), you should just enter $\color{red}{\verb|6 5|}$ in the answer box.
 
-
-
 ```python
 def pick_a_number(board):
     player1 = []
@@ -330,7 +324,7 @@ def pick_a_number(board):
             player2.append(best)
             turn = 1   
     return (sum(player1),sum(player2))
-    
+
 print pick_a_number([12, 9, 7, 3, 4, 7, 4, 3, 16, 4, 8, 12, 1, 2, 7, 11, 6, 3, 9, 7, 1])
 
 '''
@@ -340,46 +334,61 @@ ans = 75 61
 '''
 ```
 
-
-
 ## Questions 18
 
 Consider the following five functions:
 
-1.  $1^n+2^n+\cdots+1000^n$
-2.  $(n^3+2n)/(2n+1)$
-3.  $n^{1000}$
-4.  $(n^2+1)/(n+1)$
-5.  $(n!)^n$
+1. $1^n+2^n+\cdots+1000^n$
+2. $(n^3+2n)/(2n+1)$
+3. $n^{1000}$
+4. $(n^2+1)/(n+1)$
+5. $(n!)^n$
 
 Your task is to reorder the functions in the list above so that each function is big-O of the functions below it. As these functions are reordered, the initial numbers assigned to each function should be preserved.
 
 Once you have successfully reordered the functions, enter the numbers associated with the reordered functions (ordered from top to bottom) in the box below. For example, if function 5 is big-O of function 4, function 4 is big-O of function 3,..., and function 2 is big-O of function 1, enter your answer as $\color{red}{\verb|5 4 3 2 1|}$ in the box below.
 
-1.  $1000^n$
+1. $1000^n$
 
-2.  $n^2$
+2. $n^2$
 
-3.  $n^{1000}$
+3. $n^{1000}$
 
-4.  $n$
+4. $n$
 
-5.  $n^n$
-
-
+5. $n^n$
 
 5 1 3 2 4
-
-
 
 ## Questions 19
 
 Let $G=(V,E)$ be an undirected graph with $n$ nodes and $m$ edges, and let $deg(v)$ , for $v \in V$, denote the degree of node $v$. Give an expression in terms of $m$, $n$, or both, for the term $\sum_{v \in V} deg(v)$.
 
-
-
 2*m
 
-
-
 ## Questions 20
+
+The *transitive closure* of a directed graph $g=(V,E)$ is a directed graph $g′=(V,E′)$ such that $(u,v)∈E′$  if and only if there is a path from $u$ to $v$ in $g$. The following is a dynamic programming algorithm (incomplete) for computing the adjacency matrix, denoted by $R^{(n)}$, of the transitive closure of directed graph $g$ that is given by its adjacency matrix $A$. In this question, we assume the nodes in $V$ are numbered $1,2,\ldots,n$
+
+![Q20](D:\Study\Mooc\An Introduction to Interactive Programming in Python\Q20.png)
+
+The fifth line is missing the term to be assigned to $R^{(k)}$. Which of the following gives the correct term?
+
+
+
+$R^{(k−1)}[i,j]**or**(R^{(k-1)}[i,k]**and**R^{(k-1)}[k,j])$
+
+
+
+## Questions 21
+
+Questions 21 - 25 refer to the following pseudo-code of Algorithm **Mystery**:
+
+![img](D:\Study\Mooc\An Introduction to Interactive Programming in Python\ExamMysteryAlgorithm.jpg)
+
+For some input graphs, the output of the algorithm might not be unique. If we use the following graph $g1$   as input to Algorithm **Mystery**, which of the following sets could Algorithm **Mystery** return as output?
+
+![img](D:\Study\Mooc\An Introduction to Interactive Programming in Python\MystAlgFig1.jpg)
+
+
+
