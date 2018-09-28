@@ -383,6 +383,8 @@ ans = 75 61
 
 can't figure out
 
+maybe: 67 69
+
 
 
 ## Questions 18
