@@ -381,9 +381,38 @@ ans = 75 61
 
 ### False
 
-can't figure out
+```python
+def pick_a_number(board, memo = dict()): 
+    """
+    optimal play means that the player maximizes his final score
+    """
+    if len(board) == 0:
+        return (0, 0)
+    elif tuple(board) in memo:
+        return memo[tuple(board)]
+    else:
+        memo[tuple(board[1:])] = pick_a_number(board[1:], memo)
+        first = board[0] + pick_a_number(board[1:], memo)[1]
+        memo[tuple(board[0:-1])] = pick_a_number(board[0:-1], memo)
+        last = board[-1] + pick_a_number(board[0:-1], memo)[1]
+        if first > last:
+            return (first, pick_a_number(board[1:], memo)[0])
+        else:
+            return (last, pick_a_number(board[0:-1], memo)[0])
+        
+test = [3, 5, 2, 1]
+ans = pick_a_number(test)
+print(ans)
 
-maybe: 67 69
+board = [12, 9, 7, 3, 4, 7, 4, 3, 16, 4, 8, 12, 1, 2, 7, 11, 6, 3, 9, 7, 1]
+ans = pick_a_number(board)
+print(ans)
+
+"""output
+>>> 6 5
+>>> 69 67
+"""
+```
 
 
 

@@ -5,6 +5,65 @@ Created on Fri Sep 28 00:10:56 2018
 @author: saki
 """
 
+
+# =============================================================================
+# a refine recursive implement adding a memo
+# =============================================================================
+
+def pick_a_number(board, memo = dict()): 
+    """
+    optimal play means that the player maximizes his final score
+    """
+    if len(board) == 0:
+        return (0, 0)
+    elif tuple(board) in memo:
+        return memo[tuple(board)]
+    else:
+        memo[tuple(board[1:])] = pick_a_number(board[1:], memo)
+        first = board[0] + pick_a_number(board[1:], memo)[1]
+        memo[tuple(board[0:-1])] = pick_a_number(board[0:-1], memo)
+        last = board[-1] + pick_a_number(board[0:-1], memo)[1]
+        if first > last:
+            return (first, pick_a_number(board[1:], memo)[0])
+        else:
+            return (last, pick_a_number(board[0:-1], memo)[0])
+       
+test = [3, 5, 2, 1]
+ans = pick_a_number(test)
+print(ans)
+board = [12, 9, 7, 3, 4, 7, 4, 3, 16, 4, 8, 12, 1, 2, 7, 11, 6, 3, 9, 7, 1]
+ans = pick_a_number(board)
+print(ans)
+
+# =============================================================================
+# a recursive implement but cost a lot of time
+# =============================================================================
+
+def pick_a_number(board): 
+    """
+    optimal play means that the player maximizes his final score
+    """
+    if len(board) == 0:
+        return (0, 0)
+    else:
+        first = board[0] + pick_a_number(board[1:])[1]
+        last = board[-1] + pick_a_number(board[0:-1])[1]
+        if first > last:
+            return (first, pick_a_number(board[1:])[0])
+        else:
+            return (last, pick_a_number(board[0:-1])[0])
+
+#test = [3, 5, 2, 1]
+#ans = pick_a_number(test)
+#print(ans)
+#board = [12, 9, 7, 3, 4, 7, 4, 3, 16, 4, 8, 12, 1, 2, 7, 11, 6, 3, 9, 7, 1]
+#ans = pick_a_number(board)
+#print(ans)
+
+# =============================================================================
+# only compare for a local optimal in two choose
+# =============================================================================
+
 def pick_a_number(board): 
     """
     optimal play means that the player maximizes his final score
@@ -44,7 +103,21 @@ def simu_pick(board):
             flag = 1           
     return (player1, player2)
 
-def pick_a_number_wrong(board):
+#test = [3, 5, 2, 1]
+#ans = simu_pick(test)
+#print(ans)
+#print(sum(ans[0]), sum(ans[1]))
+#board = [12, 9, 7, 3, 4, 7, 4, 3, 16, 4, 8, 12, 1, 2, 7, 11, 6, 3, 9, 7, 1]
+#ans = simu_pick(board)
+#print(ans)
+#print(sum(ans[0]), sum(ans[1]))
+
+# =============================================================================
+# initial wrong implement
+# doesn't under stand the optimal
+# =============================================================================
+
+def pick_a_number(board):
     player1 = []
     player2 = []
     board_copy = board[::]
@@ -66,15 +139,9 @@ def pick_a_number_wrong(board):
             turn = 1   
     return (sum(player1),sum(player2))
 
-test = [3, 5, 2, 1]
-ans = simu_pick(test)
-print(ans)
-print(sum(ans[0]), sum(ans[1]))
-
-board = [12, 9, 7, 3, 4, 7, 4, 3, 16, 4, 8, 12, 1, 2, 7, 11, 6, 3, 9, 7, 1]
-ans = simu_pick(board)
-print(ans)
-print(sum(ans[0]), sum(ans[1]))
-# print(pick_a_number([3, 5, 2, 1]))
-# print(pick_a_number([12, 9, 7, 3, 4, 7, 4, 3, 16, 4, 8, 12, 1, 2, 7, 11, 6, 3, 9, 7, 1]))
-# print(pick_a_number_wrong([12, 9, 7, 3, 4, 7, 4, 3, 16, 4, 8, 12, 1, 2, 7, 11, 6, 3, 9, 7, 1])
+#test = [3, 5, 2, 1]
+#ans = pick_a_number(test)
+#print(ans)
+#board = [12, 9, 7, 3, 4, 7, 4, 3, 16, 4, 8, 12, 1, 2, 7, 11, 6, 3, 9, 7, 1]
+#ans = pick_a_number(board)
+#print(ans)
