@@ -77,3 +77,25 @@ The solution can be found in Example 3.15 on p. 169 of the text.
 (c) Find the conditional PDF of X given Y. 
 (d) Find E[X∣Y=y], and use the total expectation theorem to find E[X] in terms of E[Y].
 (e) Use the symmetry of the problem to find the value of E[X].
+
+
+
+## 9. Probability that 3 pieces form a triangle
+
+**Probability that 3 pieces form a triangle.** We have a stick of length 1, and we consider breaking it in three pieces as follows. We choose randomly and independently two points on the stick, each point chosen uniformly along the length of the stick, and we break the stick at these two points. What is the probability that the three pieces we are left with can form a triangle?
+
+
+
+## 10. Buffon's needle and Monte Carlo simulation
+
+**Buffon's needle and Monte Carlo simulation.** A surface is ruled with parallel lines, which are at distance d from each other. Suppose that we throw a needle of length ℓ on the surface at random. What is the probability that the needle will intersect one of the lines?
+
+
+
+## 11. The Bayes rule with continuous random variables
+
+**The Bayes rule with continuous random variables.** Let X and Y be independent continuous random variables with PDFs $f_X$ and $f_Y$, respectively, and let Z=X+Y.
+
+(a) Show that $f_{Z|X}(z∣x)=f_{Y}(z−x)$. *Hint:* Write an expression for the conditional CDF of Z given X, and differentiate.
+
+(b) Assume that X and Y are exponentially distributed with parameter λ. Find the conditional PDF of X, given that Z=z.
