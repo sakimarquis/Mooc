@@ -1,2 +1,2 @@
 # Mooc
-Backup MOOCs i studied.
+Backup courses i study and resources.
