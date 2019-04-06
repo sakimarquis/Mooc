@@ -148,7 +148,15 @@ class Graph(object):
         RETURN: a list of the traversed node values (integers).
         """
         ret_list = [start_node.value]
-        # Your code here
+        stack = [start_node]
+        start_node.visited == True
+        while len(stack) > 0:
+            for edge in stack[-1].edges:
+                for child in edge.node_to:
+                    if child.visited == False:
+                        stack.append(child)
+                        ret_list.append(child.value)                      
+        
         return ret_list
 
     def dfs(self, start_node_num):
@@ -242,3 +250,61 @@ pp.pprint(graph.bfs_names(2))
 # Should print:
 # Breadth First Search
 # ['London', 'Shanghai', 'Berlin', 'Sao Paolo', 'Mountain View', 'San Francisco']
+
+
+
+
+
+"""
+class Graph(object):
+
+    def dfs_helper(self, start_node, visited):
+        """A helper function for a recursive implementation
+        of Depth First Search iterating through a node's edges.
+        ARGUMENTS: start_node is the starting Node
+        Because this is recursive, we pass in the set of visited node
+        values.
+        RETURN: a list of the traversed node values (integers).
+        """
+        ret_list = [start_node.value]
+        visited.add(start_node.value)
+        edges_out = [e for e in start_node.edges
+                     if e.node_to.value != start_node.value]
+        for edge in edges_out:
+            if edge.node_to.value not in visited:
+                ret_list.extend(self.dfs_helper(edge.node_to, visited))
+        return ret_list
+
+    def bfs(self, start_node_num):
+        """An iterative implementation of Breadth First Search
+        iterating through a node's edges. The output is a list of
+        numbers corresponding to the traversed nodes.
+        ARGUMENTS: start_node_num is the node number (integer)
+        RETURN: a list of the node values (integers)."""
+        node = self.find_node(start_node_num)
+        ret_list = [node.value]
+        queue = [node]
+        nodes_out = [e.node_to for e in node.edges
+                     if e.node_to.value != node.value]
+        queue.extend(nodes_out)
+        for node in queue:
+            if node.value in ret_list:
+                continue
+            ret_list.append(node.value)
+            nodes_out = [e.node_to for e in node.edges
+                         if e.node_to.value != node.value]
+            queue.extend(nodes_out)
+        return ret_list
+        
+"""
+
+
+
+
+
+
+
+
+
+
+

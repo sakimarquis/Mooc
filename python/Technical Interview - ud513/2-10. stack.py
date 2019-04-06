@@ -75,7 +75,6 @@ print(stack.pop())
 stack.push(e4)
 print(stack.pop().value)
 
-
 """
 Why didn't we just come up with a function for removing the last element and 
 call it a day? Every operation on a linked list must start with the head. 

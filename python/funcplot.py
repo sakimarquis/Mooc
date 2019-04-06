@@ -18,6 +18,7 @@ for i in range(50):
     yi = (3*i+2) + random.uniform(-1 * std, std)
     y.append(yi)
     data.append([i,yi])
-    
+
 
 plt.scatter(x,y)
+plt.show()
