@@ -1,0 +1,5 @@
+We lost one degree of freedom, and one dimension, due to the constraint on probabilities that they have to sum to one. The difference vector $\hat{p} - p^0$ is constrained to a plane. That means there's no variance perpendicular to that plane. And the direction that's perpendicular to the plane is along the all-ones vector.
+
+
+
+If we rotate the coordinate axes to put the original all-ones vector along one of the new axes, then the rotated covariance matrix will have a literal zero for the variance along that axis. And that means, we can't invert it... But since there's no randomness along that direction, we could just throw that dimension away -- toss it out of the vectors, and strike out the row and column from the covariance matrix. Then we'd be fine -- the matrix would be invertible. In our new  $K-1$ dimensional space, we could use Wald's test. But the degrees of freedom would be $K-1$.
