@@ -1,7 +1,5 @@
 ### Goals of the class
 
-
-
  Welcome to 18.6501x! This class offers an in-depth introduction to the theoretical foundations of statistical methods that are useful in many applications. The goal is to understand the role of mathematics in the research and development of efficient statistical methods. 
 
  At the end of this class, you will be able to 
@@ -17,8 +15,6 @@
 
 ### What this course is about
 
-
-
 -  Understand the mathematical underpinning of statistical methods. 
 -  How to give quantitative statements from modeling assumptions. 
 -  Discover mathematical phenomena arising from statistics. 
@@ -27,8 +23,6 @@
 
 
 ### What this course is **not** about
-
-
 
 -  How to set up a statistical model for complicated real world examples;
 -  Implement statistical computational routines;
