@@ -5,7 +5,6 @@ Created on Thu Jul  4 14:53:01 2019
 @author: saki
 """
 
-import numpy as np
 import math
 
 # =============================================================================
