@@ -32,8 +32,11 @@ def compute_probabilities(X, theta, temp_parameter):
     Returns:
         H - (k, n) NumPy array, where each entry H[j][i] is the probability that X[i] is labeled as j
     """
-    #YOUR CODE HERE
-    raise NotImplementedError
+    mat = np.dot(theta, X.T) / temp_parameter
+    c = mat.max(0)
+    softmax_H = np.e ** (mat - c) / np.sum(np.e ** (mat- c), 0)
+    return softmax_H
+
 #pragma: coderesponse end
 
 #pragma: coderesponse template
@@ -53,8 +56,16 @@ def compute_cost_function(X, Y, theta, lambda_factor, temp_parameter):
     Returns
         c - the cost value (scalar)
     """
-    #YOUR CODE HERE
-    raise NotImplementedError
+    n = X.shape[0]
+    k = theta.shape[0]
+    correct = np.zeros([k,n])
+    for i in range(n):
+        correct[Y[i]][i] = 1
+    clipped_probs = np.clip(compute_probabilities(X, theta, temp_parameter), 1e-15, 1-1e-15)
+    loss = -1/n * np.sum(correct * np.log(clipped_probs))
+    regularization = lambda_factor/2 * np.linalg.norm(theta)**2
+    return loss + regularization
+    
 #pragma: coderesponse end
 
 #pragma: coderesponse template
@@ -75,8 +86,15 @@ def run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_param
     Returns:
         theta - (k, d) NumPy array that is the final value of parameters theta
     """
-    #YOUR CODE HERE
-    raise NotImplementedError
+    n = X.shape[0]
+    k = theta.shape[0]
+    correct = np.zeros([k,n])
+    for i in range(n):
+        correct[Y[i]][i] = 1
+    clipped_probs = np.clip(compute_probabilities(X, theta, temp_parameter), 1e-15, 1-1e-15)
+    jacobian = -1/(n*temp_parameter) * (correct - clipped_probs)@X + lambda_factor*theta
+    return theta - alpha*jacobian
+
 #pragma: coderesponse end
 
 #pragma: coderesponse template
@@ -97,8 +115,8 @@ def update_y(train_y, test_y):
         test_y_mod3 - (n, ) NumPy array containing the new labels (a number between 0-2)
                     for each datapoint in the test set
     """
-    #YOUR CODE HERE
-    raise NotImplementedError
+    return (np.mod(train_y,3), np.mod(test_y,3))
+    
 #pragma: coderesponse end
 
 #pragma: coderesponse template
@@ -117,8 +135,9 @@ def compute_test_error_mod3(X, Y, theta, temp_parameter):
     Returns:
         test_error - the error rate of the classifier (scalar)
     """
-    #YOUR CODE HERE
-    raise NotImplementedError
+    pred_Y = get_classification(X, theta, temp_parameter)
+    return 1 - np.mean(np.mod(pred_Y,3) == Y)
+    
 #pragma: coderesponse end
 
 def softmax_regression(X, Y, temp_parameter, alpha, lambda_factor, k, num_iterations):

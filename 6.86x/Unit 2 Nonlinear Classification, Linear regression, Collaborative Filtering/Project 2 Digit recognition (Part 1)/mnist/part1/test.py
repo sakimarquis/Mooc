@@ -203,7 +203,6 @@ def check_run_gradient_descent_iteration():
        [ -7.14285714,  -8.57142857, -10.        , -11.42857143, -12.85714286],
        [ -7.14285714,  -8.57142857, -10.        , -11.42857143, -12.85714286]
     ])
-
     if check_array(
             ex_name, softmax.run_gradient_descent_iteration,
             exp_res, X, Y, zeros, alpha, lambda_factor, temp):
