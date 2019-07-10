@@ -65,8 +65,8 @@ end
 % take Fourier transform (via fast-Fourier transform)
 sineX = fft( sum(sine_waves) )/length(time);
 
-% define vector of frequencies in Hz
-hz = linspace(0,srate/2,floor(length(time)/2)+1);
+% define vector of frequencies in Hz(which can be measured)
+hz = linspace(0,srate/2,floor(length(time)/2)+1); 
 
 figure(4), clf
 plot(hz,2*abs(sineX(1:length(hz))),'ro-')

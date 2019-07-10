@@ -124,6 +124,6 @@ plot(hz,phs1(1:length(hz)),'ro-','linew',3), hold on
 plot(hz,phs2(1:length(hz)),'bp-','linew',3)
 plot(hz,phs3(1:length(hz)),'ks-','linew',3)
 set(gca,'xlim',[freq-3 freq+3])
-xlabel('Frequency (Hz)'), ylabel('Amplitude')
+xlabel('Frequency (Hz)'), ylabel('Phase')
 
 %% end.

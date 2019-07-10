@@ -48,8 +48,8 @@ figure(3), clf
 % compute the FFT of the same signal with different DC offsets
 signalX1 = fft(signal) / length(signal);
 signalX2 = fft(signal-mean(signal)) / length(signal);
-signalX3 = fft(signal+10) / length(signal);
-
+signalX3 = fft(signal+mean(signal)) / length(signal);
+%signalX3 = fft(signal+10) / length(signal);
 
 % plot signals in the time domain
 subplot(211)

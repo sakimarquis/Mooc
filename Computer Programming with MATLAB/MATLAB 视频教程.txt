@@ -1,0 +1,9 @@
+Computer Programming with MATLAB
+Lesson 1 Introduction: www.bilibili.com/video/av43576712/
+Lesson 2 Matrices and Operators: www.bilibili.com/video/av43580080/
+Lesson 3 Functions: www.bilibili.com/video/av43581061/
+Lesson 4 Programmer's Toolbox: www.bilibili.com/video/av43583604/
+Lesson 5 Selection: www.bilibili.com/video/av43603047/
+Lesson 6 Loops: www.bilibili.com/video/av43603101/
+Lesson 7 Data Types: www.bilibili.com/video/av43603215/
+Lesson 8 File Input&Output: www.bilibili.com/video/av43603282/
