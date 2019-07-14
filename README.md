@@ -1,2 +1,3 @@
 # Mooc
-Backup courses i study and resources.
+Learning resources for review.
+
