@@ -15,7 +15,6 @@ val_texts, val_labels = zip(*((sample['text'], sample['sentiment']) for sample i
 test_texts, test_labels = zip(*((sample['text'], sample['sentiment']) for sample in test_data))
 
 dictionary = p1.bag_of_words(train_texts)
-
 train_bow_features = p1.extract_bow_feature_vectors(train_texts, dictionary)
 val_bow_features = p1.extract_bow_feature_vectors(val_texts, dictionary)
 test_bow_features = p1.extract_bow_feature_vectors(test_texts, dictionary)
@@ -121,3 +120,55 @@ sorted_word_features = utils.most_explanatory_word(best_theta, wordlist)
 print("Most Explanatory Word Features")
 print(sorted_word_features[:10])
 
+
+# =============================================================================
+# 9. Feature Engineering
+# =============================================================================
+
+train_data = utils.load_data('reviews_train.tsv', extras = True)
+val_data = utils.load_data('reviews_val.tsv', extras = True)
+test_data = utils.load_data('reviews_test.tsv', extras = True)
+
+train_texts, train_labels = zip(*((sample['text'], sample['sentiment']) for sample in train_data))
+val_texts, val_labels = zip(*((sample['text'], sample['sentiment']) for sample in val_data))
+test_texts, test_labels = zip(*((sample['text'], sample['sentiment']) for sample in test_data))
+
+dictionary = p1.bag_of_words(train_texts)
+train_bow_features = p1.extract_bow_feature_vectors(train_texts, dictionary)
+val_bow_features = p1.extract_bow_feature_vectors(val_texts, dictionary)
+test_bow_features = p1.extract_bow_feature_vectors(test_texts, dictionary)
+
+train_helpful, train_summary = zip(*((sample['helpfulY'] - sample['helpfulN'], sample['summary']) for sample in train_data))
+val_helpful, val_summary = zip(*((sample['helpfulY'] - sample['helpfulN'], sample['summary']) for sample in val_data))
+test_helpful, test_summary = zip(*((sample['helpfulY'] - sample['helpfulN'], sample['summary']) for sample in test_data))
+
+
+train_summary_features = p1.extract_bow_feature_vectors(train_texts, dictionary)
+val_summary_features = p1.extract_bow_feature_vectors(val_texts, dictionary)
+test_summary_features = p1.extract_bow_feature_vectors(test_texts, dictionary)
+
+from sklearn.decomposition import PCA
+pca_10 = PCA(n_components = 200)
+pca_20 = PCA(n_components = 500)
+pca_train_summary = pca_10.fit_transform(train_summary_features)
+pca_test_summary = pca_10.fit_transform(test_summary_features)
+pca_train_bow = pca_20.fit_transform(train_bow_features)
+pca_test_bow = pca_20.fit_transform(test_bow_features)
+
+train_features = np.concatenate((pca_train_summary, np.array(train_helpful).reshape(4000,1)),axis=1)
+test_features = np.concatenate((pca_test_summary, np.array(test_helpful).reshape(500,1)),axis=1)
+
+theta, theta_0 = p1.pegasos(train_features, train_labels, T = 30, L = 0.01)
+test_preds = p1.classify(test_features, theta, theta_0)
+test_accu = p1.accuracy(test_preds, test_labels)
+print(test_accu)
+
+theta, theta_0 = p1.pegasos(pca_train_summary, train_labels, T = 30, L = 0.01)
+test_preds = p1.classify(pca_test_summary, theta, theta_0)
+test_accu = p1.accuracy(test_preds, test_labels)
+print(test_accu)
+
+theta, theta_0 = p1.pegasos(pca_train_bow, train_labels, T = 30, L = 0.01)
+test_preds = p1.classify(pca_test_bow, theta, theta_0)
+test_accu = p1.accuracy(test_preds, test_labels)
+print(test_accu)

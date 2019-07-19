@@ -130,9 +130,9 @@ def perceptron(feature_matrix, labels, T):
     theta_0 = 0
     for t in range(T):
         for i in get_order(n_data):
-            theta, theta_0 = perceptron_single_step_update(feature_matrix[i], 
-                                                           labels[i], 
-                                                           theta, 
+            theta, theta_0 = perceptron_single_step_update(feature_matrix[i],
+                                                           labels[i],
+                                                           theta,
                                                            theta_0)
     return (theta, theta_0)
 #pragma: coderesponse end
@@ -176,9 +176,9 @@ def average_perceptron(feature_matrix, labels, T):
     theta_0_mean = 0
     for t in range(T):
         for i in get_order(n_data):
-            theta, theta_0 = perceptron_single_step_update(feature_matrix[i], 
-                                                           labels[i], 
-                                                           theta, 
+            theta, theta_0 = perceptron_single_step_update(feature_matrix[i],
+                                                           labels[i],
+                                                           theta,
                                                            theta_0)
             theta_mean += theta/(T*n_data)
             theta_0_mean += theta_0/(T*n_data)
@@ -219,7 +219,7 @@ def pegasos_single_step_update(
     else:
         current_theta = (1 - eta*L) * current_theta
     return (current_theta, current_theta_0)
-    
+
 #pragma: coderesponse end
 
 
@@ -261,9 +261,9 @@ def pegasos(feature_matrix, labels, T, L):
     for t in range(T):
         for i in get_order(n_data):
             eta = 1/(count**0.5)
-            theta, theta_0 = pegasos_single_step_update(feature_matrix[i], 
-                                                        labels[i], 
-                                                        L, 
+            theta, theta_0 = pegasos_single_step_update(feature_matrix[i],
+                                                        labels[i],
+                                                        L,
                                                         eta,
                                                         theta,
                                                         theta_0)
@@ -332,13 +332,13 @@ def classifier_accuracy(
     accuracy of the trained classifier on the validation data.
     """
     theta, theta_0 = classifier(train_feature_matrix, train_labels, **kwargs)
-    
+
     training_preds = classify(train_feature_matrix, theta, theta_0)
     validation_preds = classify(val_feature_matrix, theta, theta_0)
-    
+
     training_accu = accuracy(training_preds, train_labels)
     validation_accu = accuracy(validation_preds, val_labels)
-    
+
     return (training_accu, validation_accu)
 #pragma: coderesponse end
 
@@ -359,7 +359,7 @@ def extract_words(input_string):
 
 
 #pragma: coderesponse template
-    
+
 #def bag_of_words(texts):
 #    """
 #    Inputs a list of string reviews
@@ -386,7 +386,7 @@ def bag_of_words(texts):
     f = open('stopwords.txt')
     stopwords = extract_words(f.read())
     f.close()
-    
+
     dictionary = {} # maps word to unique index
     for text in texts:
         word_list = extract_words(text)
@@ -399,30 +399,6 @@ def bag_of_words(texts):
 
 
 #pragma: coderesponse template
-    
-#def extract_bow_feature_vectors(reviews, dictionary):
-#    """
-#    Inputs a list of string reviews
-#    Inputs the dictionary of words as given by bag_of_words
-#    Returns the bag-of-words feature matrix representation of the data.
-#    The returned matrix is of shape (n, m), where n is the number of reviews
-#    and m the total number of entries in the dictionary.
-#
-#    Feel free to change this code as guided by Problem 9
-#    """
-#    # Your code here
-#
-#    num_reviews = len(reviews)
-#    feature_matrix = np.zeros([num_reviews, len(dictionary)])
-#
-#    for i, text in enumerate(reviews):
-#        word_list = extract_words(text)
-#        for word in word_list:
-#            if word in dictionary:
-#                feature_matrix[i, dictionary[word]] = 1
-#    return feature_matrix
-
-
 
 def extract_bow_feature_vectors(reviews, dictionary):
     """
@@ -443,11 +419,32 @@ def extract_bow_feature_vectors(reviews, dictionary):
         word_list = extract_words(text)
         for word in word_list:
             if word in dictionary:
-                if feature_matrix[i, dictionary[word]] == 0:
-                    feature_matrix[i, dictionary[word]] = 1
-                else:
-                    feature_matrix[i, dictionary[word]] += 1
+                feature_matrix[i, dictionary[word]] = 1
     return feature_matrix
+
+
+#def extract_bow_feature_vectors(reviews, dictionary):
+#    """
+#    Inputs a list of string reviews
+#    Inputs the dictionary of words as given by bag_of_words
+#    Returns the bag-of-words feature matrix representation of the data.
+#    The returned matrix is of shape (n, m), where n is the number of reviews
+#    and m the total number of entries in the dictionary.
+#
+#    Feel free to change this code as guided by Problem 9
+#    """
+#    num_reviews = len(reviews)
+#    feature_matrix = np.zeros([num_reviews, len(dictionary)])
+#
+#    for i, text in enumerate(reviews):
+#        word_list = extract_words(text)
+#        for word in word_list:
+#            if word in dictionary:
+#                if feature_matrix[i, dictionary[word]] == 0:
+#                    feature_matrix[i, dictionary[word]] = 1
+#                else:
+#                    feature_matrix[i, dictionary[word]] += 1
+#    return feature_matrix
 
 #pragma: coderesponse end
 
