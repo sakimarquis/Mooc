@@ -7,7 +7,7 @@ from linear_regression import *
 from svm import *
 from softmax import *
 from features import *
-from kernel import polynomial_kernel, rbf_kernel
+from kernel import *
 
 #######################################################################
 # 1. Introduction
@@ -221,5 +221,11 @@ test_error = compute_test_error(test_cube, test_y, theta, temp_parameter)
 # =============================================================================
 # 10. Kernel Methods
 # =============================================================================
+
+
+train_x, train_y, test_x, test_y = get_MNIST_data()
+theta, cost_function_history = kn_softmax_regression(rbf_kernel, train_x, train_y, temp_parameter = 1,
+                                                     eta = 0.3, lambda_factor = 1.0e-4, k = 10,
+                                                     num_iterations = 150, gamma = 1)
 
 

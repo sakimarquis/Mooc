@@ -48,4 +48,52 @@ def rbf_kernel(X, Y, gamma):
 # pragma: coderesponse end
 
 
+def augment_feature_vector(X):
+    column_of_ones = np.zeros([len(X), 1]) + 1
+    return np.hstack((column_of_ones, X))
+
+
+def kn_prob(kernel, x_example, X, alpha, temp_parameter, **kwargs):
+    kn = kernel(x_example, X, **kwargs)
+    mat_tmp = alpha @ kn / temp_parameter
+    c = mat_tmp.max(0)
+    softmax_func = np.e ** (mat_tmp - c) / np.sum(np.e ** (mat_tmp - c), 0)
+    return softmax_func
+
+
+def kn_cost(kernel, x_example, X, Y, alpha, lambda_factor, temp_parameter, **kwargs):
+    n_data = X.shape[0]
+    k_para = alpha.shape[0]
+    correct = np.zeros([k_para, n_data])
+    for i in range(n_data): # iterate through all data
+        correct[Y[i]][i] = 1 # set the 'label' th row in i col to 1
+    clipped_probs = np.clip(kn_prob(kernel, x_example, X, alpha, temp_parameter, **kwargs), 1e-15, 1-1e-15)
+    loss = -1 / n_data * np.sum(correct * np.log(clipped_probs))
+    regularization = lambda_factor/2 * np.sum(alpha**2)
+    return loss + regularization
+
+
+def run_gradient_descent_iteration(kernel, x_example, X, Y, alpha, eta, lambda_factor, temp_parameter, **kwargs):
+    n_data = X.shape[0]
+    k_para = alpha.shape[0]
+    # get the matrix with correct entry = 1 and others = 0
+    correct = np.zeros([k_para, n_data])
+    for i in range(n_data): # iterate through all data
+        correct[Y[i]][i] = 1 # set the 'label'th row in i col to 1
+    clipped_probs = np.clip(kn_prob(kernel, X, X, alpha, temp_parameter, **kwargs), 1e-15, 1-1e-15)
+    kn = kernel(x_example, X, **kwargs)
+    grad = -1 / (n_data * temp_parameter) * (correct - clipped_probs) @ kn + lambda_factor * alpha
+    return alpha - eta * grad
+
+# pragma: coderesponse end
+
+
+def kn_softmax_regression(kernel, X, Y, temp_parameter, eta, lambda_factor, k, num_iterations, **kwargs):
+    X = augment_feature_vector(X)
+    alpha = np.zeros([k, X.shape[1]])
+    cost_function_progression = []
+    for i in range(num_iterations):
+        cost_function_progression.append(kn_cost(kernel, X, X, Y, alpha, lambda_factor, temp_parameter, **kwargs))
+        alpha = run_gradient_descent_iteration(kernel, X, X, Y, alpha, eta, lambda_factor, temp_parameter, **kwargs)
+    return alpha, cost_function_progression
 
