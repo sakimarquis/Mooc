@@ -31,7 +31,7 @@ def main():
     y_train = [y_train[i] for i in permutation]
 
     # Split dataset into batches
-    batch_size = 32
+    batch_size = 64
     train_batches = batchify_data(X_train, y_train, batch_size)
     dev_batches = batchify_data(X_dev, y_dev, batch_size)
     test_batches = batchify_data(X_test, y_test, batch_size)
@@ -39,12 +39,12 @@ def main():
     #################################
     ## Model specification TODO
     model = nn.Sequential(
-              nn.Linear(784, 10),
+              nn.Linear(784, 128),
               nn.ReLU(),
-              nn.Linear(10, 10),
+              nn.Linear(128, 10),
             )
-    lr=0.1
-    momentum=0
+    lr = 0.1
+    momentum = 0
     ##################################
 
     train_model(train_batches, dev_batches, model, lr=lr, momentum=momentum)
@@ -54,6 +54,18 @@ def main():
 
     print ("Loss on test set:"  + str(loss) + " Accuracy on test set: " + str(accuracy))
 
+#baseline: 0.9204727564102564
+#batch64: 0.9314903846153846
+#LR0.01: 0.9206730769230769
+#momentum0.9: 0.8938301282051282
+#LeakyReLU: 0.9207732371794872
+
+#128
+#baseline: 0.976647
+#batch64: 0.9743589743589743
+#LR0.01: 0.9427083333333334
+#momentum0.9: 0.9605368589743589
+#LeakyReLU: 0.978275
 
 if __name__ == '__main__':
     # Specify seed for deterministic behavior, then shuffle. Do not change seed for official submissions to edx

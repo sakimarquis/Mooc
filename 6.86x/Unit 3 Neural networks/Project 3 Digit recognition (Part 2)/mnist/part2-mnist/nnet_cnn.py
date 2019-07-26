@@ -46,6 +46,13 @@ def main():
               nn.Conv2d(1, 32, (3, 3)),
               nn.ReLU(),
               nn.MaxPool2d((2, 2)),
+              nn.Conv2d(8, 64, (3, 3)),
+              nn.ReLU(),
+              nn.MaxPool2d((2, 2)),
+              nn.view(16, -1),
+              nn.Linear(16, 128),
+              nn.Dropout2d(p = 0.5),
+              nn.Linear(128, 10)
             )
     ##################################
 
