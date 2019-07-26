@@ -43,15 +43,22 @@ def main():
     #################################
     ## Model specification TODO
     model = nn.Sequential(
+              # (num pictures × dimensions × size[0] × size[1])
+              # input: num × 1 × 28 × 28
               nn.Conv2d(1, 32, (3, 3)),
+              # after conv1: num × 32 × 26 × 26
               nn.ReLU(),
               nn.MaxPool2d((2, 2)),
-              nn.Conv2d(8, 64, (3, 3)),
+              # after pool1: num × 32 × 13 × 13
+              nn.Conv2d(32, 64, (3, 3)),
+              # after cov2: num × 64 × 11 × 11
               nn.ReLU(),
               nn.MaxPool2d((2, 2)),
-              nn.view(16, -1),
-              nn.Linear(16, 128),
-              nn.Dropout2d(p = 0.5),
+              # after pool2: num × 64 × 5 × 5
+              Flatten(),
+              # input for linear is 64 × 5 × 5
+              nn.Linear(1600, 128),
+              nn.Dropout(p = 0.5),
               nn.Linear(128, 10)
             )
     ##################################

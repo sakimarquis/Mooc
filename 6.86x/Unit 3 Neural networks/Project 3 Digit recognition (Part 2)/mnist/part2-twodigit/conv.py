@@ -14,18 +14,36 @@ num_classes = 10
 img_rows, img_cols = 42, 28 # input image dimensions
 
 
-
 class CNN(nn.Module):
 
     def __init__(self, input_dimension):
         super(CNN, self).__init__()
-        # TODO initialize model layers here
+        # initialize model layers here
+        self.flatten = Flatten()
+        self.conv1 = nn.Conv2d(1, 32, 5)
+        self.conv2 = nn.Conv2d(32, 128, 5)
+        self.relu = nn.ReLU()
+        self.mp = nn.MaxPool2d((2, 2))
+        self.fc1 = nn.Linear(3584, 64)
+        self.dropout = nn.Dropout(p = 0.5)
+        self.fc2_1 = nn.Linear(64, 10)
+        self.fc2_2 = nn.Linear(64, 10)
+        self.logsoftmax = nn.LogSoftmax()
+
 
     def forward(self, x):
-
-        # TODO use model layers to predict the two digits
+        # use model layers to predict the two digits
+        out = self.relu(self.mp(self.conv1(x)))
+        out = self.relu(self.mp(self.conv2(out)))
+        out = self.flatten(out)
+        out = self.fc1(out)
+        first = self.fc2_1(out)
+        second = self.fc2_2(out)
+        out_first_digit = self.logsoftmax(first)
+        out_second_digit = self.logsoftmax(second)
 
         return out_first_digit, out_second_digit
+
 
 def main():
     X_train, y_train, X_test, y_test = U.get_data(path_to_data_dir, use_mini_dataset)
