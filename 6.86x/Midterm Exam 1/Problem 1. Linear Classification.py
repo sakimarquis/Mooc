@@ -5,12 +5,19 @@ Created on Thu Aug  1 08:17:24 2019
 @author: saki
 """
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.svm import LinearSVC
+
 
 coords = np.array([[0, 0], [2, 0], [3, 0], [0, 2], [2, 2], [5, 1], [5, 2], \
                    [2, 4], [4, 4], [5, 5]])
 labels = np.array([-1, -1, -1, -1, -1, 1, 1, 1, 1, 1])
 mistakes = np.array([1, 9, 10, 5, 9, 11, 0, 3, 1, 1])
+
+
+fig, ax = plt.subplots()
+ax.scatter(coords[:,0], coords[:,1], c =labels)
+
 
 # =============================================================================
 # 1. (1)
@@ -32,12 +39,16 @@ def check_theta(theta, theta0, points, labels):
 
 check_theta(theta, theta0, coords, labels)
 
+# 4x + 4y -18 = 0
+x = np.linspace(0, 5, 100)
+y = (18 - 4 * x) / 4
+ax.plot(x, y)
+
 # =============================================================================
 # 1. (2)
 # =============================================================================
 
 print(np.array([0, 0]) @ np.array([5, 2]) + 0 > 0)
-
 
 # =============================================================================
 # 1. (3)
@@ -49,12 +60,21 @@ clf.fit(coords, labels)
 check_theta(clf.coef_.reshape(2), clf.intercept_, coords, labels)
 
 
+fig, ax = plt.subplots()
+ax.scatter(coords[:,0], coords[:,1], c =labels)
+# 4x + 4y -18 = 0
+y = (18 - 4 * x) / 4
+ax.plot(x, y, linestyle='--')
+# 0.33559923x + 0.35592746y - 1.50554319 = 0
+y1 = (-clf.intercept_[0] - clf.coef_[0][0] * x) / clf.coef_[0][1]
+ax.plot(x, y1)
+
+
 # =============================================================================
 # 1. (4)
 # =============================================================================
 
 print(1/np.linalg.norm(clf.coef_))
-
 
 # =============================================================================
 # 1. (5)
