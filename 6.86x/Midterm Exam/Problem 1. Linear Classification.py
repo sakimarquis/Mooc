@@ -54,8 +54,7 @@ print(np.array([0, 0]) @ np.array([5, 2]) + 0 > 0)
 # 1. (3)
 # =============================================================================
 
-#clf = LinearSVC(loss='hinge')
-clf = LinearSVC()
+clf = LinearSVC(penalty='l2', C = 1e8, loss='hinge')
 clf.fit(coords, labels)
 check_theta(clf.coef_.reshape(2), clf.intercept_, coords, labels)
 
