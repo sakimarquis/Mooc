@@ -25,7 +25,7 @@ def estep(X: np.ndarray, mixture: GaussianMixture) -> np.ndarray:
         tiled_vector = np.tile(X[i, :], (K, 1))
         sse = ((tiled_vector - mixture.mu)**2).sum(axis=1)
         j = np.argmin(sse)
-        post[i, j] = 1
+        post[i, j] = 1 # assignment, 0 or 1
 
     return post
 

@@ -28,9 +28,12 @@ assignment2 = weight2 * cluster2.pdf(x) / (weight1 * cluster1.pdf(x) + weight2 *
 
 # this two equations are same, first is from intuition, second is from the problem
 log_likelihood = np.sum(np.log(weight1 * cluster1.pdf(x) + weight2 * cluster2.pdf(x)))
-log_likelihood = np.sum(assignment1 * np.log(weight1 * cluster1.pdf(x) / assignment1) +
-                        assignment2 * np.log(weight2 * cluster2.pdf(x) / assignment2))
+#log_likelihood = np.sum(assignment1 * np.log(weight1 * cluster1.pdf(x) / assignment1) +
+#                        assignment2 * np.log(weight2 * cluster2.pdf(x) / assignment2))
 
+# this two equations are not same
+#np.sum(np.log(weight1 * cluster1.pdf(x) + weight2 * cluster2.pdf(x)))
+#np.sum(np.log(weight1 * cluster1.pdf(x)) + np.log(weight2 * cluster2.pdf(x)))
 
 # =============================================================================
 # E-Step Weights
