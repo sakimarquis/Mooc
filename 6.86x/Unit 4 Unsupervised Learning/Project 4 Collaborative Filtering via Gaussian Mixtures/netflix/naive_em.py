@@ -4,7 +4,7 @@ import numpy as np
 from common import GaussianMixture
 
 
-def pdf_2dgaussian(x, mu, var):
+def pdf_2dgaussian(X, mu, var):
     """
     We assume the simplest multivariate Gaussian model, where all dimensions
     are independent (therefore  cov(xi,xj)=0 ) and has the same variance.
@@ -12,16 +12,16 @@ def pdf_2dgaussian(x, mu, var):
     And Σ = σI, Σ^1/2 = det(σI) = σ^d
 
     Args:
-        x: (n, d) data
+        X: (n, d) data
         mu: (1, d) mean of a multivariate_gaussian
         var, scalar variance of a multivariate_gaussian
 
     Returns:
         probability of x in this multivariate_gaussian
     """
-    n, d = x.shape
+    n, d = X.shape
     tiled_mu = np.tile(mu, (n, 1))
-    y = 1/np.sqrt((2*np.pi*var)**d) * np.exp(-1/2 * np.einsum("ij -> i",(x - tiled_mu)**2) / var)
+    y = 1/np.sqrt((2*np.pi*var)**d) * np.exp(-1/2 * np.einsum("ij -> i",(X - tiled_mu)**2) / var)
     return y
 
 
@@ -42,14 +42,12 @@ def estep(X: np.ndarray, mixture: GaussianMixture) -> Tuple[np.ndarray, float]:
     k, _ = mu.shape
     prob_mat = np.zeros([n, k])
     prob_all = np.zeros(n)
-    log_likelihood = 0
     for i in range(k):
         prob = weight[i] * pdf_2dgaussian(X, mu[i], var[i])
         prob_mat[:,i] = prob
         prob_all += prob
-        log_likelihood += prob
     post = prob_mat / np.tile(prob_all.reshape(n, 1), (1, k))
-    log_likelihood = np.sum(np.log(log_likelihood))
+    log_likelihood = np.sum(np.log(np.sum(prob_mat, axis = 1)))
     return post, log_likelihood
 
 

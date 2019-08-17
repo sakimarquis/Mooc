@@ -73,3 +73,16 @@ for K in Ks:
     BIC = common.bic(X, mixture, log_likelihood)
     print(K, BIC)
 
+
+# =============================================================================
+# 7. Implementing EM for matrix completion
+# Test for comlete case
+# =============================================================================
+
+X = np.loadtxt("toy_data.txt")
+Ks = [1, 2, 3, 4]
+seeds = [0, 1, 2, 3, 4]
+mixture, post = common.init(X, 3, seed=0)
+post1, log_likelihood1 = naive_em.estep(X, mixture)
+post2, log_likelihood2 = em.estep(X, mixture)
+print(log_likelihood1, log_likelihood2)
