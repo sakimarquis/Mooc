@@ -81,8 +81,9 @@ def EM_one_iteration(x, weight1, weight2, mu1, mu2, sigma1, sigma2):
     new_weight2 = n2 / len(x)
     new_mu1 = sum(assignment1 * x) / n1
     new_mu2 = sum(assignment2 * x) / n2
-    new_sigma1 = sum(assignment1 * (x - new_mu1) ** 2) / n1
-    new_sigma2 = sum(assignment2 * (x - new_mu2) ** 2) / n2
+    # don't use sigma squared as sigma in your repeating calculation
+    new_sigma1 = np.sqrt(sum(assignment1 * (x - new_mu1) ** 2) / n1)
+    new_sigma2 = np.sqrt(sum(assignment2 * (x - new_mu2) ** 2) / n2)
     return new_weight1, new_weight2, new_mu1, new_mu2, new_sigma1, new_sigma2
 
 for i in range(100):
