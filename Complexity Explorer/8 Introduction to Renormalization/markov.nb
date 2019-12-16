@@ -1,0 +1,468 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     14092,        459]
+NotebookOptionsPosition[     12656,        404]
+NotebookOutlinePosition[     13011,        420]
+CellTagsIndexPosition[     12968,        417]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\<\
+Mathematics of Markov Chains
+Question 2, Unit #2 for SFI\[CloseCurlyQuote]s Renormalization MOOC\
+\>", "Title",
+ CellChangeTimes->{{3.70111411602348*^9, 3.701114134629053*^9}, {
+  3.7011855762753887`*^9, 3.7011855764108067`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Simon DeDeo / simon@santafe.edu / http://santafe.edu/~simon", \
+"Subsection",
+ CellChangeTimes->{{3.701114150478643*^9, 3.701114166691698*^9}}],
+
+Cell["\<\
+Let's make an arbitrary three-state Markov chain\
+\>", "Text",
+ CellChangeTimes->{{3.701113727403707*^9, 3.7011137442385674`*^9}, 
+   3.701113795834934*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"m", "=", 
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {"a", "c", "e"},
+     {"b", "d", "f"},
+     {
+      RowBox[{"1", "-", 
+       RowBox[{"(", 
+        RowBox[{"a", "+", "b"}], ")"}]}], 
+      RowBox[{"1", "-", 
+       RowBox[{"(", 
+        RowBox[{"c", "+", "d"}], ")"}]}], 
+      RowBox[{"1", "-", 
+       RowBox[{"(", 
+        RowBox[{"e", "+", "f"}], ")"}]}]}
+    }], "\[NoBreak]", ")"}]}]], "Input",
+ CellChangeTimes->{{3.701113694999189*^9, 3.701113723911322*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"a", ",", "c", ",", "e"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"b", ",", "d", ",", "f"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"1", "-", "a", "-", "b"}], ",", 
+     RowBox[{"1", "-", "c", "-", "d"}], ",", 
+     RowBox[{"1", "-", "e", "-", "f"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.701113725021961*^9, 3.7011137478405437`*^9}}]
+}, Open  ]],
+
+Cell["\<\
+Here's what it looks like after two steps (i.e., if we coarse-grain in time)\
+\>", "Text",
+ CellChangeTimes->{{3.701113767192122*^9, 3.701113794362905*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MatrixForm", "[", 
+  RowBox[{"m", ".", "m"}], "]"}]], "Input",
+ CellChangeTimes->{{3.70111374942299*^9, 3.701113760278064*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {
+      RowBox[{
+       SuperscriptBox["a", "2"], "+", 
+       RowBox[{"b", " ", "c"}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", "a", "-", "b"}], ")"}], " ", "e"}]}], 
+      RowBox[{
+       RowBox[{"a", " ", "c"}], "+", 
+       RowBox[{"c", " ", "d"}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", "c", "-", "d"}], ")"}], " ", "e"}]}], 
+      RowBox[{
+       RowBox[{"a", " ", "e"}], "+", 
+       RowBox[{"e", " ", 
+        RowBox[{"(", 
+         RowBox[{"1", "-", "e", "-", "f"}], ")"}]}], "+", 
+       RowBox[{"c", " ", "f"}]}]},
+     {
+      RowBox[{
+       RowBox[{"a", " ", "b"}], "+", 
+       RowBox[{"b", " ", "d"}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", "a", "-", "b"}], ")"}], " ", "f"}]}], 
+      RowBox[{
+       RowBox[{"b", " ", "c"}], "+", 
+       SuperscriptBox["d", "2"], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", "c", "-", "d"}], ")"}], " ", "f"}]}], 
+      RowBox[{
+       RowBox[{"b", " ", "e"}], "+", 
+       RowBox[{"d", " ", "f"}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", "e", "-", "f"}], ")"}], " ", "f"}]}]},
+     {
+      RowBox[{
+       RowBox[{"a", " ", 
+        RowBox[{"(", 
+         RowBox[{"1", "-", "a", "-", "b"}], ")"}]}], "+", 
+       RowBox[{"b", " ", 
+        RowBox[{"(", 
+         RowBox[{"1", "-", "c", "-", "d"}], ")"}]}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", "a", "-", "b"}], ")"}], " ", 
+        RowBox[{"(", 
+         RowBox[{"1", "-", "e", "-", "f"}], ")"}]}]}], 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", "a", "-", "b"}], ")"}], " ", "c"}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", "c", "-", "d"}], ")"}], " ", "d"}], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", "c", "-", "d"}], ")"}], " ", 
+        RowBox[{"(", 
+         RowBox[{"1", "-", "e", "-", "f"}], ")"}]}]}], 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", "a", "-", "b"}], ")"}], " ", "e"}], "+", 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"1", "-", "e", "-", "f"}], ")"}], "2"], "+", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "-", "c", "-", "d"}], ")"}], " ", "f"}]}]}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{{3.701113755958845*^9, 3.701113760696225*^9}}]
+}, Open  ]],
+
+Cell["\<\
+Pick a set of values for the six parameters\[LongDash]e.g.\
+\>", "Text",
+ CellChangeTimes->{{3.701113799591198*^9, 3.701113819626071*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"val", "=", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"a", "\[Rule]", 
+     RowBox[{"1", "/", "4"}]}], ",", " ", 
+    RowBox[{"b", "\[Rule]", 
+     RowBox[{"1", "/", "2"}]}], ",", " ", 
+    RowBox[{"c", "\[Rule]", 
+     RowBox[{"1", "/", "3"}]}], ",", 
+    RowBox[{"d", "\[Rule]", 
+     RowBox[{"1", "/", "3"}]}], ",", 
+    RowBox[{"e", "\[Rule]", 
+     RowBox[{"1", "/", "12"}]}], ",", 
+    RowBox[{"f", "\[Rule]", 
+     RowBox[{"10", "/", "12"}]}]}], "}"}]}]], "Input",
+ CellChangeTimes->{{3.701113820949923*^9, 3.701113853244439*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"a", "\[Rule]", 
+    FractionBox["1", "4"]}], ",", 
+   RowBox[{"b", "\[Rule]", 
+    FractionBox["1", "2"]}], ",", 
+   RowBox[{"c", "\[Rule]", 
+    FractionBox["1", "3"]}], ",", 
+   RowBox[{"d", "\[Rule]", 
+    FractionBox["1", "3"]}], ",", 
+   RowBox[{"e", "\[Rule]", 
+    FractionBox["1", "12"]}], ",", 
+   RowBox[{"f", "\[Rule]", 
+    FractionBox["5", "6"]}]}], "}"}]], "Output",
+ CellChangeTimes->{3.701113853788933*^9}]
+}, Open  ]],
+
+Cell["\<\
+Here\[CloseCurlyQuote]s the coarse-grained version...\
+\>", "Text",
+ CellChangeTimes->{{3.701113799591198*^9, 3.701113819626071*^9}, {
+  3.7011138684205847`*^9, 3.7011138720350657`*^9}, {3.701113902297771*^9, 
+  3.701113902457045*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MatrixForm", "[", 
+   RowBox[{"m", ".", "m"}], "]"}], "/.", "val"}]], "Input",
+ CellChangeTimes->{{3.70111385913356*^9, 3.70111386105707*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {
+      FractionBox["1", "4"], 
+      FractionBox["2", "9"], 
+      FractionBox["11", "36"]},
+     {
+      FractionBox["1", "2"], 
+      FractionBox["5", "9"], 
+      FractionBox["7", "18"]},
+     {
+      FractionBox["1", "4"], 
+      FractionBox["2", "9"], 
+      FractionBox["11", "36"]}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{3.701113861830093*^9}]
+}, Open  ]],
+
+Cell["\<\
+Here\[CloseCurlyQuote]s the version when we coarse-grain on timescales of a \
+hundred steps(!)...\
+\>", "Text",
+ CellChangeTimes->{{3.701113799591198*^9, 3.701113819626071*^9}, {
+  3.7011138684205847`*^9, 3.7011138720350657`*^9}, {3.701113902297771*^9, 
+  3.701113925345043*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MatrixForm", "[", 
+  RowBox[{"MatrixPower", "[", 
+   RowBox[{
+    RowBox[{"m", "/.", "val"}], ",", "100"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.70111389292592*^9, 3.701113895803069*^9}, {
+  3.701113932682949*^9, 3.701113953809804*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {
+      FractionBox["1", "4"], 
+      FractionBox["128844380183002832759115282441405318175526880500", 
+       "515377520732011331036461129765621272702107522001"], 
+      FractionBox["515377520732011331036461129765621272702107522003", 
+       "2061510082928045324145844519062485090808430088004"]},
+     {
+      FractionBox["1", "2"], 
+      FractionBox["257688760366005665518230564882810636351053761001", 
+       "515377520732011331036461129765621272702107522001"], 
+      FractionBox["515377520732011331036461129765621272702107521999", 
+       "1030755041464022662072922259531242545404215044002"]},
+     {
+      FractionBox["1", "4"], 
+      FractionBox["128844380183002832759115282441405318175526880500", 
+       "515377520732011331036461129765621272702107522001"], 
+      FractionBox["515377520732011331036461129765621272702107522003", 
+       "2061510082928045324145844519062485090808430088004"]}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{{3.701113913985663*^9, 3.701113954223488*^9}}]
+}, Open  ]],
+
+Cell["\<\
+Very very close to a matrix where all the columns are the \
+same\[LongDash]i.e., where P(x|y) is indepdent of y; where you go is \
+independent of where you came from.\
+\>", "Text",
+ CellChangeTimes->{{3.701113963778142*^9, 3.701114008930093*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MatrixForm", "[", 
+  RowBox[{"N", "[", 
+   RowBox[{"MatrixPower", "[", 
+    RowBox[{
+     RowBox[{"m", "/.", "val"}], ",", "100"}], "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.701113942898868*^9, 3.701113959296751*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {"0.25`", "0.25`", "0.25`"},
+     {"0.5`", "0.5`", "0.5`"},
+     {"0.25`", "0.25`", "0.25`"}
+    },
+    GridBoxAlignment->{
+     "Columns" -> {{Center}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+      "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}, "RowsIndexed" -> {}}], "\[NoBreak]", ")"}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{{3.701113944607971*^9, 3.70111395975463*^9}}]
+}, Open  ]],
+
+Cell["Here' s the shortcut solution:", "Text",
+ CellChangeTimes->{{3.70111402809477*^9, 3.701114035849431*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Eigensystem", "[", 
+  RowBox[{"m", "/.", "val"}], "]"}]], "Input",
+ CellChangeTimes->{{3.701114009859322*^9, 3.701114016244761*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"1", ",", 
+     RowBox[{"-", 
+      FractionBox["1", "3"]}], ",", "0"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"1", ",", "2", ",", "1"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", 
+       RowBox[{"-", "2"}], ",", "1"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "3"}], ",", "2", ",", "1"}], "}"}]}], "}"}]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{{3.701114013454618*^9, 3.701114016700103*^9}}]
+}, Open  ]],
+
+Cell["\<\
+The first element of this list are the eigenvalues; you want the largest one, \
+equal to unity. The corresponding eigenvector is {1,2,1}; because \
+eigenvectors are arbitrary up to normalization, we can divide it by its sum, \
+to get the stationary distribution {1/4,1/2,1/4}.\
+\>", "Text",
+ CellChangeTimes->{{3.701114037046205*^9, 3.70111410282241*^9}}]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1244, 940},
+WindowMargins->{{4, Automatic}, {Automatic, 4}},
+FrontEndVersion->"9.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (January 25, \
+2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 239, 5, 148, "Title"],
+Cell[CellGroupData[{
+Cell[843, 31, 149, 2, 44, "Subsection"],
+Cell[995, 35, 166, 4, 30, "Text"],
+Cell[CellGroupData[{
+Cell[1186, 43, 496, 16, 63, "Input"],
+Cell[1685, 61, 436, 12, 28, "Output"]
+}, Open  ]],
+Cell[2136, 76, 166, 3, 30, "Text"],
+Cell[CellGroupData[{
+Cell[2327, 83, 151, 3, 28, "Input"],
+Cell[2481, 88, 2948, 89, 69, "Output"]
+}, Open  ]],
+Cell[5444, 180, 148, 3, 30, "Text"],
+Cell[CellGroupData[{
+Cell[5617, 187, 559, 16, 28, "Input"],
+Cell[6179, 205, 474, 15, 48, "Output"]
+}, Open  ]],
+Cell[6668, 223, 245, 5, 30, "Text"],
+Cell[CellGroupData[{
+Cell[6938, 232, 177, 4, 28, "Input"],
+Cell[7118, 238, 889, 28, 87, "Output"]
+}, Open  ]],
+Cell[8022, 269, 289, 6, 30, "Text"],
+Cell[CellGroupData[{
+Cell[8336, 279, 269, 6, 28, "Input"],
+Cell[8608, 287, 1523, 34, 87, "Output"]
+}, Open  ]],
+Cell[10146, 324, 256, 5, 30, "Text"],
+Cell[CellGroupData[{
+Cell[10427, 333, 252, 6, 28, "Input"],
+Cell[10682, 341, 715, 19, 63, "Output"]
+}, Open  ]],
+Cell[11412, 363, 111, 1, 30, "Text"],
+Cell[CellGroupData[{
+Cell[11548, 368, 156, 3, 28, "Input"],
+Cell[11707, 373, 541, 18, 48, "Output"]
+}, Open  ]],
+Cell[12263, 394, 365, 6, 49, "Text"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
