@@ -8,7 +8,7 @@ DAYS = np.array([31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31])
 
 def read_TrainData(filename, N):
     #N: how many hours to be as inputs
-    raw_data = pd.read_csv(filename).as_matrix()
+    raw_data = pd.read_csv(filename).values
     # 12 months, 20 days per month, 18 features per day. shape: (4320 , 24)
     data = raw_data[:, 3:] #first 3 columns are not data
     data = data.astype('float')
@@ -32,7 +32,7 @@ def read_TrainData(filename, N):
 def read_TestData(filename, N):
 	#only handle N <= 48(2 days)
     assert N <= 48
-    raw_data = pd.read_csv(filename).as_matrix()
+    raw_data = pd.read_csv(filename).values
     data = raw_data[:, 3:]
     data = data.astype('float')
     surplus = DAYS - 20 #remaining days in each month after 20th
@@ -57,17 +57,18 @@ def read_TestData(filename, N):
 class Linear_Regression(object):
     def __init__(self):
         pass
+    
     def train(self, train_X, train_Y):
-        #TODO
-        #W = ?
-        self.W = W #save W for later prediction
+        W = np.linalg.inv(train_X.T @ train_X) @ train_X.T @ train_Y
+        self.W = W # save W for later prediction
+        
     def predict(self, test_X):
-        #TODO
-        #predict_Y = ...?
+        predict_Y = test_X @ self.W
         return predict_Y
+    
+    
 def MSE(predict_Y, real_Y):
-    #TODO :mean square error
-    # loss = ?
+    loss = np.mean((predict_Y - real_Y)**2)
     return loss
 
 
@@ -79,4 +80,5 @@ if __name__ == '__main__' :
     test_X, test_Y = read_TestData('test.csv', N=N)
     predict_Y = model.predict(test_X)
     test_loss = MSE(predict_Y, test_Y)
-    print(test_loss)
+    print('linear regression：{}'.format(test_loss))
+    
