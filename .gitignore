@@ -11,7 +11,7 @@
 *.class
 *.log
 *.ctxt
-.mtj.tmp/
+**/.mtj.tmp/
 *.jar
 *.war
 *.ear
@@ -55,9 +55,9 @@ $RECYCLE.BIN/
 
 
 *.pyc
-.DS_Store
-node_modules/
-.ropeproject
+*/.DS_Store
+**/node_modules/
+**/.ropeproject
 spec/
 # Created by https://www.gitignore.io/api/java,python,osx,windows,intellij,eclipse,bluej,netbeans,vim,emacs,microsoftoffice
 
@@ -65,7 +65,7 @@ spec/
 *.class
 
 # Mobile Tools for Java (J2ME)
-.mtj.tmp/
+**/.mtj.tmp/
 
 # Package Files #
 *.jar
@@ -78,7 +78,7 @@ hs_err_pid*
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
-__pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -87,20 +87,20 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
+**/env/
+**/build/
+**/develop-eggs/
+**/dist/
+**/downloads/
+**/eggs/
+**/.eggs/
+**/lib/
+**/lib64/
+**/parts/
+**/sdist/
+**/var/
+**/.egg-info/
+*.installed.cfg
 *.egg
 
 # PyInstaller
@@ -114,15 +114,15 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
-htmlcov/
+**/htmlcov/
 .tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
+*.coverage
+*.coverage.*
+*.cache
+*nosetests.xml
+*coverage.xml
 *,cover
-.hypothesis/
+**/.hypothesis/
 
 # Translations
 *.mo
@@ -148,31 +148,31 @@ Icon
 
 
 # Thumbnails
-._*
+*._*
 
 # Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
+*.DocumentRevisions-V100
+*.fseventsd
+*.Spotlight-V100
+*.TemporaryItems
+*.Trashes
+*.VolumeIcon.icns
 
 # Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
+*.AppleDB
+*.AppleDesktop
+*Network Trash Folder
+*Temporary Items
+*.apdisk
 
 
 ### Windows ###
 # Windows image file caches
-Thumbs.db
-ehthumbs.db
+*Thumbs.db
+*ehthumbs.db
 
 # Folder config file
-Desktop.ini
+*Desktop.ini
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
@@ -241,45 +241,45 @@ fabric.properties
 ### Eclipse ###
 *.pydevproject
 .metadata
-bin/
-tmp/
+**/bin/
+**/tmp/
 *.tmp
 *.bak
 *.swp
 *~.nib
-local.properties
-.settings/
-.loadpath
+*local.properties
+**/.settings/
+**/.loadpath
 
 # Eclipse Core
-.project
+*.project
 
 # External tool builders
-.externalToolBuilders/
+**/.externalToolBuilders/
 
 # Locally stored "Eclipse launch configurations"
 *.launch
 
 # CDT-specific
-.cproject
+*.cproject
 
 # JDT-specific (Eclipse Java Development Tools)
-.classpath
+*.classpath
 
 # Java annotation processor (APT)
-.factorypath
+*.factorypath
 
 # PDT-specific
-.buildpath
+*.buildpath
 
 # sbteclipse plugin
-.target
+*.target
 
 # TeXlipse plugin
-.texlipse
+*.texlipse
 
 # STS (Spring Tool Suite)
-.springBeans
+*.springBeans
 
 
 ### bluej ###
@@ -292,13 +292,13 @@ local.properties
 bluej.pkh
 
 ### NetBeans ###
-nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-nbactions.xml
-.nb-gradle/
+**/nbproject/private/
+**/build/
+**/nbbuild/
+**/dist/
+**/nbdist/
+**/nbactions.xml
+**/.nb-gradle/
 
 
 ### Vim ###
@@ -370,23 +370,23 @@ tramp
 
 # Capers Lab Things (SP21)
 !Makefile
-!lab6/testing/*
-!lab6/testing/our/*
+!**/lab6/testing/*
+!**/lab6/testing/our/*
 
 # Project 3 Image/Audio/Video Files
-!proj3/**/*.png
-!proj3/**/*.jpeg
-!proj3/**/*.jpg
-!proj3/**/*.mp3
-!proj3/**/*.mp4
-!proj3/**/*.gif
-!proj3/**/*.wav
+!**/proj3/**/*.png
+!**/proj3/**/*.jpeg
+!**/proj3/**/*.jpg
+!**/proj3/**/*.mp3
+!**/proj3/**/*.mp4
+!**/proj3/**/*.gif
+!**/proj3/**/*.wav
 
 # Project Repo Image/Audio/Video Files
-!byow/**/*.png
-!byow/**/*.jpeg
-!byow/**/*.jpg
-!byow/**/*.mp3
-!byow/**/*.mp4
-!byow/**/*.gif
-!byow/**/*.wav
+!**/byow/**/*.png
+!**/byow/**/*.jpeg
+!**/byow/**/*.jpg
+!**/byow/**/*.mp3
+!**/byow/**/*.mp4
+!**/byow/**/*.gif
+!**/byow/**/*.wav
