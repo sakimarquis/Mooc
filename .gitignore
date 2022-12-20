@@ -193,7 +193,7 @@ $RECYCLE.BIN/
 *.iml
 
 ## Directory-based project format:
-.idea/
+**/.idea/
 # if you remove the above rule, at least ignore the following:
 
 # User-specific stuff:
@@ -390,3 +390,7 @@ tramp
 !**/byow/**/*.mp4
 !**/byow/**/*.gif
 !**/byow/**/*.wav
+
+# Onenote
+**/OneNote_RecycleBin/
+*.onetoc2
