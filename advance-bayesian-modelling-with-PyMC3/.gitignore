@@ -1,0 +1,15 @@
+.ipynb_checkpoints
+.DS_Store
+.gitignore~
+.Rhistory
+*.swp
+__pycache__/
+trash/
+.R_history
+\.idea/
+
+Kaggle/input/
+
+Kaggle/code/baseline\.csv
+
+Kaggle/code/weights_base\.best\.hdf5
