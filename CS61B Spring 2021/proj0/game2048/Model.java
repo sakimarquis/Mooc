@@ -126,14 +126,18 @@ public class Model extends Observable {
     private boolean moveUp() {
         boolean changed = false;
         for (int col = 0; col < board.size(); col += 1) {
+            int previouMergedRow = -1;
             for (int row = board.size() - 1; row >= 0; row -= 1) {
                 if (board.tile(col, row) != null) {
                     Tile t = board.tile(col, row);
-                    int step = countUpSteps(col, row);
+                    int step = countUpSteps(col, row, previouMergedRow);
                     boolean merged = board.move(col, row + step, t);
-                    changed = true;
+                    if (step > 0) {
+                        changed = true;
+                    }
                     if (merged) {
                         score += t.value() * 2;
+                        previouMergedRow = row + step;
                     }
                 }
             }
@@ -142,14 +146,13 @@ public class Model extends Observable {
     }
 
     /** Return how many steps the tile can move up. */
-    private int countUpSteps(int col, int row) {
+    private int countUpSteps(int col, int row, int previouMergedRow) {
         int step = 0;
         for (int i = row + 1; i < board.size(); i += 1) {
             if (board.tile(col, i) == null) {
                 step += 1;
-            } else if (board.tile(col, i).value() == board.tile(col, row).value()) {
+            } else if (i != previouMergedRow && board.tile(col, i).value() == board.tile(col, row).value()) {
                 step += 1;
-                //System.out.println(board.tile(col, i).value());
                 break;
             }
         }
