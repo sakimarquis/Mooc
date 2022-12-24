@@ -126,10 +126,11 @@ public class Model extends Observable {
     private boolean moveUp() {
         boolean changed = false;
         for (int col = 0; col < board.size(); col += 1) {
-            for (int row = 0; row < board.size(); row += 1) {
-                Tile t = board.tile(col, row);
+            for (int row = board.size() - 1; row >= 0; row -= 1) {
                 if (board.tile(col, row) != null) {
-                    boolean merged = board.move(col, 3, t);
+                    Tile t = board.tile(col, row);
+                    int step = countUpSteps(col, row);
+                    boolean merged = board.move(col, row + step, t);
                     changed = true;
                     if (merged) {
                         score += t.value() * 2;
@@ -140,6 +141,20 @@ public class Model extends Observable {
         return changed;
     }
 
+    /** Return how many steps the tile can move up. */
+    private int countUpSteps(int col, int row) {
+        int step = 0;
+        for (int i = row + 1; i < board.size(); i += 1) {
+            if (board.tile(col, i) == null) {
+                step += 1;
+            } else if (board.tile(col, i).value() == board.tile(col, row).value()) {
+                step += 1;
+                //System.out.println(board.tile(col, i).value());
+                break;
+            }
+        }
+        return step;
+    }
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
