@@ -149,11 +149,13 @@ public class Model extends Observable {
     private int countUpSteps(int col, int row, int previousMergedRow) {
         int step = 0;
         for (int i = row + 1; i < board.size(); i += 1) {
-            if (board.tile(col, i) == null) {
-                step += 1;
-            } else if (i != previousMergedRow && board.tile(col, i).value() == board.tile(col, row).value()) {
-                step += 1;
+            if (board.tile(col, i) != null) {
+                if (i != previousMergedRow && board.tile(col, i).value() == board.tile(col, row).value()) {
+                    step += 1;
+                }
                 break;
+            } else {
+                step += 1;
             }
         }
         return step;
