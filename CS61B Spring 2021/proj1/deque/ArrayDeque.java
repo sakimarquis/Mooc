@@ -10,7 +10,7 @@ public class ArrayDeque<T> {
         int SIZE = 8;
         items = (T[]) new Object[SIZE];
         size = 0;
-        first = SIZE / 2 - 1;
+        first = SIZE / 2;
         last = SIZE / 2;
     }
 
@@ -28,18 +28,22 @@ public class ArrayDeque<T> {
         if (size == items.length) {
             resize(size * 2);
         }
-        items[size] = item;
         size += 1;
-        first = getCircularPointer(first - 1);
+        if (size > 1) {
+            first = getCircularPointer(first - 1);
+        }
+        items[first] = item;
     }
 
     public void addLast(T item) {
         if (size == items.length) {
             resize(size * 2);
         }
-        items[size] = item;
         size += 1;
-        last = getCircularPointer(last + 1);
+        if (size > 1) {
+            last = getCircularPointer(last + 1);
+        }
+        items[last] = item;
     }
 
     private void resize(int capacity) {
@@ -94,7 +98,7 @@ public class ArrayDeque<T> {
         return item;
     }
 
-    private T get(int index) {
+    public T get(int index) {
         if (index >= size) {
             return null;
         } else {
