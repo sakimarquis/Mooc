@@ -84,7 +84,7 @@ public class ArrayDequeTest {
             L.removeLast();
         }
     }
-    
+
     @Test
     public void testRandomRun() {
         ArrayDeque<Integer> L = new ArrayDeque<>();
@@ -97,10 +97,9 @@ public class ArrayDequeTest {
                 assertEquals(randVal, (int) L.get(0));
             } else if (operationNumber == 1) {
                 int randVal = StdRandom.uniform(0, 100);
-                int size = L.size();
                 L.addLast(randVal);
-                System.out.println(size);
-                assertEquals(randVal, (int) L.get(size));
+                int size = L.size();
+                assertEquals(randVal, (int) L.get(size - 1));
             } else if (operationNumber == 2 && L.size() > 0) {
                 L.removeFirst();
             } else if (operationNumber == 3 && L.size() > 0) {
