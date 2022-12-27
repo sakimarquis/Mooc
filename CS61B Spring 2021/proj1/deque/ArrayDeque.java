@@ -15,10 +15,10 @@ public class ArrayDeque<T> {
     }
 
     private int getCircularPointer(int pointer) {
-        if (pointer == -1) {
-            return items.length - 1;
-        } else if (pointer == items.length) {
-            return 0;
+        if (pointer < 0) {
+            return pointer + items.length;
+        } else if (pointer >= items.length) {
+            return pointer - items.length;
         } else {
             return pointer;
         }
