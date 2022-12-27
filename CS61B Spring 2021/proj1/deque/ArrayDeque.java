@@ -93,4 +93,13 @@ public class ArrayDeque<T> {
         }
         return item;
     }
+
+    private T get(int index) {
+        if (index >= size) {
+            return null;
+        } else {
+            int real_index = getCircularPointer(first + index);
+            return items[real_index];
+        }
+    }
 }
