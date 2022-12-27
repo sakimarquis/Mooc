@@ -3,8 +3,8 @@ package deque;
 public class ArrayDeque<T> {
     private T[] items;
     private int size;
-    public int first;
-    public int last;
+    private int first;
+    private int last;
 
     public ArrayDeque() {
         int SIZE = 8;
