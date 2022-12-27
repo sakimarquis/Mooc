@@ -78,7 +78,7 @@ public class ArrayDeque<T> {
         items[first] = null;
         size -= 1;
         if (size > 0) {
-            last = getCircularPointer(last - 1);
+            first = getCircularPointer(first + 1);
         }
         if (size <= items.length / 4 && items.length > 8) {
             resize(size * 2);
