@@ -14,17 +14,23 @@ public class ArrayDeque<T> {
         last = SIZE / 2;
     }
 
+    private int getCircularPointer(int pointer) {
+        if (pointer == -1) {
+            return items.length - 1;
+        } else if (pointer == items.length) {
+            return 0;
+        } else {
+            return pointer;
+        }
+    }
+    
     public void addFirst(T item) {
         if (size == items.length) {
             resize(size * 2);
         }
         items[size] = item;
         size += 1;
-        if (first == 0) {
-            first = items.length - 1;
-        } else {
-            first -= 1;
-        }
+        first = getCircularPointer(first - 1);
     }
 
     public void addLast(T item) {
@@ -33,11 +39,7 @@ public class ArrayDeque<T> {
         }
         items[size] = item;
         size += 1;
-        if (last == items.length - 1) {
-            last = 0;
-        } else {
-            last += 1;
-        }
+        last = getCircularPointer(last + 1);
     }
 
     private void resize(int capacity) {
