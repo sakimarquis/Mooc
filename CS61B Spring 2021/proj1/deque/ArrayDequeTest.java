@@ -2,6 +2,7 @@ package deque;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import edu.princeton.cs.algs4.StdRandom;
 
 
 public class ArrayDequeTest {
@@ -46,7 +47,7 @@ public class ArrayDequeTest {
     @Test
     public void testGet() {
         ArrayDeque<Integer> L = new ArrayDeque<>();
-        L.addLast(1);
+        L.addFirst(1);
         L.addLast(2);
         L.addFirst(3);
         L.addLast(4);
@@ -61,12 +62,9 @@ public class ArrayDequeTest {
     @Test
     public void testRemove() {
         ArrayDeque<Integer> L = new ArrayDeque<>();
-        L.addLast(1);
-        L.addLast(2);
-        L.addLast(3);
-        L.addLast(4);
-        L.addLast(5);
-        L.addLast(6);
+        for (int i = 1; i <= 6; i++) {
+            L.addLast(i);
+        }
         assertEquals(1, (int) L.removeFirst());
         assertEquals(6, (int) L.removeLast());
         assertEquals(2, (int) L.removeFirst());
@@ -76,22 +74,40 @@ public class ArrayDequeTest {
     }
 
     @Test
-    /* Tests resizing */
-    public void resizeTest() {
-        ArrayDeque<Integer> lld1 = new ArrayDeque<>();
-        lld1.addFirst(3);
-        lld1.addFirst(2);
-        lld1.addFirst(1);
-        lld1.addFirst(0);
-        lld1.addFirst(-1);
-        lld1.addFirst(-2);
-        lld1.addFirst(-3);
-        lld1.addFirst(-4);
-        lld1.addFirst(-5);
-        lld1.addFirst(-6);
-        lld1.addFirst(-7);
-        lld1.addFirst(-8);
-        lld1.addFirst(-9);
-        lld1.addFirst(-10);
+    public void testResizeNaive() {
+        ArrayDeque<Integer> L = new ArrayDeque<>();
+        for (int i = 0; i < 64; i++) {
+            L.addLast(i);
+        }
+        for (int i = 0; i < 32; i++) {
+            L.removeFirst();
+            L.removeLast();
+        }
     }
+    
+    @Test
+    public void testRandomRun() {
+        ArrayDeque<Integer> L = new ArrayDeque<>();
+        int N = 10000;
+        for (int i = 0; i < N; i += 1) {
+            int operationNumber = StdRandom.uniform(0, 4);
+            if (operationNumber == 0) {
+                int randVal = StdRandom.uniform(0, 100);
+                L.addFirst(randVal);
+                assertEquals(randVal, (int) L.get(0));
+            } else if (operationNumber == 1) {
+                int randVal = StdRandom.uniform(0, 100);
+                int size = L.size();
+                L.addLast(randVal);
+                System.out.println(size);
+                assertEquals(randVal, (int) L.get(size));
+            } else if (operationNumber == 2 && L.size() > 0) {
+                L.removeFirst();
+            } else if (operationNumber == 3 && L.size() > 0) {
+                L.removeLast();
+            }
+        }
+    }
+
 }
+
