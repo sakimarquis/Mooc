@@ -3,8 +3,8 @@ package deque;
 public class ArrayDeque<T> {
     private T[] items;
     private int size;
-    private int first;
-    private int last;
+    public int first;
+    public int last;
 
     public ArrayDeque() {
         int SIZE = 8;
@@ -77,7 +77,9 @@ public class ArrayDeque<T> {
         T item = items[first];
         items[first] = null;
         size -= 1;
-        first = getCircularPointer(first + 1);
+        if (size > 0) {
+            last = getCircularPointer(last - 1);
+        }
         if (size <= items.length / 4 && items.length > 8) {
             resize(size * 2);
         }
@@ -91,7 +93,9 @@ public class ArrayDeque<T> {
         T item = items[last];
         items[last] = null;
         size -= 1;
-        last = getCircularPointer(last - 1);
+        if (size > 0) {
+            last = getCircularPointer(last - 1);
+        }
         if (size <= items.length / 4 && items.length > 8) {
             resize(size * 2);
         }
