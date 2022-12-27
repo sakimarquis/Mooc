@@ -19,8 +19,12 @@ public class ArrayDeque<T> {
             resize(size * 2);
         }
         items[size] = item;
-        first -= 1;
         size += 1;
+        if (first == 0) {
+            first = items.length - 1;
+        } else {
+            first -= 1;
+        }
     }
 
     public void addLast(T item) {
@@ -28,8 +32,12 @@ public class ArrayDeque<T> {
             resize(size * 2);
         }
         items[size] = item;
-        last += 1;
         size += 1;
+        if (last == items.length - 1) {
+            last = 0;
+        } else {
+            last += 1;
+        }
     }
 
     private void resize(int capacity) {
