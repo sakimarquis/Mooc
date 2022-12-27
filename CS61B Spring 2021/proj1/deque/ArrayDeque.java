@@ -5,9 +5,9 @@ public class ArrayDeque<T> {
     private int size;
     private int first;
     private int last;
-    private final int SIZE = 8;
 
     public ArrayDeque() {
+        int SIZE = 8;
         items = (T[]) new Object[SIZE];
         size = 0;
         first = SIZE / 2 - 1;
@@ -23,7 +23,7 @@ public class ArrayDeque<T> {
             return pointer;
         }
     }
-    
+
     public void addFirst(T item) {
         if (size == items.length) {
             resize(size * 2);
@@ -72,8 +72,8 @@ public class ArrayDeque<T> {
         }
         T item = items[first];
         items[first] = null;
-        first += 1;
         size -= 1;
+        first = getCircularPointer(first + 1);
         if (size <= items.length / 4) {
             resize(size * 2);
         }
@@ -86,8 +86,8 @@ public class ArrayDeque<T> {
         }
         T item = items[last];
         items[last] = null;
-        last -= 1;
         size -= 1;
+        last = getCircularPointer(last + 1);
         if (size <= items.length / 4) {
             resize(size * 2);
         }
