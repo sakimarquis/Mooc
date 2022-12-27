@@ -16,7 +16,7 @@ public class LinkedListDeque<T> {
 
     private final Node sentinel;
     private int size;
-    
+
     public LinkedListDeque() {
         sentinel = new Node(null, null, null);
         sentinel.prev = sentinel;
@@ -85,5 +85,4 @@ public class LinkedListDeque<T> {
         size -= 1;
         return item;
     }
-
 }
