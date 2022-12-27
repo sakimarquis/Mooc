@@ -49,10 +49,10 @@ public class ArrayDeque<T> {
     private void resize(int capacity) {
         T[] tmp = (T[]) new Object[capacity];
         int new_first = capacity / 4;
-        System.arraycopy(items, first, tmp, new_first, size);
-        first = new_first;
-        last = first + size + 1;
+        System.arraycopy(items, 0, tmp, new_first, size);
         items = tmp;
+        first = new_first;
+        last = getCircularPointer(first + size - 1);
     }
 
     public boolean isEmpty() {
@@ -78,7 +78,7 @@ public class ArrayDeque<T> {
         items[first] = null;
         size -= 1;
         first = getCircularPointer(first + 1);
-        if (size <= items.length / 4) {
+        if (size <= items.length / 4 && items.length > 8) {
             resize(size * 2);
         }
         return item;
@@ -91,8 +91,8 @@ public class ArrayDeque<T> {
         T item = items[last];
         items[last] = null;
         size -= 1;
-        last = getCircularPointer(last + 1);
-        if (size <= items.length / 4) {
+        last = getCircularPointer(last - 1);
+        if (size <= items.length / 4 && items.length > 8) {
             resize(size * 2);
         }
         return item;
