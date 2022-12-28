@@ -110,4 +110,25 @@ public class ArrayDeque<T> {
             return items[real_index];
         }
     }
+
+    public boolean equals(Object o) {
+        if (o instanceof ArrayDeque) {
+            return equalsHelper((ArrayDeque) o);
+        } else {
+            return false;
+        }
+    }
+
+    private boolean equalsHelper(ArrayDeque o) {
+        if (this.size() != o.size()) {
+            return false;
+        } else {
+            for (int i = 0; i < this.size(); i++) {
+                if (this.get(i) != o.get(i)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
 }
