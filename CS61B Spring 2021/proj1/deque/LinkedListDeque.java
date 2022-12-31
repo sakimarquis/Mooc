@@ -1,7 +1,7 @@
 package deque;
 
 /** The generic linked list. */
-public class LinkedListDeque<T> {
+public class LinkedListDeque<T> implements Deque<T> {
     private class Node {
         public T item;
         public Node prev;
@@ -31,6 +31,7 @@ public class LinkedListDeque<T> {
         size = 1;
     }
 
+    @Override
     public void addFirst(T item) {
         Node oldFirst = sentinel.next;
         Node newNode = new Node(sentinel, item, oldFirst);
@@ -39,6 +40,7 @@ public class LinkedListDeque<T> {
         size += 1;
     }
 
+    @Override
     public void addLast(T item) {
         Node oldLast = sentinel.prev;
         Node newNode = new Node(oldLast, item, sentinel);
@@ -47,14 +49,12 @@ public class LinkedListDeque<T> {
         size += 1;
     }
 
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
+    @Override
     public int size() {
         return size;
     }
 
+    @Override
     public void printDeque() {
         Node start = sentinel.next;
         while (start != sentinel) {
@@ -64,6 +64,7 @@ public class LinkedListDeque<T> {
         System.out.println();
     }
 
+    @Override
     public T removeFirst() {
         if (isEmpty()) {
             return null;
@@ -75,6 +76,7 @@ public class LinkedListDeque<T> {
         return item;
     }
 
+    @Override
     public T removeLast() {
         if (isEmpty()) {
             return null;
@@ -86,6 +88,7 @@ public class LinkedListDeque<T> {
         return item;
     }
 
+    @Override
     public T get(int index) {
         if (index >= size) {
             return null;
@@ -114,6 +117,7 @@ public class LinkedListDeque<T> {
         }
     }
 
+    @Override
     public boolean equals(Object o) {
         if (o instanceof LinkedListDeque) {
             return equalsHelper((LinkedListDeque) o);
