@@ -1,4 +1,5 @@
 package lec10_inheritance3;
+import java.util.Comparator;
 
 public class DogLauncher {
     public static void main(String[] args) {
@@ -10,7 +11,7 @@ public class DogLauncher {
         Dog d = (Dog) Maximizer.max(dogs);
         System.out.println(d.name);
 
-        Dog.NameComparator nc = Dog.getNameComparator();
+        Comparator<Dog> nc = Dog.getNameComparator();
         if (nc.compare(d1, d2) > 0) {
             d1.bark();
         } else {
