@@ -111,8 +111,11 @@ public class ArrayDeque<T> {
         }
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (o instanceof ArrayDeque) {
+        if (o == this) {
+            return true;
+        } if (o instanceof ArrayDeque) {
             return equalsHelper((ArrayDeque) o);
         } else {
             return false;

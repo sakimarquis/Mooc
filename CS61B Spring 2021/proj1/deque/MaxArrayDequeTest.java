@@ -55,14 +55,13 @@ public class MaxArrayDequeTest {
     private static class strangeComparator implements Comparator<Integer> {
         @Override
         public int compare(Integer x1, Integer x2) {
-            return (x1 - x2) * 100 / (x1 + x2);
+            return x1 % 7 - x2 % 7;
         }
     }
 
     public static Comparator<Integer> getStrangeComparator() {
         return new strangeComparator();
     }
-
 
     @Test
     public void testStringCompare() {
@@ -112,10 +111,10 @@ public class MaxArrayDequeTest {
     public void testStrangeIntegerCompare() {
         Comparator<Integer> c = getStrangeComparator();
         MaxArrayDeque<Integer> L = new MaxArrayDeque<>(c);
-        L.addLast(1);
-        L.addLast(2);
-        L.addLast(3);
-        L.addLast(4);
-        assertEquals(4, (int) L.max());
+        L.addLast(10);
+        L.addLast(20);
+        L.addLast(30);
+        L.addLast(40);
+        assertEquals(20, (int) L.max());
     }
 }
