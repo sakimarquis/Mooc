@@ -6,7 +6,7 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
     private Comparator<T> arrayComparator;
     public MaxArrayDeque(Comparator<T> c) {
         super();
-        Comparator<T> arrayComparator = c;
+        arrayComparator = c;
     }
 
     public T max() {
