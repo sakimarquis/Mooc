@@ -12,14 +12,6 @@ public class GuitarHero {
     private static final Integer KEYBOARD_SIZE = 37;
     private static Deque<GuitarString> GStrings;
 
-//    public GuitarHero () {
-//        GStrings = new ArrayDeque<>();
-//        for (int i = 0; i < KEYBOARD_SIZE; i++) {
-//            double concert = 440.0 * Math.pow(2.0, (i - 24.0) / 12.0);
-//            GuitarString s = new GuitarString(concert);
-//            GStrings.addLast(s);
-//        }
-//    }
     public static void main(String[] args) {
         GStrings = new ArrayDeque<>();
         for (int i = 0; i < KEYBOARD_SIZE; i++) {
@@ -54,4 +46,3 @@ public class GuitarHero {
         }
     }
 }
-
