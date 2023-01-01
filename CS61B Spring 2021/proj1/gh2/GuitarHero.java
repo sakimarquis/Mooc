@@ -7,24 +7,28 @@ import edu.princeton.cs.algs4.StdDraw;
 /**
  * A client that uses the synthesizer package to replicate a plucked guitar string sound
  */
-public class GuitarHero {
+public abstract class GuitarHero {
     private static final String KEYBOARD = "q2we4r5ty7u8i9op-[=zxdcfvgbnjmk,.;/' ";;
-    private static final Integer KEYBOARD_SIZE = 37;
-    private static Deque<GuitarString> GStrings;
+    public static final Integer KEYBOARD_SIZE = 37;
+    public static Deque<MusicString> musicStrings;
 
-    public static void main(String[] args) {
-        GStrings = new ArrayDeque<>();
+    public static void getMusicString() {
+        musicStrings = new ArrayDeque<>();
         for (int i = 0; i < KEYBOARD_SIZE; i++) {
             double concert = 440.0 * Math.pow(2.0, (i - 24.0) / 12.0);
-            GuitarString s = new GuitarString(concert);
-            GStrings.addLast(s);
+            MusicString s = new GuitarString(concert);
+            musicStrings.addLast(s);
         }
+    }
+
+    public static void main(String[] args) {
+        getMusicString();
         while (true) {
             /* check if the user has typed a key; if so, process it */
             if (StdDraw.hasNextKeyTyped()) {
                 char key = StdDraw.nextKeyTyped();
                 int idx = KEYBOARD.indexOf(key);
-                GuitarString gs = GStrings.get(idx);
+                MusicString gs = musicStrings.get(idx);
                 if (gs != null) {
                     gs.pluck();
                 }
@@ -33,7 +37,7 @@ public class GuitarHero {
             /* compute the superposition of samples */
             double sample = 0.0;
             for (int i = 0; i < KEYBOARD_SIZE; i++) {
-                sample += GStrings.get(i).sample();
+                sample += musicStrings.get(i).sample();
             }
 
             /* play the sample on standard audio */
@@ -41,7 +45,7 @@ public class GuitarHero {
 
             /* advance the simulation of each guitar string by one step */
             for (int i = 0; i < KEYBOARD_SIZE; i++) {
-                GStrings.get(i).tic();
+                musicStrings.get(i).tic();
             }
         }
     }
