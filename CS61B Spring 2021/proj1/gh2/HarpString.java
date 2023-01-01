@@ -2,7 +2,6 @@ package gh2;
 
 public class HarpString extends GuitarString {
     private static final double DECAY = -0.999;
-
     public HarpString(double frequency) {
         super(frequency);
     }
