@@ -5,14 +5,12 @@ import java.io.Serializable;
 import static capers.Utils.*;
 
 /** Represents a dog that can be serialized.
- * @author TODO
+ * @author hdx
 */
 public class Dog { // TODO
 
     /** Folder that dogs live in. */
-    static final File DOG_FOLDER = null; // TODO (hint: look at the `join`
-                                         //      function in Utils)
-
+    static final File DOG_FOLDER = join(".capers", "dogs");
     /** Age of dog. */
     private int age;
     /** Breed of dog. */
