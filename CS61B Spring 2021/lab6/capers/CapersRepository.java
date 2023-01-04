@@ -29,7 +29,12 @@ public class CapersRepository {
      *    - story -- file containing the current story
      */
     public static void setupPersistence() {
-        // TODO
+        if (!CAPERS_FOLDER.exists()){
+            CAPERS_FOLDER.mkdir();
+        }
+        if (!Dog.DOG_FOLDER.exists()){
+            Dog.DOG_FOLDER.mkdir();
+        }
     }
 
     /**
@@ -38,7 +43,13 @@ public class CapersRepository {
      * @param text String of the text to be appended to the story
      */
     public static void writeStory(String text) {
-        // TODO
+        File storyFile = join(CAPERS_FOLDER, "story");
+        if (!storyFile.exists()) {
+            writeContents(storyFile, text);
+        } else {
+            writeContents(storyFile, readContentsAsString(storyFile) + "\n" + text);
+        }
+        System.out.println(readContentsAsString(storyFile));
     }
 
     /**
@@ -47,7 +58,7 @@ public class CapersRepository {
      * Also prints out the dog's information using toString().
      */
     public static void makeDog(String name, String breed, int age) {
-        // TODO
+        //Dog dog = new Dog(args[1], args[2], Integer.parseInt(args[3]));
     }
 
     /**
