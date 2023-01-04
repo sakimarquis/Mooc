@@ -1,11 +1,11 @@
 package capers;
 
 import java.io.File;
-
+import java.util.Arrays;
 import static capers.Utils.*;
 
 /** Canine Capers: A Gitlet Prelude.
- * @author TODO
+ * @author hdx
 */
 public class Main {
     /**
