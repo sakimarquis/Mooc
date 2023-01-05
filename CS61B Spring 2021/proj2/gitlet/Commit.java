@@ -26,8 +26,13 @@ public class Commit implements Serializable {
         this.message = message;
         this.files = files;
         this.parent = parent;
-        this.timestamp = new Date();
         this.blobsUID = new HashSet<>();
+        addBlobsUID(files);
+        if (parent == null) {
+            this.timestamp = new Date(0);
+        } else {
+            this.timestamp = new Date();
+        }
         this.UID = Utils.sha1(message, timestamp.toString(), parent, blobsUID.toString());
     }
 
@@ -47,12 +52,10 @@ public class Commit implements Serializable {
         return this.blobsUID;
     }
 
-    public HashSet<String> addBlobsUID(String[] files) {
+    public void addBlobsUID(String[] files) {
         for (String file : files) {
-            File f = new File(file);
-            Blob b = new Blob(f);
-            b.dump();
-            this.blobsUID.add(b.getUID());
+            Blob blob = new Blob(new File(file));
+            this.blobsUID.add(blob.getUID());
         }
     }
 
@@ -60,5 +63,9 @@ public class Commit implements Serializable {
         File folder = new File(".gitlet/objects/" + UID.substring(0, 2) + "/");
         File file = Utils.join(folder, UID.substring(2, 42));
         Utils.writeObject(folder, this);
+    }
+
+    public static Commit fromFile(File file) {
+        return Utils.readObject(file, Commit.class);
     }
 }

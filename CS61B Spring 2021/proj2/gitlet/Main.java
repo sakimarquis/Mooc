@@ -24,7 +24,7 @@ public class Main {
                 Repository.add(args[1]);
             case "commit":
                 validateNumArgs("commit", args, 2);
-                Repository.commit(args[1]);
+                //Repository.commit(args[1]);
             case "rm":
                 break;
             case "log":

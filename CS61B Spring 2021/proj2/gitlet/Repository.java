@@ -33,6 +33,7 @@ public class Repository {
         }
         // Get the current working directory
         Commit initial = new Commit("initial commit", null, null);
+        initial.dump();
     }
 
     /** Adds the file to the staging area. */
@@ -52,6 +53,30 @@ public class Repository {
         } else {
             writeContents(fileInStagingArea, fileContents);
         }
-
     }
+//
+//    public static void commit(String message) {
+//        if (message.equals("")) {
+//            System.out.println("Please enter a commit message.");
+//        } else {
+//            File stagingArea = join(GITLET_DIR, "stagingArea");
+//            String[] files = stagingArea.list();
+//            if (files.length == 0) {
+//                System.out.println("No changes added to the commit.");
+//            } else {
+//                File head = join(GITLET_DIR, "head");
+//                String headContents = readContentsAsString(head);
+//                Commit parent = Commit.fromFile(new File(headContents));
+//                Commit commit = new Commit(message, files, parent.getUID());
+//                commit.dump();
+//                writeContents(head, commit.getUID());
+//                for (String file : files) {
+//                    File fileInStagingArea = join(stagingArea, file);
+//                    File fileInWorkingDir = join(CWD, file);
+//                    writeContents(fileInWorkingDir, readContents(fileInStagingArea));
+//                    fileInStagingArea.delete();
+//                }
+//            }
+//        }
+//    }
 }
