@@ -19,8 +19,11 @@ public class Commit {
 
     /** The message of this Commit. */
     private String message;
+    /** The time of this Commit. */
     private Date timestamp;
+    /** The files of this Commit. */
     private String[] files;
+    /** The parent of this Commit. */
     private Commit parent;
 
     public Commit(String message, String[] files, Commit parent) {
