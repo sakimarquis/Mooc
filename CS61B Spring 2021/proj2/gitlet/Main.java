@@ -17,11 +17,14 @@ public class Main {
         String firstArg = args[0];
         switch(firstArg) {
             case "init":
+                validateNumArgs("init", args, 1);
                 Repository.init();
             case "add":
+                validateNumArgs("init", args, 2);
                 Repository.add(args[1]);
             case "commit":
-                break;
+                validateNumArgs("init", args, 2);
+                Repository.commit(args[1]);
             case "rm":
                 break;
             case "log":
@@ -44,6 +47,20 @@ public class Main {
                 break;
             default:
                 Utils.exitWithError(String.format("Unknown command: %s", args[0]));
+        }
+    }
+    /**
+     * Checks the number of arguments versus the expected number,
+     * throws a RuntimeException if they do not match.
+     *
+     * @param cmd Name of command you are validating
+     * @param args Argument array from command line
+     * @param n Number of expected arguments
+     */
+    public static void validateNumArgs(String cmd, String[] args, int n) {
+        if (args.length != n) {
+            throw new RuntimeException(
+                    String.format("Invalid number of arguments for: %s.", cmd));
         }
     }
 }
