@@ -25,5 +25,34 @@ public class Repository {
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
 
-    /* TODO: fill in the rest of this class. */
+    public static void init() {
+        if (GITLET_DIR.exists()) {
+            System.out.println("A Gitlet version-control system already exists in the current directory.");
+        } else {
+            GITLET_DIR.mkdir();
+        }
+        // Get the current working directory
+        File cwd = new File(System.getProperty("user.dir"));
+        Commit initial = new Commit("initial commit", null, null);
+    }
+
+    /** Adds the file to the staging area. */
+    public static void add(String filename) {
+        File f = new File(filename);
+        byte[] fileContents = readContents(f);
+        String fileContentsString = Utils.sha1(fileContents);
+        File stagingArea = join(GITLET_DIR, "stagingArea");
+        File fileInStagingArea = join(stagingArea, filename);
+        if (fileInStagingArea.exists()) {
+            String fileInStagingAreaContents = readContentsAsString(fileInStagingArea);
+            if (fileContentsString.equals(fileInStagingAreaContents)) {
+                System.out.println("File has not been modified since the last commit.");
+            } else {
+                writeContents(fileInStagingArea, fileContents);
+            }
+        } else {
+            writeContents(fileInStagingArea, fileContents);
+        }
+
+    }
 }
