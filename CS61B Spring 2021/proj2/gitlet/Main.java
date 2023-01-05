@@ -21,7 +21,7 @@ public class Main {
             case "add":
                 Repository.add(args[1]);
             case "commit":
-                break
+                break;
             case "rm":
                 break;
             case "log":
