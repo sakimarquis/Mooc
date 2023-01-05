@@ -11,8 +11,7 @@ public class Main {
      */
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.out.println("Must have at least one argument");
-            System.exit(-1);
+            Utils.exitWithError("Please enter a command.");
         }
 
         String firstArg = args[0];
@@ -43,6 +42,8 @@ public class Main {
                 break;
             case "merge":
                 break;
+            default:
+                Utils.exitWithError(String.format("Unknown command: %s", args[0]));
         }
     }
 }
