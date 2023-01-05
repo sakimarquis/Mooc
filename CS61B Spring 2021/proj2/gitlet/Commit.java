@@ -1,35 +1,34 @@
 package gitlet;
 
+import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 
 /** Represents a gitlet commit object.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
- *
  *  @author hdx
  */
-public class Commit {
-    /**
-     * TODO: add instance variables here.
-     *
-     * List all instance variables of the Commit class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided one example for `message`.
-     */
-
+public class Commit implements Serializable {
     /** The message of this Commit. */
-    private String message;
+    private final String message;
     /** The time of this Commit. */
-    private Date timestamp;
-    /** The files of this Commit. */
+    private final Date timestamp;
+    /** The *one* file of this Commit. */
     private String[] files;
-    /** The parent of this Commit. */
-    private Commit parent;
+    /** The parent of this Commit. We use string not Commit to avoid serialize problem*/
+    private final String parent;
+    /** The pointer points to the UID of the blob of this Commit. */
+    private final HashSet<String> blobsUID;
+    /** The UID of this Commit. */
+    private final String UID;
 
-    public Commit(String message, String[] files, Commit parent) {
+    public Commit(String message, String[] files, String parent) {
         this.message = message;
         this.files = files;
         this.parent = parent;
+        this.timestamp = new Date();
+        this.blobsUID = new HashSet<>();
+        this.UID = Utils.sha1(message, timestamp.toString(), parent, blobsUID.toString());
     }
 
     public String getMessage() {
@@ -40,7 +39,26 @@ public class Commit {
         return this.timestamp;
     }
 
-    public Commit getParent() {
+    public String getParent() {
         return this.parent;
+    }
+
+    public HashSet<String> getBlobsUID() {
+        return this.blobsUID;
+    }
+
+    public HashSet<String> addBlobsUID(String[] files) {
+        for (String file : files) {
+            File f = new File(file);
+            Blob b = new Blob(f);
+            b.dump();
+            this.blobsUID.add(b.getUID());
+        }
+    }
+
+    public void dump() {
+        File folder = new File(".gitlet/objects/" + UID.substring(0, 2) + "/");
+        File file = Utils.join(folder, UID.substring(2, 42));
+        Utils.writeObject(folder, this);
     }
 }

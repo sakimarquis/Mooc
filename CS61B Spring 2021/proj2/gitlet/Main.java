@@ -20,10 +20,10 @@ public class Main {
                 validateNumArgs("init", args, 1);
                 Repository.init();
             case "add":
-                validateNumArgs("init", args, 2);
+                validateNumArgs("add", args, 2);
                 Repository.add(args[1]);
             case "commit":
-                validateNumArgs("init", args, 2);
+                validateNumArgs("commit", args, 2);
                 Repository.commit(args[1]);
             case "rm":
                 break;

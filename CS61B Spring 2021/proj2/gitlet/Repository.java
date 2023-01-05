@@ -9,7 +9,7 @@ import static gitlet.Utils.*;
  *  TODO: It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
- *  @author TODO
+ *  @author hdx
  */
 public class Repository {
     /**
@@ -20,9 +20,9 @@ public class Repository {
      * variable is used. We've provided two examples for you.
      */
 
-    /** The current working directory. */
+    /** The current working directory as File. */
     public static final File CWD = new File(System.getProperty("user.dir"));
-    /** The .gitlet directory. */
+    /** The .gitlet directory as File (DIR). */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
 
     public static void init() {
@@ -32,7 +32,6 @@ public class Repository {
             GITLET_DIR.mkdir();
         }
         // Get the current working directory
-        File cwd = new File(System.getProperty("user.dir"));
         Commit initial = new Commit("initial commit", null, null);
     }
 
