@@ -4,6 +4,11 @@ import java.io.File;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 
+/** Represents a gitlet blob object.
+ * It is a file in the .gitlet/object directory. It has a file name and content.
+ * We can use UID to retrieve it.
+ *  @author hdx
+ */
 public class Blob implements Serializable {
     private final String UID;
     private final byte[] content;
