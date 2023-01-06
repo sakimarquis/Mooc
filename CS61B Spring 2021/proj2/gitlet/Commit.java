@@ -27,7 +27,9 @@ public class Commit implements Serializable {
         this.files = files;
         this.parent = parent;
         this.blobsUID = new HashSet<>();
-        addBlobsUID(files);
+        if (files != null) {
+            addBlobsUID(files);
+        }
         if (parent == null) {
             this.timestamp = new Date(0);
         } else {
@@ -61,7 +63,7 @@ public class Commit implements Serializable {
 
     public void dump() {
         File folder = new File(".gitlet/objects/" + UID.substring(0, 2) + "/");
-        File file = Utils.join(folder, UID.substring(2, 42));
+        File file = Utils.join(folder, UID.substring(2, 40));
         Utils.writeObject(folder, this);
     }
 
