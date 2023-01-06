@@ -2,6 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 
 
@@ -13,11 +14,15 @@ public class StagingArea implements Serializable {
     private final HashSet<String> addition;
     /** The files to be removed. */
     private final HashSet<String> removal;
+    /** The location of the staging area. */
     private final File INDEX = new File(".gitlet/index");
+    /** The files that are in the staging area. key is the UID, value is the filenames*/
+    private final HashMap<String, String> files;
 
     public StagingArea() {
         this.addition = new HashSet<>();
         this.removal = new HashSet<>();
+        this.files = new HashMap<>();
     }
 
     public HashSet<String> getAddition() {
@@ -28,18 +33,22 @@ public class StagingArea implements Serializable {
         return this.removal;
     }
 
-    public void addBlob(String UID) {
+    public void addBlob(Blob blob) {
+        String UID = blob.getUID();
         if (removal.contains(UID)) {
             removal.remove(UID);
         }
         addition.add(UID);
+        files.put(UID, blob.getFilename());
     }
 
-    public void removeBlob(String UID) {
+    public void removeBlob(Blob blob) {
+        String UID = blob.getUID();
         if (addition.contains(UID)) {
             addition.remove(UID);
         }
         removal.add(UID);
+        files.put(UID, blob.getFilename());
     }
 
     public void dump() {

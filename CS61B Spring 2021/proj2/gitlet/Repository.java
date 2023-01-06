@@ -20,6 +20,8 @@ public class Repository {
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory as File (DIR). */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
+    /** The staging area. */
+    private static StagingArea STAGING_AREA = new StagingArea();
 
     public static void init() {
         if (GITLET_DIR.exists()) {
@@ -35,25 +37,13 @@ public class Repository {
 
     /** Adds the file to the staging area. */
     public static void add(String filename) {
-        File f = new File(filename);
-        if (!f.exists()) {
+        File file = new File(filename);
+        if (!file.exists()) {
             System.out.println("File does not exist.");
             return;
         }
-        byte[] fileContents = readContents(f);
-        String fileContentsString = Utils.sha1(fileContents);
-        File stagingArea = join(GITLET_DIR, "stagingArea");
-        File fileInStagingArea = join(stagingArea, filename);
-        if (fileInStagingArea.exists()) {
-            String fileInStagingAreaContents = readContentsAsString(fileInStagingArea);
-            if (fileContentsString.equals(fileInStagingAreaContents)) {
-                System.out.println("File has not been modified since the last commit.");
-            } else {
-                writeContents(fileInStagingArea, fileContents);
-            }
-        } else {
-            writeContents(fileInStagingArea, fileContents);
-        }
+        Blob blob = new Blob(file);
+        STAGING_AREA.add(blob.getUID());
     }
 //
 //    public static void commit(String message) {

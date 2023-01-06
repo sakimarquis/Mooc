@@ -12,15 +12,20 @@ import java.nio.charset.StandardCharsets;
 public class Blob implements Serializable {
     private final String UID;
     private final byte[] content;
+    private final String name;
 
     public Blob(File file) {
-        String name = file.getName();
+        this.name = file.getName();
         this.content = Utils.readContents(file);
         this.UID = Utils.sha1(name, content);
     }
 
     public String getUID() {
         return UID;
+    }
+
+    public String getFilename() {
+        return this.name;
     }
 
     public String getContentAsString() {
