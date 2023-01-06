@@ -16,13 +16,21 @@ public class Repository {
      * variable is used. We've provided two examples for you.
      */
 
-    /** The current working directory as File. */
+    /**
+     * The current working directory as File.
+     */
     public static final File CWD = new File(System.getProperty("user.dir"));
-    /** The .gitlet directory as File (DIR). */
+    /**
+     * The .gitlet directory as File (DIR).
+     */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
-    /** The staging area. */
+    /**
+     * The staging area.
+     */
     private static StagingArea STAGING_AREA = new StagingArea();
-    /** The current HEAD. */
+    /**
+     * The current HEAD.
+     */
     private static final File HEAD_DIR = join(CWD, ".gitlet/HEAD");
 
     public static void init() {
@@ -39,7 +47,9 @@ public class Repository {
         initial.dump();
     }
 
-    /** Adds a copy of the file as it currently exists to the staging area */
+    /**
+     * Adds a copy of the file as it currently exists to the staging area
+     */
     public static void add(String filename) {
         File file = new File(filename);
         if (!file.exists()) {
@@ -71,7 +81,9 @@ public class Repository {
         }
     }
 
-    /** Creates a new commit, saves tracked files in the current commit and staging Area. */
+    /**
+     * Creates a new commit, saves tracked files in the current commit and staging Area.
+     */
     public static void commit(String message) {
         if (message.equals("")) {
             System.out.println("Please enter a commit message.");
@@ -95,5 +107,52 @@ public class Repository {
         Utils.writeObject(HEAD_DIR, commit.getUID());  //update the HEAD
         STAGING_AREA = new StagingArea();  // clears the staging area.
         STAGING_AREA.dump();
+    }
+
+    /** Removes the file: Unstage the file if it is currently staged for addition. If the file is tracked
+     * in the current commit, stage it for removal and remove the file from the working directory if the
+     * user has not already done so (do not remove it unless it is tracked in the current commit). */
+    public static void rm(String filename) {
+        Blob blob = new Blob(new File(filename));
+        // If the file is currently staged for addition, unstage it.
+        if (STAGING_AREA.getStagedBlobs().contains(blob)) {
+            STAGING_AREA.removeFromStagingArea(blob);
+            STAGING_AREA.dump();
+            return;
+        }
+
+        // If the file is tracked in the current commit, stage it for removal.
+        String HEAD = readObject(HEAD_DIR, String.class);
+        Commit commit = Commit.fromUID(HEAD);
+        if (commit.getTrackedBlobs().containsKey(filename)) {
+            STAGING_AREA.removeBlob(blob);
+            STAGING_AREA.dump();
+            // remove the file from the working directory if the user has not already done so.
+            File file = new File(filename);
+            if (file.exists()) {
+                file.delete();
+            }
+            return;
+        }
+
+        // If the file is not tracked in the current commit, print an error message.
+        System.out.println("No reason to remove the file.");
+    }
+
+    /**  Starting at the current head commit, display information about each commit
+     * backwards along the commit tree until the initial commit, following the first parent commit links,
+     * ignoring any second parents found in merge commits. For every node in this history, the information
+     * it should display is the commit id, the time the commit was made, and the commit message.*/
+    public static void log() {
+        String HEAD = readObject(HEAD_DIR, String.class);
+        Commit commit = Commit.fromUID(HEAD);
+        while (commit != null) {
+            System.out.println("===");
+            System.out.println("commit " + commit.getUID());
+            System.out.println("Date: " + commit.getTimestamp());
+            System.out.println(commit.getMessage());
+            System.out.println();
+            commit = Commit.fromUID(commit.getParent());
+        }
     }
 }

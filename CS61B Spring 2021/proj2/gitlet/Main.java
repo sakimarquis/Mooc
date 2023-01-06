@@ -27,9 +27,14 @@ public class Main {
             case "commit":
                 validateNumArgs("commit", args, 2);
                 Repository.commit(args[1]);
+                break;
             case "rm":
+                validateNumArgs("rm", args, 2);
+                Repository.rm(args[1]);
                 break;
             case "log":
+                validateNumArgs("log", args, 1);
+                Repository.log();
                 break;
             case "global-log":
                 break;
