@@ -22,6 +22,8 @@ public class Repository {
     public static final File GITLET_DIR = join(CWD, ".gitlet");
     /** The staging area. */
     private static StagingArea STAGING_AREA = new StagingArea();
+    /** The current HEAD. */
+    private static String HEAD = null;
 
     public static void init() {
         if (GITLET_DIR.exists()) {
@@ -31,11 +33,12 @@ public class Repository {
             GITLET_DIR.mkdir();
         }
         // Get the current working directory
-        Commit initial = new Commit("initial commit", null, null);
+        Commit initial = new Commit("initial commit", null, HEAD);
+        HEAD = initial.getUID();
         initial.dump();
     }
 
-    /** Adds the file to the staging area. */
+    /** Adds a copy of the file as it currently exists to the staging area */
     public static void add(String filename) {
         File file = new File(filename);
         if (!file.exists()) {
@@ -43,7 +46,22 @@ public class Repository {
             return;
         }
         Blob blob = new Blob(file);
-        STAGING_AREA.add(blob.getUID());
+        STAGING_AREA.addBlob(blob);
+        STAGING_AREA.dump();
+    }
+
+    /** Creates a new commit, saves tracked files in the current commit and staging Area. */
+    public static void commit(String message) {
+        if (message.equals("")) {
+            System.out.println("Please enter a commit message.");
+            return;
+        }
+        for (Blob blob : STAGING_AREA.getStagedBlobs()) {
+            blob.dump();
+        }
+        Commit commit = new Commit(message, STAGING_AREA.getAdditionUID(), HEAD);
+        commit.dump();
+        STAGING_AREA = new StagingArea();  // clear the staging area
     }
 //
 //    public static void commit(String message) {

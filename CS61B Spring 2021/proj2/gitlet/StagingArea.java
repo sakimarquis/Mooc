@@ -2,7 +2,6 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.HashSet;
 
 
@@ -11,44 +10,47 @@ import java.util.HashSet;
  * */
 public class StagingArea implements Serializable {
     /** The files to be added. */
-    private final HashSet<String> addition;
+    private final HashSet<String> additionUID;
     /** The files to be removed. */
-    private final HashSet<String> removal;
+    private final HashSet<String> removalUID;
     /** The location of the staging area. */
     private final File INDEX = new File(".gitlet/index");
-    /** The files that are in the staging area. key is the UID, value is the filenames*/
-    private final HashMap<String, String> files;
+    /** The files that are in the staging area. key is the UID, value is the blob*/
+    private final HashSet<Blob> blobs;
 
     public StagingArea() {
-        this.addition = new HashSet<>();
-        this.removal = new HashSet<>();
-        this.files = new HashMap<>();
+        this.additionUID = new HashSet<>();
+        this.removalUID = new HashSet<>();
+        this.blobs = new HashSet<>();
     }
 
-    public HashSet<String> getAddition() {
-        return this.addition;
+    public HashSet<String> getAdditionUID() {
+        return this.additionUID;
     }
 
-    public HashSet<String> getRemoval() {
-        return this.removal;
+    public HashSet<String> getRemovalUID() {
+        return this.removalUID;
+    }
+
+    public HashSet<Blob> getStagedBlobs() {
+        return this.blobs;
     }
 
     public void addBlob(Blob blob) {
         String UID = blob.getUID();
-        if (removal.contains(UID)) {
-            removal.remove(UID);
+        if (removalUID.contains(UID)) {
+            removalUID.remove(UID);
         }
-        addition.add(UID);
-        files.put(UID, blob.getFilename());
+        additionUID.add(UID);
+        blobs.add(blob);
     }
 
     public void removeBlob(Blob blob) {
         String UID = blob.getUID();
-        if (addition.contains(UID)) {
-            addition.remove(UID);
+        if (additionUID.contains(UID)) {
+            additionUID.remove(UID);
         }
-        removal.add(UID);
-        files.put(UID, blob.getFilename());
+        removalUID.add(UID);
     }
 
     public void dump() {

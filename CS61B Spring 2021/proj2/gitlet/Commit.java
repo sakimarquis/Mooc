@@ -13,29 +13,27 @@ public class Commit implements Serializable {
     private final String message;
     /** The time of this Commit. */
     private final Date timestamp;
-    /** The *one* file of this Commit. */
-    private String[] files;
     /** The parent of this Commit. We use string not Commit to avoid serialize problem*/
     private final String parent;
-    /** The pointer points to the UID of the blob of this Commit. */
-    private final HashSet<String> trackedBlobsUID;
+//    /** The pointer points to the UID of the blob of this Commit. */
+//    private final HashSet<String> trackedBlobsUID;
     /** The UID of this Commit. */
     private final String UID;
 
-    public Commit(String message, String[] files, String parent) {
+    public Commit(String message, HashSet<String> trackedBlobsUID, String parent) {
         this.message = message;
-        this.files = files;
+        /** The filenames of this Commit. */
         this.parent = parent;
-        this.trackedBlobsUID = new HashSet<>();
-        if (files != null) {
-            addBlobsUID(files);
-        }
+//        this.trackedBlobsUID = new HashSet<>();
+//        if (files != null) {
+//            addBlobsUID(files);
+//        }
         if (parent == null) {
             this.timestamp = new Date(0);
         } else {
             this.timestamp = new Date();
         }
-        this.UID = Utils.sha1(message, timestamp.toString(), parent, trackedBlobsUID.toString());
+        this.UID = Utils.sha1(message, timestamp.toString(), parent, trackedBlobsUID);
     }
 
     public String getMessage() {
@@ -50,16 +48,20 @@ public class Commit implements Serializable {
         return this.parent;
     }
 
-    public HashSet<String> getTrackedBlobsUID() {
-        return this.trackedBlobsUID;
+    public String getUID() {
+        return this.UID;
     }
 
-    public void addBlobsUID(String[] files) {
-        for (String file : files) {
-            Blob blob = new Blob(new File(file));
-            this.trackedBlobsUID.add(blob.getUID());
-        }
-    }
+//    public HashSet<String> getTrackedBlobsUID() {
+//        return this.trackedBlobsUID;
+//    }
+//
+//    public void addBlobsUID(String[] files) {
+//        for (String file : files) {
+//            Blob blob = new Blob(new File(file));
+//            this.trackedBlobsUID.add(blob.getUID());
+//        }
+//    }
 
     public void dump() {
         File folder = new File(".gitlet/objects/" + UID.substring(0, 2) + "/");
