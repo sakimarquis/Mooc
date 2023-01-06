@@ -51,16 +51,22 @@ public class Repository {
         String HEAD = readObject(HEAD_DIR, String.class);
         // get the last commit
         Commit lastCommit = Commit.fromUID(HEAD);
-        // check if the Blob has the same filename as the blob in the last commit
-        if (lastCommit == null || lastCommit.getTrackedBlobs().containsKey(blob.getUID())) {
-            // if not the same, add the file to the staging area
+        // If the Blob has the different filename with all the blobs in the last commit
+        if (!lastCommit.getTrackedBlobs().containsKey(filename)) {
+            // add the blob to the staging area
             STAGING_AREA.addBlob(blob);
             STAGING_AREA.dump();
         } else {
-            // if that same Blob is already in the staging area, remove it
-            if (STAGING_AREA.getStagedBlobs().contains(blob)) {
-                STAGING_AREA.removeFromStagingArea(blob);
+            // If the Blob has the different content (UID) with the blob in the last commit
+            if (!lastCommit.getTrackedBlobs().containsValue(blob.getUID())) {
+                STAGING_AREA.addBlob(blob);
                 STAGING_AREA.dump();
+            } else {
+                // if the Blob has the different content (UID), and it is already in the staging area
+                if (STAGING_AREA.getStagedBlobs().contains(blob)) {
+                    STAGING_AREA.removeFromStagingArea(blob);
+                    STAGING_AREA.dump();
+                }
             }
         }
     }
@@ -79,7 +85,8 @@ public class Repository {
 
         // creates a new commit and dumps it.
         String HEAD = readObject(HEAD_DIR, String.class);
-        Commit commit = new Commit(message, STAGING_AREA.getAdditionUID(), HEAD);
+        Commit commit = Commit.fromUID(HEAD);
+        commit.addBlobs(STAGING_AREA.getStagedBlobs());
         commit.dump();
         Utils.writeObject(HEAD_DIR, commit.getUID());
 
