@@ -78,6 +78,11 @@ public class Repository {
             return;
         }
 
+        if (STAGING_AREA.getStagedBlobs().isEmpty()) {
+            System.out.println("No changes added to the commit.");
+            return;
+        }
+
         // dumps files in the staging area to the current commit.
         for (Blob blob : STAGING_AREA.getStagedBlobs()) {
             blob.dump();
@@ -86,11 +91,9 @@ public class Repository {
         // creates a new commit and dumps it.
         String HEAD = readObject(HEAD_DIR, String.class);
         Commit commit = Commit.fromUID(HEAD);
-        commit.addBlobs(STAGING_AREA.getStagedBlobs());
-        commit.dump();
-        Utils.writeObject(HEAD_DIR, commit.getUID());
-
-        // clears the staging area.
-        STAGING_AREA = new StagingArea();
+        commit.update(STAGING_AREA.getStagedBlobs(), message);
+        Utils.writeObject(HEAD_DIR, commit.getUID());  //update the HEAD
+        STAGING_AREA = new StagingArea();  // clears the staging area.
+        STAGING_AREA.dump();
     }
 }
