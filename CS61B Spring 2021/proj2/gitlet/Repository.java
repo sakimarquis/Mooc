@@ -3,12 +3,8 @@ package gitlet;
 import java.io.File;
 import static gitlet.Utils.*;
 
-// TODO: any imports you need here
 
 /** Represents a gitlet repository.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
- *
  *  @author hdx
  */
 public class Repository {
@@ -28,6 +24,7 @@ public class Repository {
     public static void init() {
         if (GITLET_DIR.exists()) {
             System.out.println("A Gitlet version-control system already exists in the current directory.");
+            return;
         } else {
             GITLET_DIR.mkdir();
         }
@@ -39,6 +36,10 @@ public class Repository {
     /** Adds the file to the staging area. */
     public static void add(String filename) {
         File f = new File(filename);
+        if (!f.exists()) {
+            System.out.println("File does not exist.");
+            return;
+        }
         byte[] fileContents = readContents(f);
         String fileContentsString = Utils.sha1(fileContents);
         File stagingArea = join(GITLET_DIR, "stagingArea");

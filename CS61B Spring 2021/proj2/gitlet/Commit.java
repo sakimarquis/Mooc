@@ -18,7 +18,7 @@ public class Commit implements Serializable {
     /** The parent of this Commit. We use string not Commit to avoid serialize problem*/
     private final String parent;
     /** The pointer points to the UID of the blob of this Commit. */
-    private final HashSet<String> blobsUID;
+    private final HashSet<String> trackedBlobsUID;
     /** The UID of this Commit. */
     private final String UID;
 
@@ -26,7 +26,7 @@ public class Commit implements Serializable {
         this.message = message;
         this.files = files;
         this.parent = parent;
-        this.blobsUID = new HashSet<>();
+        this.trackedBlobsUID = new HashSet<>();
         if (files != null) {
             addBlobsUID(files);
         }
@@ -35,7 +35,7 @@ public class Commit implements Serializable {
         } else {
             this.timestamp = new Date();
         }
-        this.UID = Utils.sha1(message, timestamp.toString(), parent, blobsUID.toString());
+        this.UID = Utils.sha1(message, timestamp.toString(), parent, trackedBlobsUID.toString());
     }
 
     public String getMessage() {
@@ -50,14 +50,14 @@ public class Commit implements Serializable {
         return this.parent;
     }
 
-    public HashSet<String> getBlobsUID() {
-        return this.blobsUID;
+    public HashSet<String> getTrackedBlobsUID() {
+        return this.trackedBlobsUID;
     }
 
     public void addBlobsUID(String[] files) {
         for (String file : files) {
             Blob blob = new Blob(new File(file));
-            this.blobsUID.add(blob.getUID());
+            this.trackedBlobsUID.add(blob.getUID());
         }
     }
 
