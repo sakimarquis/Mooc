@@ -22,18 +22,14 @@ public class Commit implements Serializable {
 
     public Commit(String message, HashSet<String> trackedBlobsUID, String parent) {
         this.message = message;
-        /** The filenames of this Commit. */
         this.parent = parent;
-//        this.trackedBlobsUID = new HashSet<>();
-//        if (files != null) {
-//            addBlobsUID(files);
-//        }
         if (parent == null) {
             this.timestamp = new Date(0);
+            this.UID = Utils.sha1(message, timestamp.toString(), null, null);
         } else {
             this.timestamp = new Date();
+            this.UID = Utils.sha1(message, timestamp.toString(), parent, trackedBlobsUID.toString());
         }
-        this.UID = Utils.sha1(message, timestamp.toString(), parent, trackedBlobsUID);
     }
 
     public String getMessage() {

@@ -21,7 +21,6 @@ public class Main {
                 Repository.init();
                 break;
             case "add":
-                System.out.println("add");
                 validateNumArgs("add", args, 2);
                 Repository.add(args[1]);
                 break;

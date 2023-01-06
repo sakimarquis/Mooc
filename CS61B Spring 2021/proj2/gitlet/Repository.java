@@ -34,6 +34,7 @@ public class Repository {
         }
         // Get the current working directory
         Commit initial = new Commit("initial commit", null, null);
+        System.out.println(HEAD_DIR);
         Utils.writeObject(HEAD_DIR, initial.getUID());
         initial.dump();
     }
