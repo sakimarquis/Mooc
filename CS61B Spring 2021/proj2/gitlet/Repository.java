@@ -5,33 +5,26 @@ import static gitlet.Utils.*;
 
 
 /** Represents a gitlet repository.
+ * .gitlet (repository directory).
+ * ├── objects/ (metadata for commits and the blobs objects)
+ * ├── HEAD  (current HEAD)
+ * ├── index  (staging area)
+ * └── refs/
+ *   └── heads/ (branch head)
+ *
  *  @author hdx
  */
 public class Repository {
-    /**
-     * TODO: add instance variables here.
-     *
-     * List all instance variables of the Repository class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided two examples for you.
-     */
-
-    /**
-     * The current working directory as File.
-     */
+    /** The current working directory as File.*/
     public static final File CWD = new File(System.getProperty("user.dir"));
-    /**
-     * The .gitlet directory as File (DIR).
-     */
+    /** The .gitlet directory as File (DIR). */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
-    /**
-     * The staging area.
-     */
+    /** The staging area. */
     private static StagingArea STAGING_AREA = new StagingArea();
-    /**
-     * The current HEAD.
-     */
+    /** The current HEAD. */
     private static final File HEAD_DIR = join(CWD, ".gitlet/HEAD");
+    /** The branch HEAD. */
+    private static final File BRANCH_HEAD_DIR = join(CWD, ".gitlet/refs/heads");
 
     public static void init() {
         if (GITLET_DIR.exists()) {
@@ -128,10 +121,7 @@ public class Repository {
             STAGING_AREA.removeBlob(blob);
             STAGING_AREA.dump();
             // remove the file from the working directory if the user has not already done so.
-            File file = new File(filename);
-            if (file.exists()) {
-                file.delete();
-            }
+            restrictedDelete(filename);
             return;
         }
 

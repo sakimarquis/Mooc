@@ -16,6 +16,8 @@ public class Commit implements Serializable {
     private Date timestamp;
     /** The parent of this Commit. We use string not Commit to avoid serialize problem*/
     private String parent;
+    /** If there is a branch split and merge, we need to store the second parent. */
+    private String secondParent;
     /** The pointer points to the filename and UID pairs of the blob of current Commit.
      * We use HashMap rather than HashSet since it is troublesome to index the blob and get the filename
      * in that blob. (Maybe it is in the staging area or in the object dir.)
@@ -76,7 +78,7 @@ public class Commit implements Serializable {
 
     public void dump() {
         File folder = new File(".gitlet/objects/" + UID.substring(0, 2) + "/");
-        File file = Utils.join(folder, UID.substring(2, 40));
+        File file = Utils.join(folder, UID.substring(2, Utils.UID_LENGTH));
         if (!folder.exists()) {
             folder.mkdirs();
         }
@@ -90,10 +92,28 @@ public class Commit implements Serializable {
     /** Return the commit with the given UID, or null if it doesn't exist. */
     public static Commit fromUID(String UID) {
         File folder = new File(".gitlet/objects/" + UID.substring(0, 2) + "/");
-        File file = Utils.join(folder, UID.substring(2, 40));
+        File file = Utils.join(folder, UID.substring(2, Utils.UID_LENGTH));
         if (!folder.exists()) {
             return null;
         }
         return Utils.readObject(file, Commit.class);
     }
+
+    /** Find the UID of all commits that have the given commit message. */
+    public static HashSet<String> findWithMsg(String message) {
+        HashSet<String> result = new HashSet<>();
+        File folder = new File(".gitlet/objects/");
+        for (File file : folder.listFiles()) {
+            if (file.isDirectory()) {
+                for (File file1 : file.listFiles()) {
+                    Commit commit = Utils.readObject(file1, Commit.class);
+                    if (commit.getMessage().equals(message)) {
+                        result.add(commit.getUID());
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
 }

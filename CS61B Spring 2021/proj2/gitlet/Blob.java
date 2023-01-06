@@ -34,7 +34,7 @@ public class Blob implements Serializable {
 
     public void dump() {
         File folder = new File(".gitlet/objects/" + UID.substring(0, 2) + "/");
-        File file = Utils.join(folder, UID.substring(2, 40));
+        File file = Utils.join(folder, UID.substring(2, Utils.UID_LENGTH));
         if (!folder.exists()) {
             folder.mkdirs();
         }
