@@ -39,7 +39,9 @@ class Utils {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
             for (Object val : vals) {
-                if (val instanceof byte[]) {
+                if (val == null) {
+                    continue;
+                } else if (val instanceof byte[]) {
                     md.update((byte[]) val);
                 } else if (val instanceof String) {
                     md.update(((String) val).getBytes(StandardCharsets.UTF_8));
