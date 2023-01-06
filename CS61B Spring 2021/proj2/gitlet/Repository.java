@@ -47,8 +47,22 @@ public class Repository {
             return;
         }
         Blob blob = new Blob(file);
-        STAGING_AREA.addBlob(blob);
-        STAGING_AREA.dump();
+        // read the current HEAD
+        String HEAD = readObject(HEAD_DIR, String.class);
+        // get the last commit
+        Commit lastCommit = Commit.fromUID(HEAD);
+        // check if the Blob is the same as the blob in the last commit
+        if (lastCommit == null || lastCommit.getTrackedBlobsUID().contains(blob.getUID())) {
+            // if not the same, add the file to the staging area
+            STAGING_AREA.addBlob(blob);
+            STAGING_AREA.dump();
+        } else {
+            // if that same Blob is already in the staging area, remove it
+            if (STAGING_AREA.getStagedBlobs().contains(blob)) {
+                STAGING_AREA.removeFromStagingArea(blob);
+                STAGING_AREA.dump();
+            }
+        }
     }
 
     /** Creates a new commit, saves tracked files in the current commit and staging Area. */
@@ -72,29 +86,4 @@ public class Repository {
         // clears the staging area.
         STAGING_AREA = new StagingArea();
     }
-
-//    public static void commit(String message) {
-//        if (message.equals("")) {
-//            System.out.println("Please enter a commit message.");
-//        } else {
-//            File stagingArea = join(GITLET_DIR, "stagingArea");
-//            String[] files = stagingArea.list();
-//            if (files.length == 0) {
-//                System.out.println("No changes added to the commit.");
-//            } else {
-//                File head = join(GITLET_DIR, "head");
-//                String headContents = readContentsAsString(head);
-//                Commit parent = Commit.fromFile(new File(headContents));
-//                Commit commit = new Commit(message, files, parent.getUID());
-//                commit.dump();
-//                writeContents(head, commit.getUID());
-//                for (String file : files) {
-//                    File fileInStagingArea = join(stagingArea, file);
-//                    File fileInWorkingDir = join(CWD, file);
-//                    writeContents(fileInWorkingDir, readContents(fileInStagingArea));
-//                    fileInStagingArea.delete();
-//                }
-//            }
-//        }
-//    }
 }

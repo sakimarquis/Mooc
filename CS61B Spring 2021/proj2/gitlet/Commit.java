@@ -19,9 +19,12 @@ public class Commit implements Serializable {
 //    private final HashSet<String> trackedBlobsUID;
     /** The UID of this Commit. */
     private final String UID;
+    /** The UID of the tracked blobs of this Commit. */
+    private final HashSet<String> trackedBlobsUID;
 
     public Commit(String message, HashSet<String> trackedBlobsUID, String parent) {
         this.message = message;
+        this.trackedBlobsUID = trackedBlobsUID;
         this.parent = parent;
         if (parent == null) {
             this.timestamp = new Date(0);
@@ -38,6 +41,10 @@ public class Commit implements Serializable {
 
     public Date getTimestamp() {
         return this.timestamp;
+    }
+
+    public HashSet<String> getTrackedBlobsUID() {
+        return this.trackedBlobsUID;
     }
 
     public String getParent() {
@@ -69,6 +76,16 @@ public class Commit implements Serializable {
     }
 
     public static Commit fromFile(File file) {
+        return Utils.readObject(file, Commit.class);
+    }
+
+    /** Return the commit with the given UID, or null if it doesn't exist. */
+    public static Commit fromUID(String UID) {
+        File folder = new File(".gitlet/objects/" + UID.substring(0, 2) + "/");
+        File file = Utils.join(folder, UID.substring(2, 40));
+        if (!folder.exists()) {
+            return null;
+        }
         return Utils.readObject(file, Commit.class);
     }
 }

@@ -53,6 +53,18 @@ public class StagingArea implements Serializable {
         removalUID.add(UID);
     }
 
+    /** Remove the blob from the staging area. */
+    public void removeFromStagingArea(Blob blob) {
+        String UID = blob.getUID();
+        if (additionUID.contains(UID)) {
+            additionUID.remove(UID);
+        }
+        if (removalUID.contains(UID)) {
+            removalUID.remove(UID);
+        }
+        blobs.remove(blob);
+    }
+
     public void dump() {
         Utils.writeObject(INDEX_DIR, this);
     }
