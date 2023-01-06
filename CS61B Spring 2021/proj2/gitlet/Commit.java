@@ -3,7 +3,7 @@ package gitlet;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.HashMap;
 
 /** Represents a gitlet commit object.
  *  @author hdx
@@ -15,16 +15,17 @@ public class Commit implements Serializable {
     private final Date timestamp;
     /** The parent of this Commit. We use string not Commit to avoid serialize problem*/
     private final String parent;
-//    /** The pointer points to the UID of the blob of this Commit. */
-//    private final HashSet<String> trackedBlobsUID;
+    /** The pointer points to the filename and UID pairs of the blob of current Commit.
+     * We use HashMap rather than HashSet since it is troublesome to index the blob and get the filename
+     * in that blob. (Maybe it is in the staging area or in the object dir.)
+     * KEY: filename; value: UID (we don't want conflict of the filename) */
+    private final HashMap<String, String> trackedBlobs;
     /** The UID of this Commit. */
     private final String UID;
-    /** The UID of the tracked blobs of this Commit. */
-    private final HashSet<String> trackedBlobsUID;
 
-    public Commit(String message, HashSet<String> trackedBlobsUID, String parent) {
+    public Commit(String message, HashMap<String, String> trackedBlobsUID, String parent) {
         this.message = message;
-        this.trackedBlobsUID = trackedBlobsUID;
+        this.trackedBlobs = trackedBlobsUID;
         this.parent = parent;
         if (parent == null) {
             this.timestamp = new Date(0);
@@ -43,8 +44,8 @@ public class Commit implements Serializable {
         return this.timestamp;
     }
 
-    public HashSet<String> getTrackedBlobsUID() {
-        return this.trackedBlobsUID;
+    public HashMap<String, String> getTrackedBlobs() {
+        return this.trackedBlobs;
     }
 
     public String getParent() {

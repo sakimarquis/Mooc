@@ -51,8 +51,8 @@ public class Repository {
         String HEAD = readObject(HEAD_DIR, String.class);
         // get the last commit
         Commit lastCommit = Commit.fromUID(HEAD);
-        // check if the Blob is the same as the blob in the last commit
-        if (lastCommit == null || lastCommit.getTrackedBlobsUID().contains(blob.getUID())) {
+        // check if the Blob has the same filename as the blob in the last commit
+        if (lastCommit == null || lastCommit.getTrackedBlobs().containsKey(blob.getUID())) {
             // if not the same, add the file to the staging area
             STAGING_AREA.addBlob(blob);
             STAGING_AREA.dump();
