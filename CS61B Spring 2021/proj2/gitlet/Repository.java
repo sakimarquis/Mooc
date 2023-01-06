@@ -56,12 +56,19 @@ public class Repository {
             System.out.println("Please enter a commit message.");
             return;
         }
+
+        // dumps files in the staging area to the current commit.
         for (Blob blob : STAGING_AREA.getStagedBlobs()) {
             blob.dump();
         }
+
+        // creates a new commit and dumps it.
         Commit commit = new Commit(message, STAGING_AREA.getAdditionUID(), HEAD);
         commit.dump();
-        STAGING_AREA = new StagingArea();  // clear the staging area
+        HEAD = commit.getUID();
+
+        // clears the staging area.
+        STAGING_AREA = new StagingArea();
     }
 //
 //    public static void commit(String message) {
