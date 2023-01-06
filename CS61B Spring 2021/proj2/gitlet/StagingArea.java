@@ -14,7 +14,7 @@ public class StagingArea implements Serializable {
     /** The files to be removed. */
     private final HashSet<String> removalUID;
     /** The location of the staging area. */
-    private final File INDEX = new File(".gitlet/index");
+    private final File INDEX_DIR = new File(".gitlet/index");
     /** The files that are in the staging area. key is the UID, value is the blob*/
     private final HashSet<Blob> blobs;
 
@@ -54,7 +54,7 @@ public class StagingArea implements Serializable {
     }
 
     public void dump() {
-        Utils.writeObject(INDEX, this);
+        Utils.writeObject(INDEX_DIR, this);
     }
 
     public static StagingArea fromFile(File file) {

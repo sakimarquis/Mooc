@@ -23,7 +23,7 @@ public class Repository {
     /** The staging area. */
     private static StagingArea STAGING_AREA = new StagingArea();
     /** The current HEAD. */
-    private static String HEAD = null;
+    private static final File HEAD_DIR = join(CWD, ".gitlet/HEAD");
 
     public static void init() {
         if (GITLET_DIR.exists()) {
@@ -33,8 +33,8 @@ public class Repository {
             GITLET_DIR.mkdir();
         }
         // Get the current working directory
-        Commit initial = new Commit("initial commit", null, HEAD);
-        HEAD = initial.getUID();
+        Commit initial = new Commit("initial commit", null, null);
+        Utils.writeObject(HEAD_DIR, initial.getUID());
         initial.dump();
     }
 
@@ -63,14 +63,15 @@ public class Repository {
         }
 
         // creates a new commit and dumps it.
+        String HEAD = readObject(HEAD_DIR, String.class);
         Commit commit = new Commit(message, STAGING_AREA.getAdditionUID(), HEAD);
         commit.dump();
-        HEAD = commit.getUID();
+        Utils.writeObject(HEAD_DIR, commit.getUID());
 
         // clears the staging area.
         STAGING_AREA = new StagingArea();
     }
-//
+
 //    public static void commit(String message) {
 //        if (message.equals("")) {
 //            System.out.println("Please enter a commit message.");
