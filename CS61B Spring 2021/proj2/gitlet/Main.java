@@ -19,9 +19,12 @@ public class Main {
             case "init":
                 validateNumArgs("init", args, 1);
                 Repository.init();
+                break;
             case "add":
+                System.out.println("add");
                 validateNumArgs("add", args, 2);
                 Repository.add(args[1]);
+                break;
             case "commit":
                 validateNumArgs("commit", args, 2);
                 //Repository.commit(args[1]);
