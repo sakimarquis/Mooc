@@ -64,7 +64,10 @@ public class Commit implements Serializable {
     public void dump() {
         File folder = new File(".gitlet/objects/" + UID.substring(0, 2) + "/");
         File file = Utils.join(folder, UID.substring(2, 40));
-        Utils.writeObject(folder, this);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+        Utils.writeObject(file, this);
     }
 
     public static Commit fromFile(File file) {

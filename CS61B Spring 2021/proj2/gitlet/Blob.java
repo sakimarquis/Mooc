@@ -24,8 +24,11 @@ public class Blob implements Serializable {
 
     public void dump() {
         File folder = new File(".gitlet/objects/" + UID.substring(0, 2) + "/");
-        File file = Utils.join(folder, UID.substring(2, 42));
-        Utils.writeObject(folder, this);
+        File file = Utils.join(folder, UID.substring(2, 40));
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+        Utils.writeObject(file, this);
     }
 
     public static Blob fromFile(File file) {
