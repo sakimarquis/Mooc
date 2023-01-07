@@ -6,12 +6,10 @@ import static gitlet.Utils.*;
 
 /** Represents a gitlet repository.
  * .gitlet (repository directory).
- * ├── objects/ (metadata for commits and the blobs objects)
- * ├── HEAD  (current HEAD)
- * ├── index  (staging area)
- * └── refs/
- *   └── heads/ (branch head)
- *
+ * /objects/ (metadata for commits and the blobs objects)
+ * /HEAD  (current HEAD)
+ * /index  (staging area)
+ * /refs/heads/ (branch head)
  *  @author hdx
  */
 public class Repository {
@@ -35,7 +33,6 @@ public class Repository {
         }
         // Get the current working directory
         Commit initial = new Commit("initial commit", null, null);
-        System.out.println(HEAD_DIR);
         Utils.writeObject(HEAD_DIR, initial.getUID());
         initial.dump();
     }
