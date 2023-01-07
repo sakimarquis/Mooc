@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -17,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /** Assorted utilities.
@@ -243,5 +245,11 @@ class Utils {
             System.out.println(message);
         }
         System.exit(-1);
+    }
+
+    public static List<Path> getFilesRecursively(File dir) throws IOException {
+        return Files.walk(dir.toPath())
+                .filter(Files::isRegularFile)
+                .collect(Collectors.toList());
     }
 }

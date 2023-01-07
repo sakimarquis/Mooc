@@ -2,10 +2,8 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static gitlet.Utils.*;
 
@@ -148,16 +146,36 @@ public class Repository {
     /**  Display information about all commits ever made. */
     public static void globalLog() {
         try {
-            List<Path> filePaths = Files.walk(OBJECT_DIR.toPath())
-                    .filter(Files::isRegularFile)
-                    .collect(Collectors.toList());
+            List<Path> filePaths = getFilesRecursively(OBJECT_DIR);
             for (Path filePath : filePaths) {
-                System.out.println(filePath.toFile());
                 Dumpable dumpObj = Utils.readObject(filePath.toFile(), Dumpable.class);
                 if (dumpObj instanceof Commit) {
                     Commit commit = (Commit) dumpObj;
                     commit.printLog();
                 }
+            }
+        } catch (IOException e) {
+            throw error("IOException");
+        }
+    }
+
+    /** Prints out the ids of all commits that have the given commit message, one per line. */
+    public static void find(String message) {
+        boolean found = false;
+        try {
+            List<Path> filePaths = getFilesRecursively(OBJECT_DIR);
+            for (Path filePath : filePaths) {
+                Dumpable dumpObj = Utils.readObject(filePath.toFile(), Dumpable.class);
+                if (dumpObj instanceof Commit) {
+                    Commit commit = (Commit) dumpObj;
+                    if (commit.getMessage().contains(message)) {
+                        System.out.println(commit.getUID());
+                        found = true;
+                    }
+                }
+            }
+            if (!found) {
+                System.out.println("Found no commit with that message.");
             }
         } catch (IOException e) {
             throw error("IOException");

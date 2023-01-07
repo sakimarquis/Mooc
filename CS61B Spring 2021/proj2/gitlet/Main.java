@@ -42,7 +42,7 @@ public class Main {
                 break;
             case "find":
                 validateNumArgs("find", args, 2);
-                System.out.println("Not implement find yet.");
+                Repository.find(args[1]);
                 break;
             case "status":
                 break;
