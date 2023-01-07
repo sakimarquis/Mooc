@@ -5,11 +5,11 @@ import static gitlet.Utils.*;
 
 
 /** Represents a gitlet repository.
- * .gitlet (repository directory).
- * /objects/ (metadata for commits and the blobs objects)
- * /HEAD  (current HEAD)
- * /index  (staging area)
- * /refs/heads/ (branch head)
+ * .gitlet/  (repository directory).
+ * .gitlet/objects/  (metadata for commits and the blobs objects)
+ * .gitlet/HEAD  (current HEAD)
+ * .gitlet/index  (staging area)
+ * .gitlet/refs/heads/  (branch head)
  *  @author hdx
  */
 public class Repository {
