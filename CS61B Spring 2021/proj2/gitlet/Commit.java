@@ -9,7 +9,7 @@ import java.util.HashSet;
 /** Represents a gitlet commit object.
  *  @author hdx
  */
-public class Commit implements Serializable {
+public class Commit implements Dumpable {
     /** The message of this Commit. */
     private String message;
     /** The time of this Commit. */
@@ -118,6 +118,14 @@ public class Commit implements Serializable {
             }
         }
         return result;
+    }
+
+    public void printLog() {
+        System.out.println("===");
+        System.out.println("commit " + this.getUID());
+        System.out.println("Date: " + this.getTimestamp());
+        System.out.println(this.getMessage());
+        System.out.println();
     }
 
 }

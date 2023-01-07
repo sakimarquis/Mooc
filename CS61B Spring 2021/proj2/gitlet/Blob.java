@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
  * We can use UID to retrieve it.
  *  @author hdx
  */
-public class Blob implements Serializable {
+public class Blob implements Dumpable {
     private final String UID;
     private final byte[] content;
     private final String name;

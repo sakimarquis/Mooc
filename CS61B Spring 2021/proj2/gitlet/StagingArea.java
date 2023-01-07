@@ -8,7 +8,7 @@ import java.util.HashSet;
 /** Staging area for gitlet.
  * stores the UID of the files that are staged for addition and removal.
  * */
-public class StagingArea implements Serializable {
+public class StagingArea implements Dumpable {
     /** The files to be added. */
     private final HashSet<String> additionUID;
     /** The files to be removed. */

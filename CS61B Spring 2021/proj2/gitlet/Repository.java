@@ -1,6 +1,12 @@
 package gitlet;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static gitlet.Utils.*;
 
 
@@ -23,6 +29,8 @@ public class Repository {
     private static final File HEAD_DIR = join(CWD, ".gitlet/HEAD");
     /** The branch HEAD. */
     private static final File BRANCH_HEAD_DIR = join(CWD, ".gitlet/refs/heads");
+    /** The dump object directory. */
+    private static final File OBJECT_DIR = join(CWD, ".gitlet/objects");
 
     public static void init() {
         if (GITLET_DIR.exists()) {
@@ -132,12 +140,27 @@ public class Repository {
         String parent = readObject(HEAD_DIR, String.class);
         while (parent != null) {
             Commit commit = Commit.fromUID(parent);
-            System.out.println("===");
-            System.out.println("commit " + commit.getUID());
-            System.out.println("Date: " + commit.getTimestamp());
-            System.out.println(commit.getMessage());
-            System.out.println();
+            commit.printLog();
             parent = commit.getParent();
+        }
+    }
+
+    /**  Display information about all commits ever made. */
+    public static void globalLog() {
+        try {
+            List<Path> filePaths = Files.walk(OBJECT_DIR.toPath())
+                    .filter(Files::isRegularFile)
+                    .collect(Collectors.toList());
+            for (Path filePath : filePaths) {
+                System.out.println(filePath.toFile());
+                Dumpable dumpObj = Utils.readObject(filePath.toFile(), Dumpable.class);
+                if (dumpObj instanceof Commit) {
+                    Commit commit = (Commit) dumpObj;
+                    commit.printLog();
+                }
+            }
+        } catch (IOException e) {
+            throw error("IOException");
         }
     }
 }

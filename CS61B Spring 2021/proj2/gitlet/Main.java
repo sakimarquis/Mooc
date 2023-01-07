@@ -38,7 +38,7 @@ public class Main {
                 break;
             case "global-log":
                 validateNumArgs("global-log", args, 1);
-                System.out.println("Not implement global-log yet.");
+                Repository.globalLog();
                 break;
             case "find":
                 validateNumArgs("find", args, 2);
