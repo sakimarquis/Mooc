@@ -37,9 +37,7 @@ public class Repository {
         initial.dump();
     }
 
-    /**
-     * Adds a copy of the file as it currently exists to the staging area
-     */
+    /** Adds a copy of the file as it currently exists to the staging area */
     public static void add(String filename) {
         File file = new File(filename);
         if (!file.exists()) {
@@ -71,14 +69,14 @@ public class Repository {
         }
     }
 
-    /**
-     * Creates a new commit, saves tracked files in the current commit and staging Area.
-     */
+    /** Creates a new commit, saves tracked files in the current commit and staging Area. */
     public static void commit(String message) {
         if (message.equals("")) {
             System.out.println("Please enter a commit message.");
             return;
         }
+
+        STAGING_AREA = StagingArea.load();
 
         if (STAGING_AREA.getStagedBlobs().isEmpty()) {
             System.out.println("No changes added to the commit.");
@@ -131,15 +129,15 @@ public class Repository {
      * ignoring any second parents found in merge commits. For every node in this history, the information
      * it should display is the commit id, the time the commit was made, and the commit message.*/
     public static void log() {
-        String HEAD = readObject(HEAD_DIR, String.class);
-        Commit commit = Commit.fromUID(HEAD);
-        while (commit != null) {
+        String parent = readObject(HEAD_DIR, String.class);
+        while (parent != null) {
+            Commit commit = Commit.fromUID(parent);
             System.out.println("===");
             System.out.println("commit " + commit.getUID());
             System.out.println("Date: " + commit.getTimestamp());
             System.out.println(commit.getMessage());
             System.out.println();
-            commit = Commit.fromUID(commit.getParent());
+            parent = commit.getParent();
         }
     }
 }

@@ -28,7 +28,11 @@ public class Commit implements Serializable {
 
     public Commit(String message, HashMap<String, String> trackedBlobs, String parent) {
         this.message = message;
-        this.trackedBlobs = trackedBlobs;
+        if (trackedBlobs == null) {
+            this.trackedBlobs = new HashMap<>();
+        } else {
+            this.trackedBlobs = trackedBlobs;
+        }
         this.parent = parent;
         if (parent == null) {
             this.timestamp = new Date(0);
