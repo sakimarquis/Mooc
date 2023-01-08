@@ -83,4 +83,9 @@ public class StagingArea implements Dumpable {
     public static StagingArea load() {
         return Utils.readObject(INDEX_DIR, StagingArea.class);
     }
+
+    public static void clear() {
+        StagingArea STAGING_AREA = new StagingArea();
+        STAGING_AREA.dump();
+    }
 }

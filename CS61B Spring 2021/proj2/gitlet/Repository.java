@@ -40,8 +40,7 @@ public class Repository {
         Branch master = new Branch("master", initial.getUID());
         initial.dump();
         master.dump();
-        StagingArea STAGING_AREA = new StagingArea();
-        STAGING_AREA.dump();
+        StagingArea.clear();
     }
 
     /** Adds a copy of the file as it currently exists to the staging area */
@@ -102,8 +101,7 @@ public class Repository {
         Commit commit = Commit.fromUID(HEAD);
         commit.update(STAGING_AREA.getStagedBlobs(), message);
         Utils.writeObject(HEAD_DIR, commit.getUID());  //update the HEAD
-        STAGING_AREA = new StagingArea();  // clears the staging area.
-        STAGING_AREA.dump();
+        StagingArea.clear();
     }
 
     /** Removes the file: Unstage the file if it is currently staged for addition. If the file is tracked
@@ -244,10 +242,7 @@ public class Repository {
      * overwriting the version of the file that’s already there if there is one. The new version of the file is not
      * staged. */
     public static void checkoutFileInCommit(String commitID, String filename) {
-        if (Commit.fromUID(commitID) == null) {
-            System.out.println("No commit with that id exists.");
-            return;
-        }
+        Commit.checkExists(commitID);
 
         Commit commit = Commit.fromUID(commitID);
 
@@ -267,16 +262,8 @@ public class Repository {
      * branch but are not present in the checked-out branch are deleted. The staging area is cleared, unless the
      * checked-out branch is the current branch. */
     public static void checkoutBranch(String branchName) {
-        if (Branch.getCommitUID(branchName) == null) {
-            System.out.println("No such branch exists.");
-            return;
-        }
-
-        // If that branch is the current branch
-        if (branchName.equals(readObject(HEAD_DIR, String.class))) {
-            System.out.println("No need to checkout the current branch.");
-            return;
-        }
+        Branch.checkExists(branchName);
+        Branch.checkCurrentBranch(branchName);
 
         // delete files that are tracked in the current branch
         String HEAD = readObject(HEAD_DIR, String.class);
@@ -306,9 +293,7 @@ public class Repository {
         // update the current HEAD pointer
         writeObject(HEAD_DIR, commitUID);
 
-        // clear the staging area
-        StagingArea STAGING_AREA = new StagingArea();
-        STAGING_AREA.dump();
+        StagingArea.clear();
     }
 
     /** Creates a new branch with the given name, and points it at the current head commit. */
@@ -327,4 +312,45 @@ public class Repository {
         }
         Branch.delete(branchName);
     }
+
+    /** Checks out all the files tracked by the given commit. Removes tracked files that are not present in that commit.
+     *  Also moves the current branch’s head to that commit node. The staging area is cleared.
+     *  The command is essentially checkout of an arbitrary commit that also changes the current branch head. */
+    public static void reset(String commitID) {
+        Commit.checkExists(commitID);
+
+        // delete files that are tracked in the current branch
+        String HEAD = readObject(HEAD_DIR, String.class);
+        Commit currentCommit = Commit.fromUID(HEAD);
+        HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
+        for (String filename : currentTrackedBlobs.keySet()) {
+            if (!currentTrackedBlobs.containsKey(filename)) {
+                restrictedDelete(filename);
+            }
+        }
+
+        // copy files from the checked-out branch
+        Commit commit = Commit.fromUID(commitID);
+        HashMap<String, String> trackedBlobs = commit.getTrackedBlobs();
+        for (String filename : trackedBlobs.keySet()) {
+            Blob blob = Blob.fromUID(trackedBlobs.get(filename));
+            // If a working file is untracked in the current branch and would be overwritten by the checkout
+            File file = new File(filename);
+            if (file.exists()) {
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                return;
+            }
+            blob.writeToFile(filename);
+        }
+
+        // update the current HEAD pointer
+        writeObject(HEAD_DIR, commitID);
+
+        StagingArea.clear();
+    }
+
+
+    /** Below are helper functions. */
+
+    /** delete files that are tracked in the current branch */
 }

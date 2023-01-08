@@ -127,4 +127,9 @@ public class Commit implements Dumpable {
         System.out.println();
     }
 
+    public static void checkExists(String commitID) {
+        if (Commit.fromUID(commitID) == null) {
+            Utils.exitWithError("No commit with that id exists.");
+        }
+    }
 }

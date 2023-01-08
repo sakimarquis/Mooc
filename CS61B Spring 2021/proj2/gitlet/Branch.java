@@ -2,6 +2,8 @@ package gitlet;
 
 import java.io.File;
 
+import static gitlet.Utils.readObject;
+
 /** Represent the branch: pointer to the commit. */
 public class Branch implements Dumpable {
     private final String branchName;
@@ -38,5 +40,18 @@ public class Branch implements Dumpable {
         }
         Branch branch = Utils.readObject(file, Branch.class);
         return branch.commitUID;
+    }
+
+    public static void checkExists(String branchName) {
+        File file = Utils.join(Repository.BRANCH_DIR, branchName);
+        if (!file.exists()) {
+            Utils.exitWithError("No such branch exists.");
+        }
+    }
+
+    public static void checkCurrentBranch(String branchName) {
+        if (branchName.equals(readObject(Repository.HEAD_DIR, String.class))) {
+            Utils.exitWithError("No need to checkout the current branch.");
+        }
     }
 }
