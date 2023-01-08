@@ -236,6 +236,12 @@ public class Repository {
             return;
         }
 
+        // If that branch is the current branch
+        if (branchName.equals(readObject(HEAD_DIR, String.class))) {
+            System.out.println("No need to checkout the current branch.");
+            return;
+        }
+
         // delete files that are tracked in the current branch
         String HEAD = readObject(HEAD_DIR, String.class);
         Commit currentCommit = Commit.fromUID(HEAD);
@@ -247,17 +253,26 @@ public class Repository {
         }
 
         // copy files from the checked-out branch
-        String branch = Branch.getCommitUID(branchName);
-        Commit commit = Commit.fromUID(branch);
+        String commitUID = Branch.getCommitUID(branchName);
+        Commit commit = Commit.fromUID(commitUID);
         HashMap<String, String> trackedBlobs = commit.getTrackedBlobs();
         for (String filename : trackedBlobs.keySet()) {
             Blob blob = Blob.fromUID(trackedBlobs.get(filename));
+            // If a working file is untracked in the current branch and would be overwritten by the checkout
+            File file = new File(filename);
+            if (file.exists()) {
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                return;
+            }
             blob.writeToFile(filename);
         }
 
-        // update the current branch
-        Branch branch = new Branch(branchName, commit.getUID());
-        branch.dump();
+        // update the current HEAD pointer
+        writeObject(HEAD_DIR, commitUID);
+
+        // clear the staging area
+        STAGING_AREA = new StagingArea();
+        STAGING_AREA.dump();
     }
 
     /** Creates a new branch with the given name, and points it at the current head commit. */
