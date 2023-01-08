@@ -236,6 +236,7 @@ public class Repository {
         }
         Blob blob = Blob.fromUID(commit.getTrackedBlobs().get(filename));
         blob.writeToFile(filename);
+        //
     }
 
     /** checkout [commit id] -- [file name]:
@@ -317,4 +318,13 @@ public class Repository {
         branch.dump();
     }
 
+    /** Deletes the branch with the given name. This only means to delete the pointer associated with the branch;
+     * it does not mean to delete all commits that were created under the branch, or anything like that. */
+    public static void rmBranch(String branchName) {
+        if (Branch.getCommitUID(branchName).equals(readObject(HEAD_DIR, String.class))) {
+            System.out.println("Cannot remove the current branch.");
+            return;
+        }
+        Branch.delete(branchName);
+    }
 }

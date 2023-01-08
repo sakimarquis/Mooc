@@ -21,6 +21,16 @@ public class Branch implements Dumpable {
         Utils.writeObject(file, this);
     }
 
+    /** delete the branch. */
+    public static void delete(String branchName) {
+        File file = Utils.join(Repository.BRANCH_DIR, branchName);
+        if (!file.exists()) {
+            System.out.println("A branch with that name does not exist.");
+            return;
+        }
+        file.delete();
+    }
+
     public static String getCommitUID(String branchName) {
         File file = Utils.join(Repository.BRANCH_DIR, branchName);
         if (!file.exists()) {
