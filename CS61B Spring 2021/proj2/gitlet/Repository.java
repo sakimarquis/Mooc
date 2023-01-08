@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.HashMap;
 
 import static gitlet.Utils.*;
-
 
 /** Represents a gitlet repository.
  * .gitlet/  (repository directory).
@@ -189,26 +189,76 @@ public class Repository {
          System.out.println("Not implemented yet.");
      }
 
-    /** Checks out all the files tracked by the given commit.
-     * Usage:
-     * 1, checkout -- [file name]:
-     *      Takes the version of the file as it exists in the head commit and puts it in the working directory,
-     *      overwriting the version of the file that’s already there if there is one. The new version of the file
-     *      is not staged.
-     * 2, checkout [commit id] -- [file name]: T
-     *      Takes the version of the file as it exists in the commit with the given id, and puts it in the working
-     *      directory, overwriting the version of the file that’s already there if there is one. The new version of
-     *      the file is not staged.
-     * 3, checkout [branch name]:
-     *      Takes all files in the commit at the head of the given branch, and puts them in the working directory,
-     *      overwriting the versions of the files that are already there if they exist. Also, at the end of this
-     *      command, the given branch will now be considered the current branch (HEAD). Any files that are tracked
-     *      in the current branch but are not present in the checked-out branch are deleted. The staging area is
-     *      cleared, unless the checked-out branch is the current branch.
-     * */
+    /** checkout -- [file name]:
+     * Takes the version of the file as it exists in the head commit and puts it in the working directory, overwriting
+     * the version of the file that’s already there if there is one. The new version of the file is not staged. */
+    public static void checkoutFile(String filename) {
+        String HEAD = readObject(HEAD_DIR, String.class);
+        Commit commit = Commit.fromUID(HEAD);
+        if (!commit.getTrackedBlobs().containsKey(filename)) {
+            System.out.println("File does not exist in that commit.");
+            return;
+        }
+        Blob blob = Blob.fromUID(commit.getTrackedBlobs().get(filename));
+        blob.writeToFile(filename);
+    }
 
+    /** checkout [commit id] -- [file name]:
+     * Takes the version of the file as it exists in the commit with the given id, and puts it in the working directory,
+     * overwriting the version of the file that’s already there if there is one. The new version of the file is not
+     * staged. */
+    public static void checkoutFileInCommit(String commitID, String filename) {
+        if (Commit.fromUID(commitID) == null) {
+            System.out.println("No commit with that id exists.");
+            return;
+        }
 
+        Commit commit = Commit.fromUID(commitID);
 
+        if (!commit.getTrackedBlobs().containsKey(filename)) {
+            System.out.println("File does not exist in that commit.");
+            return;
+        }
+
+        Blob blob = Blob.fromUID(commit.getTrackedBlobs().get(filename));
+        blob.writeToFile(filename);
+    }
+
+    /** checkout [branch name]:
+     * Takes all files in the commit at the head of the given branch, and puts them in the working directory,
+     * overwriting the versions of the files that are already there if they exist. Also, at the end of this command,
+     * the given branch will now be considered the current branch (HEAD). Any files that are tracked in the current
+     * branch but are not present in the checked-out branch are deleted. The staging area is cleared, unless the
+     * checked-out branch is the current branch. */
+    public static void checkoutBranch(String branchName) {
+        if (Branch.getCommitUID(branchName) == null) {
+            System.out.println("No such branch exists.");
+            return;
+        }
+
+        // delete files that are tracked in the current branch
+        String HEAD = readObject(HEAD_DIR, String.class);
+        Commit currentCommit = Commit.fromUID(HEAD);
+        HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
+        for (String filename : currentTrackedBlobs.keySet()) {
+            if (!currentTrackedBlobs.containsKey(filename)) {
+                restrictedDelete(filename);
+            }
+        }
+
+        // copy files from the checked-out branch
+        String branch = Branch.getCommitUID(branchName);
+        Commit commit = Commit.fromUID(branch);
+        HashMap<String, String> trackedBlobs = commit.getTrackedBlobs();
+        for (String filename : trackedBlobs.keySet()) {
+            Blob blob = Blob.fromUID(trackedBlobs.get(filename));
+            blob.writeToFile(filename);
+        }
+
+        // update the current branch
+        Branch branch = new Branch(branchName, commit.getUID());
+        branch.dump();
+    }
 
     /** Creates a new branch with the given name, and points it at the current head commit. */
     public static void branch(String branchName) {

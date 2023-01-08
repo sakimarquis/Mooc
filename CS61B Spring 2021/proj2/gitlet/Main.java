@@ -51,7 +51,16 @@ public class Main {
                 Repository.status();
                 break;
             case "checkout":
-                System.out.println(Arrays.toString(args) + " " + args.length);
+                if (args.length == 2) {
+                    Repository.checkoutBranch(args[1]);
+                } else if (args.length == 3 && args[1].equals("--")) {
+                    Repository.checkoutFile(args[2]);
+                } else if (args.length == 4 && args[2].equals("--")) {
+                    Repository.checkoutFileInCommit(args[2], args[3]);
+                } else {
+                    throw new RuntimeException(
+                            String.format("Invalid number of arguments for: %s.", args));
+                }
                 break;
             case "branch":
                 validateNumArgs("branch", args, 2);

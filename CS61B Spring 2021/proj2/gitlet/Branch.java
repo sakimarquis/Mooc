@@ -20,4 +20,13 @@ public class Branch implements Dumpable {
         File file = Utils.join(folder, branchName);
         Utils.writeObject(file, this);
     }
+
+    public static String getCommitUID(String branchName) {
+        File file = Utils.join(Repository.BRANCH_DIR, branchName);
+        if (!file.exists()) {
+            return null;
+        }
+        Branch branch = Utils.readObject(file, Branch.class);
+        return branch.commitUID;
+    }
 }
