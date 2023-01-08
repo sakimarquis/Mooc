@@ -13,7 +13,7 @@ import static gitlet.Utils.*;
  * .gitlet/objects/  (metadata for commits and the blobs objects)
  * .gitlet/HEAD  (current HEAD)
  * .gitlet/index  (staging area)
- * .gitlet/refs/heads/  (branch head)
+ * .gitlet/refs/heads/  (branch pointers including the master branch)
  *  @author hdx
  */
 public class Repository {
@@ -39,7 +39,9 @@ public class Repository {
         // Get the current working directory
         Commit initial = new Commit("initial commit", null, null);
         Utils.writeObject(HEAD_DIR, initial.getUID());
+        Branch master = new Branch("master", initial.getUID());
         initial.dump();
+        master.dump();
     }
 
     /** Adds a copy of the file as it currently exists to the staging area */
@@ -189,13 +191,9 @@ public class Repository {
 
     /** Creates a new branch with the given name, and points it at the current head commit. */
     public static void branch(String branchName) {
-        if (BRANCHES.containsKey(branchName)) {
-            System.out.println("A branch with that name already exists.");
-            return;
-        }
         String HEAD = readObject(HEAD_DIR, String.class);
-        BRANCHES.put(branchName, HEAD);
-        BRANCHES.dump();
+        Branch branch = new Branch(branchName, HEAD);
+        branch.dump();
     }
 
 

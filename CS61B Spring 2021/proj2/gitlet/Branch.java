@@ -2,16 +2,22 @@ package gitlet;
 
 import java.io.File;
 
-
-
+/** Represent the branch: pointer to the commit. */
 public class Branch implements Dumpable {
+    private final String branchName;
+    private final String commitUID;
+
+    public Branch(String branchName, String commitUID) {
+        this.branchName = branchName;
+        this.commitUID = commitUID;
+    }
 
     public void dump() {
-        File folder = new File(Repository.BRANCH_DIR + UID.substring(0, 2) + "/");
-        File file = Utils.join(folder, UID.substring(2, Utils.UID_LENGTH));
+        File folder = Repository.BRANCH_DIR;
         if (!folder.exists()) {
             folder.mkdirs();
         }
+        File file = Utils.join(folder, branchName);
         Utils.writeObject(file, this);
     }
 }
