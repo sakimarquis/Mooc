@@ -1,6 +1,8 @@
 package gitlet;
 
 
+import java.util.Arrays;
+
 /** Driver class for Gitlet, a subset of the Git version-control system.
  *  @author hdx
  */
@@ -49,6 +51,7 @@ public class Main {
                 Repository.status();
                 break;
             case "checkout":
+                System.out.println(Arrays.toString(args) + " " + args.length);
                 break;
             case "branch":
                 validateNumArgs("branch", args, 2);

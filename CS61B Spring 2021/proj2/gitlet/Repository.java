@@ -189,12 +189,32 @@ public class Repository {
          System.out.println("Not implemented yet.");
      }
 
+    /** Checks out all the files tracked by the given commit.
+     * Usage:
+     * 1, checkout -- [file name]:
+     *      Takes the version of the file as it exists in the head commit and puts it in the working directory,
+     *      overwriting the version of the file that’s already there if there is one. The new version of the file
+     *      is not staged.
+     * 2, checkout [commit id] -- [file name]: T
+     *      Takes the version of the file as it exists in the commit with the given id, and puts it in the working
+     *      directory, overwriting the version of the file that’s already there if there is one. The new version of
+     *      the file is not staged.
+     * 3, checkout [branch name]:
+     *      Takes all files in the commit at the head of the given branch, and puts them in the working directory,
+     *      overwriting the versions of the files that are already there if they exist. Also, at the end of this
+     *      command, the given branch will now be considered the current branch (HEAD). Any files that are tracked
+     *      in the current branch but are not present in the checked-out branch are deleted. The staging area is
+     *      cleared, unless the checked-out branch is the current branch.
+     * */
+
+
+
+
     /** Creates a new branch with the given name, and points it at the current head commit. */
     public static void branch(String branchName) {
         String HEAD = readObject(HEAD_DIR, String.class);
         Branch branch = new Branch(branchName, HEAD);
         branch.dump();
     }
-
 
 }
