@@ -42,7 +42,7 @@ public class Blob implements Dumpable {
 
     public void writeToFile(String filename) {
         File file = Utils.join(Repository.CWD, "/", filename);
-        Utils.writeObject(file, this);
+        Utils.writeContents(file, this.getContentAsString());
     }
 
     public static Blob fromFile(File file) {
