@@ -186,7 +186,34 @@ public class Repository {
     /** Displays what branches currently exist, and marks the current branch with a *.
      * Also displays what files have been staged for addition or removal. */
      public static void status() {
-         System.out.println("Not implemented yet.");
+        // print out all the branches
+        System.out.println("=== Branches ===");
+        List<String> branches = Utils.plainFilenamesIn(BRANCH_DIR);
+        for (String branch : branches) {
+            if (Branch.getCommitUID(branch).equals(readObject(HEAD_DIR, String.class))) {
+                System.out.println("*" + branch);
+            } else {
+                System.out.println(branch);
+            }
+        }
+
+        // print out all the files that have been staged for addition
+        System.out.println("=== Staged Files ===");
+        for (Blob blob : STAGING_AREA.getStagedBlobs()) {
+            System.out.println(blob.getFilename());
+        }
+
+        // print out all the files that have been staged for removal
+        System.out.println("=== Removed Files ===");
+        for (Blob blob : STAGING_AREA.getRemovalBlob()) {
+            System.out.println(blob.getFilename());
+        }
+
+        // print out all the files that have been modified but not staged for commit
+        System.out.println("=== Modifications Not Staged For Commit ===");
+
+        // print out all the files that are untracked
+        System.out.println("=== Untracked Files ===");
      }
 
     /** checkout -- [file name]:

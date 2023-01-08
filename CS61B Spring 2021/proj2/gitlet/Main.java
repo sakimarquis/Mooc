@@ -58,8 +58,7 @@ public class Main {
                 } else if (args.length == 4 && args[2].equals("--")) {
                     Repository.checkoutFileInCommit(args[2], args[3]);
                 } else {
-                    throw new RuntimeException(
-                            String.format("Invalid number of arguments for: %s.", args));
+                    throw new RuntimeException(String.format("Invalid number of arguments for: checkout"));
                 }
                 break;
             case "branch":

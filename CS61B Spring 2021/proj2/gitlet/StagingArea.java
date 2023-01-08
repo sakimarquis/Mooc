@@ -68,6 +68,16 @@ public class StagingArea implements Dumpable {
         Utils.writeObject(INDEX_DIR, this);
     }
 
+    public HashSet<Blob> getRemovalBlob () {
+        HashSet<Blob> removalBlob = new HashSet<>();
+        StagingArea stagingArea = Utils.readObject(INDEX_DIR, StagingArea.class);
+        for (String UID : stagingArea.getRemovalUID()) {
+            Blob blob = Blob.fromUID(UID);
+            removalBlob.add(blob);
+        }
+        return removalBlob;
+    }
+
     public static StagingArea load() {
         return Utils.readObject(INDEX_DIR, StagingArea.class);
     }
