@@ -81,7 +81,7 @@ public class Commit implements Dumpable {
     }
 
     public void dump() {
-        File folder = new File(".gitlet/objects/" + UID.substring(0, 2) + "/");
+        File folder = new File(Repository.OBJECT_DIR + UID.substring(0, 2) + "/");
         File file = Utils.join(folder, UID.substring(2, Utils.UID_LENGTH));
         if (!folder.exists()) {
             folder.mkdirs();

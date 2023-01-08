@@ -24,11 +24,10 @@ public class Repository {
     /** The staging area. */
     private static StagingArea STAGING_AREA = new StagingArea();
     /** The current HEAD. */
-    private static final File HEAD_DIR = join(CWD, ".gitlet/HEAD");
-    /** The branch HEAD. */
-    private static final File BRANCH_HEAD_DIR = join(CWD, ".gitlet/refs/heads");
-    /** The dump object directory. */
-    private static final File OBJECT_DIR = join(CWD, ".gitlet/objects");
+    public static final File HEAD_DIR = join(CWD, ".gitlet/HEAD");
+    /** The branch directory. */
+    public static final File BRANCH_DIR = join(CWD, ".gitlet/refs/heads");
+    public static final File OBJECT_DIR = join(CWD, ".gitlet/objects");
 
     public static void init() {
         if (GITLET_DIR.exists()) {
@@ -181,4 +180,23 @@ public class Repository {
             throw error("IOException");
         }
     }
+
+    /** Displays what branches currently exist, and marks the current branch with a *.
+     * Also displays what files have been staged for addition or removal. */
+     public static void status() {
+         System.out.println("Not implemented yet.");
+     }
+
+    /** Creates a new branch with the given name, and points it at the current head commit. */
+    public static void branch(String branchName) {
+        if (BRANCHES.containsKey(branchName)) {
+            System.out.println("A branch with that name already exists.");
+            return;
+        }
+        String HEAD = readObject(HEAD_DIR, String.class);
+        BRANCHES.put(branchName, HEAD);
+        BRANCHES.dump();
+    }
+
+
 }

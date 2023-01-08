@@ -45,10 +45,14 @@ public class Main {
                 Repository.find(args[1]);
                 break;
             case "status":
+                validateNumArgs("status", args, 1);
+                Repository.status();
                 break;
             case "checkout":
                 break;
             case "branch":
+                validateNumArgs("branch", args, 2);
+                Repository.branch(args[1]);
                 break;
             case "rm-branch":
                 break;
