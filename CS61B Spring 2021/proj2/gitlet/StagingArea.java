@@ -1,7 +1,8 @@
 package gitlet;
 
 import java.io.File;
-import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 
 
@@ -15,13 +16,13 @@ public class StagingArea implements Dumpable {
     private final HashSet<String> removalUID;
     /** The location of the staging area. */
     private static final File INDEX_DIR = new File(".gitlet/index");
-    /** The files that are in the staging area. key is the UID, value is the blob*/
-    private final HashSet<Blob> blobs;
+    /** The files that are in the staging area. key is the filename, value is the blob*/
+    private final HashMap<String, Blob> blobs;
 
     public StagingArea() {
         this.additionUID = new HashSet<>();
         this.removalUID = new HashSet<>();
-        this.blobs = new HashSet<>();
+        this.blobs = new HashMap<>();
     }
 
     public HashSet<String> getAdditionUID() {
@@ -33,7 +34,8 @@ public class StagingArea implements Dumpable {
     }
 
     public HashSet<Blob> getStagedBlobs() {
-        return this.blobs;
+        Collection<Blob> blobs = this.blobs.values();
+        return new HashSet<>(blobs);
     }
 
     public void addBlob(Blob blob) {
@@ -42,7 +44,7 @@ public class StagingArea implements Dumpable {
             removalUID.remove(UID);
         }
         additionUID.add(UID);
-        blobs.add(blob);
+        blobs.put(blob.getFilename(), blob);
     }
 
     public void removeBlob(Blob blob) {
@@ -58,7 +60,7 @@ public class StagingArea implements Dumpable {
         String UID = blob.getUID();
         if (additionUID.contains(UID)) {
             additionUID.remove(UID);
-            blobs.remove(blob);
+            blobs.remove(blob.getFilename());
         } else if (removalUID.contains(UID)) {
             removalUID.remove(UID);
         }

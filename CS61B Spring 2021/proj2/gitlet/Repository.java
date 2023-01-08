@@ -21,8 +21,6 @@ public class Repository {
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory as File (DIR). */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
-    /** The staging area. */
-    private static StagingArea STAGING_AREA = new StagingArea();
     /** The current HEAD. */
     public static final File HEAD_DIR = join(CWD, ".gitlet/HEAD");
     /** The branch directory. */
@@ -42,6 +40,8 @@ public class Repository {
         Branch master = new Branch("master", initial.getUID());
         initial.dump();
         master.dump();
+        StagingArea STAGING_AREA = new StagingArea();
+        STAGING_AREA.dump();
     }
 
     /** Adds a copy of the file as it currently exists to the staging area */
@@ -56,6 +56,8 @@ public class Repository {
         String HEAD = readObject(HEAD_DIR, String.class);
         // get the last commit
         Commit lastCommit = Commit.fromUID(HEAD);
+        // get the staging area
+        StagingArea STAGING_AREA = StagingArea.load();
         // If the Blob has the different filename with all the blobs in the last commit
         if (!lastCommit.getTrackedBlobs().containsKey(filename)) {
             // add the blob to the staging area
@@ -83,7 +85,7 @@ public class Repository {
             return;
         }
 
-        STAGING_AREA = StagingArea.load();
+        StagingArea STAGING_AREA = StagingArea.load();
 
         if (STAGING_AREA.getStagedBlobs().isEmpty()) {
             System.out.println("No changes added to the commit.");
@@ -109,6 +111,7 @@ public class Repository {
      * user has not already done so (do not remove it unless it is tracked in the current commit). */
     public static void rm(String filename) {
         Blob blob = new Blob(new File(filename));
+        StagingArea STAGING_AREA = StagingArea.load();
         // If the file is currently staged for addition, unstage it.
         if (STAGING_AREA.getStagedBlobs().contains(blob)) {
             STAGING_AREA.removeFromStagingArea(blob);
@@ -198,21 +201,26 @@ public class Repository {
         }
 
         // print out all the files that have been staged for addition
+        System.out.println();
         System.out.println("=== Staged Files ===");
+        StagingArea STAGING_AREA = StagingArea.load();
         for (Blob blob : STAGING_AREA.getStagedBlobs()) {
             System.out.println(blob.getFilename());
         }
 
         // print out all the files that have been staged for removal
+        System.out.println();
         System.out.println("=== Removed Files ===");
         for (Blob blob : STAGING_AREA.getRemovalBlob()) {
             System.out.println(blob.getFilename());
         }
 
         // print out all the files that have been modified but not staged for commit
+        System.out.println();
         System.out.println("=== Modifications Not Staged For Commit ===");
 
         // print out all the files that are untracked
+        System.out.println();
         System.out.println("=== Untracked Files ===");
      }
 
@@ -298,7 +306,7 @@ public class Repository {
         writeObject(HEAD_DIR, commitUID);
 
         // clear the staging area
-        STAGING_AREA = new StagingArea();
+        StagingArea STAGING_AREA = new StagingArea();
         STAGING_AREA.dump();
     }
 
