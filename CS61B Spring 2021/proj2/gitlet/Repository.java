@@ -265,30 +265,11 @@ public class Repository {
         Branch.checkExists(branchName);
         Branch.checkCurrentBranch(branchName);
 
-        // delete files that are tracked in the current branch
-        String HEAD = readObject(HEAD_DIR, String.class);
-        Commit currentCommit = Commit.fromUID(HEAD);
-        HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
-        for (String filename : currentTrackedBlobs.keySet()) {
-            if (!currentTrackedBlobs.containsKey(filename)) {
-                restrictedDelete(filename);
-            }
-        }
+        deleteTrackedFiles();  // delete files that are tracked in the current branch
 
         // copy files from the checked-out branch
         String commitUID = Branch.getCommitUID(branchName);
-        Commit commit = Commit.fromUID(commitUID);
-        HashMap<String, String> trackedBlobs = commit.getTrackedBlobs();
-        for (String filename : trackedBlobs.keySet()) {
-            Blob blob = Blob.fromUID(trackedBlobs.get(filename));
-            // If a working file is untracked in the current branch and would be overwritten by the checkout
-            File file = new File(filename);
-            if (file.exists()) {
-                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
-                return;
-            }
-            blob.writeToFile(filename);
-        }
+        checkoutFilesInCommit(commitUID);
 
         // update the current HEAD pointer
         writeObject(HEAD_DIR, commitUID);
@@ -316,10 +297,25 @@ public class Repository {
     /** Checks out all the files tracked by the given commit. Removes tracked files that are not present in that commit.
      *  Also moves the current branch’s head to that commit node. The staging area is cleared.
      *  The command is essentially checkout of an arbitrary commit that also changes the current branch head. */
-    public static void reset(String commitID) {
-        Commit.checkExists(commitID);
+    public static void reset(String commitUID) {
+        Commit.checkExists(commitUID);
 
-        // delete files that are tracked in the current branch
+        deleteTrackedFiles();  // delete files that are tracked in the current branch
+
+        // copy files from the checked-out branch
+        checkoutFilesInCommit(commitUID);
+
+        // update the current HEAD pointer
+        writeObject(HEAD_DIR, commitUID);
+
+        StagingArea.clear();
+    }
+
+
+    /** Below are helper functions. */
+
+    /** Delete files that are tracked in the current branch */
+    public static void deleteTrackedFiles() {
         String HEAD = readObject(HEAD_DIR, String.class);
         Commit currentCommit = Commit.fromUID(HEAD);
         HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
@@ -328,9 +324,11 @@ public class Repository {
                 restrictedDelete(filename);
             }
         }
+    }
 
-        // copy files from the checked-out branch
-        Commit commit = Commit.fromUID(commitID);
+    /** copy files from the checked-out commit. */
+    public static void checkoutFilesInCommit(String commitUID) {
+        Commit commit = Commit.fromUID(commitUID);
         HashMap<String, String> trackedBlobs = commit.getTrackedBlobs();
         for (String filename : trackedBlobs.keySet()) {
             Blob blob = Blob.fromUID(trackedBlobs.get(filename));
@@ -342,15 +340,5 @@ public class Repository {
             }
             blob.writeToFile(filename);
         }
-
-        // update the current HEAD pointer
-        writeObject(HEAD_DIR, commitID);
-
-        StagingArea.clear();
     }
-
-
-    /** Below are helper functions. */
-
-    /** delete files that are tracked in the current branch */
 }
