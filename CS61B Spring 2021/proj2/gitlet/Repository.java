@@ -348,7 +348,6 @@ public class Repository {
         Commit currentCommit = Commit.fromUID(HEAD);
         Commit givenCommit = Commit.fromUID(givenCommitUID);
         Commit splitCommit = Commit.fromUID(splitCommitUID);
-
         HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
         HashMap<String, String> givenTrackedBlobs = givenCommit.getTrackedBlobs();
         HashMap<String, String> splitTrackedBlobs = splitCommit.getTrackedBlobs();
@@ -360,8 +359,42 @@ public class Repository {
         // 3.2, in the different ways: CONFLICT
         // 4, From Split point, files removed in the other but not removed in the HEAD branch: -> remove, stage
         // 5, From Split point, files removed in the HEAD but not modified in the other branch: -> remove
+
+        // For files in the split point
+        for (String key : splitTrackedBlobs.keySet()) {
+            if (givenTrackedBlobs.containsKey(key) && currentTrackedBlobs.containsKey(key)) {
+                // 1, files modified in the other but not modified in the HEAD branch: -> other branch, stage
+                if (!splitTrackedBlobs.get(key).equals(givenTrackedBlobs.get(key))
+                        && splitTrackedBlobs.get(key).equals(currentTrackedBlobs.get(key))) {
+                    StagingArea.add(key);
+                }
+                // 2, files modified in the HEAD but not modified in the other branch: -> HEAD branch
+                else if (splitTrackedBlobs.get(key).equals(givenTrackedBlobs.get(key))
+                        && !splitTrackedBlobs.get(key).equals(currentTrackedBlobs.get(key))) {
+                    checkoutFileInCommit(HEAD, key);
+                }
+                // 3.1, in the same way: nothing to do
+                else if (splitTrackedBlobs.get(key).equals(givenTrackedBlobs.get(key))
+                        && splitTrackedBlobs.get(key).equals(currentTrackedBlobs.get(key))) {
+                    continue;
+                }
+                break;
+            }
+            // 4, files removed in the other but not removed in the HEAD branch: -> remove, stage
+            else if (!givenTrackedBlobs.containsKey(key) && currentTrackedBlobs.containsKey(key)) {
+                break;
+            }
+            // 5, files removed in the HEAD but not modified in the other branch: -> remove
+            else if (givenTrackedBlobs.containsKey(key) && !currentTrackedBlobs.containsKey(key)) {
+                break;
+            }
+        }
+
+
         // 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch, stage
         // 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch
+
+
     }
 
 
