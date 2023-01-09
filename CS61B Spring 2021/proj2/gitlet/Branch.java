@@ -56,19 +56,18 @@ public class Branch implements Dumpable {
     }
 
     public static String findSplitPoint(String branchName) {
-        String headName = readObject(Repository.HEAD_DIR, String.class);
-
+        String HEAD = readObject(Repository.HEAD_DIR, String.class);
         // use DFS to search the latest common ancestor
-        Commit currentCommit = Commit.fromUID(Branch.getCommitUID(headName));
-        while (currentCommit != null) {
-            Commit branchCommit = Commit.fromUID(Branch.getCommitUID(branchName));
-            while (branchCommit != null) {
-                if (currentCommit.getUID().equals(branchCommit.getUID())) {
-                    return currentCommit.getUID();
+        Commit headCommit = Commit.fromUID(HEAD);
+        while (headCommit != null) {
+            Commit otherCommit = Commit.fromUID(Branch.getCommitUID(branchName));
+            while (otherCommit != null) {
+                if (headCommit.getUID().equals(otherCommit.getUID())) {
+                    return headCommit.getUID();
                 }
-                branchCommit = Commit.fromUID(branchCommit.getParent());
+                otherCommit = Commit.fromUID(otherCommit.getParent());
             }
-            currentCommit = Commit.fromUID(currentCommit.getParent());
+            headCommit = Commit.fromUID(headCommit.getParent());
         }
         return null;
     }

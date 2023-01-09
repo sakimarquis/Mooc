@@ -311,37 +311,6 @@ public class Repository {
         StagingArea.clear();
     }
 
-
-    /** Below are helper functions. */
-
-    /** Delete files that are tracked in the current branch */
-    public static void deleteTrackedFiles() {
-        String HEAD = readObject(HEAD_DIR, String.class);
-        Commit currentCommit = Commit.fromUID(HEAD);
-        HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
-        for (String filename : currentTrackedBlobs.keySet()) {
-            if (!currentTrackedBlobs.containsKey(filename)) {
-                restrictedDelete(filename);
-            }
-        }
-    }
-
-    /** copy files from the checked-out commit. */
-    public static void checkoutFilesInCommit(String commitUID) {
-        Commit commit = Commit.fromUID(commitUID);
-        HashMap<String, String> trackedBlobs = commit.getTrackedBlobs();
-        for (String filename : trackedBlobs.keySet()) {
-            Blob blob = Blob.fromUID(trackedBlobs.get(filename));
-            // If a working file is untracked in the current branch and would be overwritten by the checkout
-            File file = new File(filename);
-            if (file.exists()) {
-                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
-                return;
-            }
-            blob.writeToFile(filename);
-        }
-    }
-
     /** Merges files from the given branch into the current branch. */
     public static void merge(String branchName) {
         Branch.checkExists(branchName);
@@ -373,25 +342,26 @@ public class Repository {
             return;
         }
 
-        // 1, From Split point, files modified in the other but not modified in the HEAD branch: -> other branch
+        String HEAD = readObject(HEAD_DIR, String.class);
+        Commit headCommit = Commit.fromUID(HEAD);
+        Commit otherCommit = Commit.fromUID(Branch.getCommitUID(branchName));
+        Commit splitCommit = Commit.fromUID(splitPointUID);
+        
+        // 1, From Split point, files modified in the other but not modified in the HEAD branch: -> other branch, stage
         // 2, From Split point, files modified in the HEAD but not modified in the other branch: -> HEAD branch
         // 3, From Split point, files modified in both branches
         // 3.1, in the same way: nothing to do
         // 3.2, in the different ways: CONFLICT
-        // 4, From Split point, files removed in the other but not removed in the HEAD branch: -> remove and stage
+        // 4, From Split point, files removed in the other but not removed in the HEAD branch: -> remove, stage
         // 5, From Split point, files removed in the HEAD but not modified in the other branch: -> remove
-        // 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch
+        // 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch, stage
         // 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch
-        
+
 
     }
 
 //        // If the split point is the same commit as the given branch, then we do nothing; the merge is complete
 //        String splitPoint = Branch.findSplitPoint(branchName);
-//
-//
-//
-//
 //        String currentBranchName = Branch.getCurrentBranchName();
 //        String currentCommitUID = Branch.getCommitUID(currentBranchName);
 //        String givenCommitUID = Branch.getCommitUID(branchName);
@@ -403,4 +373,33 @@ public class Repository {
 //        HashMap<String, String> givenTrackedBlobs = givenCommit.getTrackedBlobs();
 
 
+    /** Below are helper functions. */
+
+    /** Delete files that are tracked in the current branch */
+    public static void deleteTrackedFiles() {
+        String HEAD = readObject(HEAD_DIR, String.class);
+        Commit currentCommit = Commit.fromUID(HEAD);
+        HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
+        for (String filename : currentTrackedBlobs.keySet()) {
+            if (!currentTrackedBlobs.containsKey(filename)) {
+                restrictedDelete(filename);
+            }
+        }
+    }
+
+    /** copy files from the checked-out commit. */
+    public static void checkoutFilesInCommit(String commitUID) {
+        Commit commit = Commit.fromUID(commitUID);
+        HashMap<String, String> trackedBlobs = commit.getTrackedBlobs();
+        for (String filename : trackedBlobs.keySet()) {
+            Blob blob = Blob.fromUID(trackedBlobs.get(filename));
+            // If a working file is untracked in the current branch and would be overwritten by the checkout
+            File file = new File(filename);
+            if (file.exists()) {
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                return;
+            }
+            blob.writeToFile(filename);
+        }
+    }
 }
