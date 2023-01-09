@@ -88,4 +88,9 @@ public class StagingArea implements Dumpable {
         StagingArea STAGING_AREA = new StagingArea();
         STAGING_AREA.dump();
     }
+
+    public static Boolean isEmpty () {
+        StagingArea stagingArea = Utils.readObject(INDEX_DIR, StagingArea.class);
+        return stagingArea.getAdditionUID().isEmpty() && stagingArea.getRemovalUID().isEmpty();
+    }
 }

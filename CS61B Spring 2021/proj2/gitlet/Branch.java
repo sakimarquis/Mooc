@@ -34,7 +34,7 @@ public class Branch implements Dumpable {
     }
 
     public static String getCommitUID(String branchName) {
-        File file = Utils.join(Repository.BRANCH_DIR, branchName);
+        File file = Utils.join(Repository.BRANCH_DIR, "/" , branchName);
         if (!file.exists()) {
             return null;
         }
@@ -53,5 +53,24 @@ public class Branch implements Dumpable {
         if (branchName.equals(readObject(Repository.HEAD_DIR, String.class))) {
             Utils.exitWithError("No need to checkout the current branch.");
         }
+    }
+
+    public static String findSplitPoint(String branchName) {
+        String headName = readObject(Repository.HEAD_DIR, String.class);
+        Commit currentCommit = Commit.fromUID(Branch.getCommitUID(headName));
+        Commit branchCommit = Commit.fromUID(Branch.getCommitUID(branchName));
+
+        // use DFS to search the latest common ancestor
+        while (currentCommit != null) {
+            while (branchCommit != null) {
+                if (currentCommit.getUID().equals(branchCommit.getUID())) {
+                    return currentCommit.getUID();
+                }
+                branchCommit = Commit.fromUID(branchCommit.getParent());
+            }
+            currentCommit = Commit.fromUID(currentCommit.getParent());
+            branchCommit = Commit.fromUID(Branch.getCommitUID(branchName));
+        }
+        return null;
     }
 }

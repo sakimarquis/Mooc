@@ -341,4 +341,42 @@ public class Repository {
             blob.writeToFile(filename);
         }
     }
+
+    /** Merges files from the given branch into the current branch. */
+    public static void merge(String branchName) {
+        Branch.checkExists(branchName);
+
+        // If attempting to merge a branch with itself
+        if (branchName.equals(readObject(Repository.HEAD_DIR, String.class))) {
+            Utils.exitWithError("Cannot merge a branch with itself.");
+        }
+
+        // If there are staged additions or removals present
+        if (!StagingArea.isEmpty()) {
+            Utils.exitWithError("You have uncommitted changes.");
+        }
+
+        String splitPointUID = Branch.findSplitPoint(branchName);
+
+
+    }
+
+
+//        // If the split point is the same commit as the given branch, then we do nothing; the merge is complete
+//        String splitPoint = Branch.findSplitPoint(branchName);
+//
+//
+//
+//
+//        String currentBranchName = Branch.getCurrentBranchName();
+//        String currentCommitUID = Branch.getCommitUID(currentBranchName);
+//        String givenCommitUID = Branch.getCommitUID(branchName);
+//
+//        Commit currentCommit = Commit.fromUID(currentCommitUID);
+//        Commit givenCommit = Commit.fromUID(givenCommitUID);
+//
+//        HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
+//        HashMap<String, String> givenTrackedBlobs = givenCommit.getTrackedBlobs();
+
+
 }

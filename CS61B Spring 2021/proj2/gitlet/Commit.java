@@ -13,7 +13,7 @@ public class Commit implements Dumpable {
     private String message;
     /** The time of this Commit. */
     private Date timestamp;
-    /** The parent of this Commit. We use string not Commit to avoid serialize problem*/
+    /** The UID of the parent of this Commit. We use string not Commit to avoid serialize problem*/
     private String parent;
     /** If there is a branch split and merge, we need to store the second parent. */
     private String secondParent;
