@@ -57,11 +57,11 @@ public class Branch implements Dumpable {
 
     public static String findSplitPoint(String branchName) {
         String headName = readObject(Repository.HEAD_DIR, String.class);
-        Commit currentCommit = Commit.fromUID(Branch.getCommitUID(headName));
-        Commit branchCommit = Commit.fromUID(Branch.getCommitUID(branchName));
 
         // use DFS to search the latest common ancestor
+        Commit currentCommit = Commit.fromUID(Branch.getCommitUID(headName));
         while (currentCommit != null) {
+            Commit branchCommit = Commit.fromUID(Branch.getCommitUID(branchName));
             while (branchCommit != null) {
                 if (currentCommit.getUID().equals(branchCommit.getUID())) {
                     return currentCommit.getUID();
@@ -69,7 +69,6 @@ public class Branch implements Dumpable {
                 branchCommit = Commit.fromUID(branchCommit.getParent());
             }
             currentCommit = Commit.fromUID(currentCommit.getParent());
-            branchCommit = Commit.fromUID(Branch.getCommitUID(branchName));
         }
         return null;
     }
