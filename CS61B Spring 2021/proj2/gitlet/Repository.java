@@ -315,8 +315,11 @@ public class Repository {
     public static void merge(String branchName) {
         Branch.checkExists(branchName);
 
+        String HEAD = readObject(HEAD_DIR, String.class);
+        String otherCommitUID = Branch.getCommitUID(branchName);
+
         // If attempting to merge a branch with itself
-        if (branchName.equals(readObject(Repository.HEAD_DIR, String.class))) {
+        if (otherCommitUID.equals(HEAD)) {
             Utils.exitWithError("Cannot merge a branch with itself.");
         }
 
@@ -325,28 +328,27 @@ public class Repository {
             Utils.exitWithError("You have uncommitted changes.");
         }
 
-        String splitPointUID = Branch.findSplitPoint(branchName);
-        assert splitPointUID != null;
+        String splitCommitUID = Branch.findSplitPoint(branchName);
+        assert splitCommitUID != null;
 
         // If the split point is the same commit as the given branch, then we do nothing; the merge is complete
-        if (splitPointUID.equals(Branch.getCommitUID(branchName))) {
+        if (otherCommitUID.equals(splitCommitUID)) {
             Utils.exitWithError("Given branch is an ancestor of the current branch.");
         }
 
         // If the split point is the current branch, then the effect is to check out the given branch
         // In other words, if the current branch has no new commits and the other branch has new commits,
         // simply "fast-forward" the current branch to the other branch
-        if (splitPointUID.equals(readObject(HEAD_DIR, String.class))) {
+        if (splitCommitUID.equals(HEAD)) {
             checkoutBranch(branchName);
             System.out.println("Current branch fast-forwarded.");
             return;
         }
 
-        String HEAD = readObject(HEAD_DIR, String.class);
         Commit headCommit = Commit.fromUID(HEAD);
-        Commit otherCommit = Commit.fromUID(Branch.getCommitUID(branchName));
-        Commit splitCommit = Commit.fromUID(splitPointUID);
-        
+        Commit otherCommit = Commit.fromUID(otherCommitUID);
+        Commit splitCommit = Commit.fromUID(splitCommitUID);
+
         // 1, From Split point, files modified in the other but not modified in the HEAD branch: -> other branch, stage
         // 2, From Split point, files modified in the HEAD but not modified in the other branch: -> HEAD branch
         // 3, From Split point, files modified in both branches
@@ -356,6 +358,7 @@ public class Repository {
         // 5, From Split point, files removed in the HEAD but not modified in the other branch: -> remove
         // 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch, stage
         // 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch
+
 
 
     }
