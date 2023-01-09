@@ -357,10 +357,34 @@ public class Repository {
         }
 
         String splitPointUID = Branch.findSplitPoint(branchName);
+        assert splitPointUID != null;
 
+        // If the split point is the same commit as the given branch, then we do nothing; the merge is complete
+        if (splitPointUID.equals(Branch.getCommitUID(branchName))) {
+            Utils.exitWithError("Given branch is an ancestor of the current branch.");
+        }
+
+        // If the split point is the current branch, then the effect is to check out the given branch
+        // In other words, if the current branch has no new commits and the other branch has new commits,
+        // simply "fast-forward" the current branch to the other branch
+        if (splitPointUID.equals(readObject(HEAD_DIR, String.class))) {
+            checkoutBranch(branchName);
+            System.out.println("Current branch fast-forwarded.");
+            return;
+        }
+
+        // 1, From Split point, files modified in the other but not modified in the HEAD branch: -> other branch
+        // 2, From Split point, files modified in the HEAD but not modified in the other branch: -> HEAD branch
+        // 3, From Split point, files modified in both branches
+        // 3.1, in the same way: nothing to do
+        // 3.2, in the different ways: CONFLICT
+        // 4, From Split point, files removed in the other but not removed in the HEAD branch: -> remove and stage
+        // 5, From Split point, files removed in the HEAD but not modified in the other branch: -> remove
+        // 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch
+        // 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch
+        
 
     }
-
 
 //        // If the split point is the same commit as the given branch, then we do nothing; the merge is complete
 //        String splitPoint = Branch.findSplitPoint(branchName);
