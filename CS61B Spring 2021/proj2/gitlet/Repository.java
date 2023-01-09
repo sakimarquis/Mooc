@@ -316,10 +316,10 @@ public class Repository {
         Branch.checkExists(branchName);
 
         String HEAD = readObject(HEAD_DIR, String.class);
-        String otherCommitUID = Branch.getCommitUID(branchName);
+        String givenCommitUID = Branch.getCommitUID(branchName);
 
         // If attempting to merge a branch with itself
-        if (otherCommitUID.equals(HEAD)) {
+        if (givenCommitUID.equals(HEAD)) {
             Utils.exitWithError("Cannot merge a branch with itself.");
         }
 
@@ -332,7 +332,7 @@ public class Repository {
         assert splitCommitUID != null;
 
         // If the split point is the same commit as the given branch, then we do nothing; the merge is complete
-        if (otherCommitUID.equals(splitCommitUID)) {
+        if (givenCommitUID.equals(splitCommitUID)) {
             Utils.exitWithError("Given branch is an ancestor of the current branch.");
         }
 
@@ -345,9 +345,13 @@ public class Repository {
             return;
         }
 
-        Commit headCommit = Commit.fromUID(HEAD);
-        Commit otherCommit = Commit.fromUID(otherCommitUID);
+        Commit currentCommit = Commit.fromUID(HEAD);
+        Commit givenCommit = Commit.fromUID(givenCommitUID);
         Commit splitCommit = Commit.fromUID(splitCommitUID);
+
+        HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
+        HashMap<String, String> givenTrackedBlobs = givenCommit.getTrackedBlobs();
+        HashMap<String, String> splitTrackedBlobs = splitCommit.getTrackedBlobs();
 
         // 1, From Split point, files modified in the other but not modified in the HEAD branch: -> other branch, stage
         // 2, From Split point, files modified in the HEAD but not modified in the other branch: -> HEAD branch
@@ -358,22 +362,7 @@ public class Repository {
         // 5, From Split point, files removed in the HEAD but not modified in the other branch: -> remove
         // 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch, stage
         // 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch
-
-
-
     }
-
-//        // If the split point is the same commit as the given branch, then we do nothing; the merge is complete
-//        String splitPoint = Branch.findSplitPoint(branchName);
-//        String currentBranchName = Branch.getCurrentBranchName();
-//        String currentCommitUID = Branch.getCommitUID(currentBranchName);
-//        String givenCommitUID = Branch.getCommitUID(branchName);
-//
-//        Commit currentCommit = Commit.fromUID(currentCommitUID);
-//        Commit givenCommit = Commit.fromUID(givenCommitUID);
-//
-//        HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
-//        HashMap<String, String> givenTrackedBlobs = givenCommit.getTrackedBlobs();
 
 
     /** Below are helper functions. */
