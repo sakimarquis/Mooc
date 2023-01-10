@@ -313,13 +313,15 @@ public class Repository {
     }
 
     /** Merges files from the given branch into the current branch.
-     * 1, From Split point, files modified in the other but not modified in the HEAD branch: -> other branch, stage
-     * 2, From Split point, files modified in the HEAD but not modified in the other branch: -> HEAD branch
-     * 3, From Split point, files modified in both branches
+     * 1, Files in Split point, files modified in the other but not modified in the HEAD branch: -> other branch, stage
+     * 2, Files in Split point, files modified in the HEAD but not modified in the other branch: -> HEAD branch
+     * 3, Files in Split point, files modified in both branches
      * 3.1, in the same way: nothing to do
      * 3.2, in the different ways: CONFLICT
-     * 4, From Split point, files removed in the other but not removed in the HEAD branch: -> remove, stage
-     * 5, From Split point, files removed in the HEAD but not modified in the other branch: -> remove
+     * 4, Files in Split point, files removed in the other but not removed in the HEAD branch: -> remove, stage
+     * 5, Files in Split point, files removed in the HEAD but not modified in the other branch: -> remove
+     * 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch, stage
+     * 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch
      * "I must confess that I wrote Fortran in Java."
      * */
     public static void merge(String branchName) {
@@ -399,10 +401,12 @@ public class Repository {
                 }
                 // 3.2, files modified in the different ways: CONFLICT
                 else if (!fileUIDInCurrent.equals(fileUIDInGiven)) {
-                    String blobUID = givenTrackedBlobs.get(key);
-                    Blob blob = Blob.fromUID(blobUID);
-                    String blobContent = blob.getContent();
-                    String conflictContent = "<<<<<<< HEAD" + System.lineSeparator() + blobContent + "=======" + System.lineSeparator() + blobContent + ">>>>>>>" + System.lineSeparator();
+                    Blob currentBlob = Blob.fromUID(givenTrackedBlobs.get(key));
+                    Blob givenBlob = Blob.fromUID(currentTrackedBlobs.get(key));
+                    String currentContent = currentBlob.getContentAsString();
+                    String givenContent = givenBlob.getContentAsString();
+                    String mergedContent = "<<<<<<< HEAD" + System.lineSeparator() + currentContent + "======="
+                            + System.lineSeparator() + givenContent + ">>>>>>>" + System.lineSeparator();
                 }
             }
             // 4, files removed in the other but not removed in the HEAD branch: -> remove, stage
@@ -440,12 +444,19 @@ public class Repository {
             }
         }
 
+        // 3.2 Files different in HEAD and other branch
+        HashSet<String> intersectionFiles = new HashSet<>(currentTrackedBlobs.keySet());
+        intersectionFiles.retainAll(givenTrackedBlobs.keySet());
+
+
+
+
         // Finally, make the commit and dump it, change the HEAD and dump it
         String msg = "Merged " + branchName + " into " + Branch.getBranchNameFromUID(HEAD) + ".";
         Commit mergedCommit = new Commit(msg, mergedTrackedBlobs, HEAD, givenCommitUID);
         mergedCommit.dump();
-        checkoutFilesInCommit(mergedCommit.getUID());
-        Utils.writeObject(HEAD_DIR, mergedCommit.getUID());  //update the HEAD
+        checkoutFilesInCommit(mergedCommit.getUID());  // update CWD
+        Utils.writeObject(HEAD_DIR, mergedCommit.getUID());  // update the HEAD
     }
 
 
@@ -463,7 +474,7 @@ public class Repository {
         }
     }
 
-    /** copy files from the checked-out commit. */
+    /** save all blobs in given commit as files to CWD. */
     public static void checkoutFilesInCommit(String commitUID) {
         Commit commit = Commit.fromUID(commitUID);
         HashMap<String, String> trackedBlobs = commit.getTrackedBlobs();
