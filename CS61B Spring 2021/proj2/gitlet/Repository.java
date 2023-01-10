@@ -396,9 +396,9 @@ public class Repository {
                 else if (fileUIDInSplit.equals(fileUIDInGiven) && !fileUIDInSplit.equals(fileUIDInCurrent)) {
                     mergedTrackedBlobs.put(key, currentTrackedBlobs.get(key));
                 }
-                // 3.1, files modified in the same way: nothing to do
+                // 3.1, files modified in the same way: nothing to do (add, since merged is empty)
                 else if (fileUIDInCurrent.equals(fileUIDInGiven)) {
-                    break;
+                    mergedTrackedBlobs.put(key, currentTrackedBlobs.get(key));
                 }
                 // 3.2, files in split point and modified in the different ways: CONFLICT
                 else if (!fileUIDInCurrent.equals(fileUIDInGiven)) {
