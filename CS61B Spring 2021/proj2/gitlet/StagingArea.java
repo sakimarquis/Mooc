@@ -103,7 +103,16 @@ public class StagingArea implements Dumpable {
     }
 
     public boolean containsFilename(String filename) {
-        return addedBlobs.containsKey(filename);
+        boolean inAddition = addedBlobs.containsKey(filename);
+        boolean inRemoval = false;
+        StagingArea stagingArea = Utils.readObject(INDEX_DIR, StagingArea.class);
+        for (String UID : stagingArea.getRemovalUID()) {
+            Blob blob = Blob.fromUID(UID);
+            if (blob.getFilename().equals(filename)) {
+                inRemoval = true;
+            }
+        }
+        return inAddition || inRemoval;
     }
 
     public Blob getBlob(String filename) {

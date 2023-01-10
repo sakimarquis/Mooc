@@ -535,6 +535,7 @@ public class Repository {
 
         // Tracked in the current commit, changed in the working directory, but not staged;
         for (String filename : currentTrackedBlobs.keySet()) {
+            //System.out.println("wowowow" + filename);
             boolean inCWD = false;
             for (File file : files) {
                 if (file.isFile() && file.getName().equals(filename)) {

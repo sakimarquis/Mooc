@@ -56,7 +56,7 @@ public class Blob implements Dumpable {
         return Utils.readObject(file, Blob.class);
     }
 
-    /** Return the commit with the given UID, or null if it doesn't exist. */
+    /** Return the blob with the given UID, or null if it doesn't exist. */
     public static Blob fromUID(String UID) {
         File folder = new File(Repository.OBJECT_DIR + "/" + UID.substring(0, 2) + "/");
         File file = Utils.join(folder, UID.substring(2, Utils.UID_LENGTH));

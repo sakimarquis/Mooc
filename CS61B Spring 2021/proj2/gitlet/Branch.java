@@ -73,11 +73,11 @@ public class Branch implements Dumpable {
         Commit headCommit = Commit.fromUID(getHeadCommitUID());
         while (headCommit != null) {
             Commit otherCommit = Commit.fromUID(Branch.getCommitUID(branchName));
-            while (otherCommit != null) {
+            while (otherCommit.getParent() != null) {
+                otherCommit = Commit.fromUID(otherCommit.getParent());
                 if (headCommit.getUID().equals(otherCommit.getUID())) {
                     return headCommit.getUID();
                 }
-                otherCommit = Commit.fromUID(otherCommit.getParent());
             }
             headCommit = Commit.fromUID(headCommit.getParent());
         }

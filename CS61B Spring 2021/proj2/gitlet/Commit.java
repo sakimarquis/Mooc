@@ -47,6 +47,8 @@ public class Commit implements Dumpable {
         this.trackedBlobs = trackedBlobs;
         this.parent = parent;
         this.secondParent = secondParent;
+        this.timestamp = new Date();
+        this.UID = Utils.sha1(message, timestamp.toString(), parent, secondParent, trackedBlobs.toString());
     }
 
     public String getMessage() {
@@ -95,17 +97,10 @@ public class Commit implements Dumpable {
         Utils.writeObject(file, this);
     }
 
-    public static Commit fromFile(File file) {
-        return Utils.readObject(file, Commit.class);
-    }
-
     /** Return the commit with the given UID, or null if it doesn't exist. */
     public static Commit fromUID(String UID) {
         File folder = new File(Repository.OBJECT_DIR + "/" + UID.substring(0, 2) + "/");
         File file = Utils.join(folder, UID.substring(2, Utils.UID_LENGTH));
-        if (!folder.exists()) {
-            return null;
-        }
         return Utils.readObject(file, Commit.class);
     }
 
