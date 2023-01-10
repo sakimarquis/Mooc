@@ -268,13 +268,8 @@ public class Repository {
             return;
         }
 
-        if (!getUntrackedFiles().isEmpty()) {
-            System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
-            // return;
-        }
-
-        deleteTrackedFiles();  // delete files that are tracked in the current branch
-
+        // delete files that are tracked in the current branch
+        deleteTrackedFiles();
         // copy files from the checked-out branch
         String commitUID = Branch.getCommitUID(branchName);
         checkoutFilesInCommit(commitUID);
@@ -309,9 +304,7 @@ public class Repository {
         Commit.checkExists(commitUID);
 
         deleteTrackedFiles();  // delete files that are tracked in the current branch
-
-        // copy files from the checked-out branch
-        checkoutFilesInCommit(commitUID);
+        checkoutFilesInCommit(commitUID);  // copy files from the checked-out branch
 
         // update the current HEAD pointer
         Branch.updateHEAD(commitUID);
@@ -494,11 +487,15 @@ public class Repository {
 
     /** save all blobs in given commit as files to CWD. */
     public static void checkoutFilesInCommit(String commitUID) {
+        // If a working file is untracked in the current branch and would be overwritten by the checkout
+        if (!getUntrackedFiles().isEmpty()) {
+            System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+            // return;
+        }
         Commit commit = Commit.fromUID(commitUID);
         HashMap<String, String> trackedBlobs = commit.getTrackedBlobs();
         for (String filename : trackedBlobs.keySet()) {
             Blob blob = Blob.fromUID(trackedBlobs.get(filename));
-            // If a working file is untracked in the current branch and would be overwritten by the checkout
             blob.writeToFile(filename);
         }
     }
