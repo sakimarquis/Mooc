@@ -33,6 +33,7 @@ public class Branch implements Dumpable {
         file.delete();
     }
 
+    /** given the branch name, get the branch file and return the commitUID it track. */
     public static String getCommitUID(String branchName) {
         File file = Utils.join(Repository.BRANCH_DIR, "/" , branchName);
         if (!file.exists()) {
@@ -42,6 +43,7 @@ public class Branch implements Dumpable {
         return branch.commitUID;
     }
 
+    /** check whether the branch exists. */
     public static void checkExists(String branchName) {
         File file = Utils.join(Repository.BRANCH_DIR, branchName);
         if (!file.exists()) {
@@ -49,12 +51,12 @@ public class Branch implements Dumpable {
         }
     }
 
-    public static void checkCurrentBranch(String branchName) {
-        if (Branch.getCommitUID(branchName).equals(readObject(Repository.HEAD_DIR, String.class))) {
-            Utils.exitWithError("No need to checkout the current branch.");
-        }
+    /** Return the branch with the given branchName, or null if it doesn't exist. */
+    public static boolean isBranchHEAD(String branchName) {
+        return branchName.equals(readObject(Repository.HEAD_FILE, String.class));
     }
 
+    /** Return the branch given the commitUID the branch track. */
     public static String getBranchNameFromUID(String branchUID) {
         File folder = Repository.BRANCH_DIR;
         for (File file : folder.listFiles()) {
@@ -67,9 +69,8 @@ public class Branch implements Dumpable {
     }
 
     public static String findSplitPoint(String branchName) {
-        String HEAD = readObject(Repository.HEAD_DIR, String.class);
         // use DFS to search the latest common ancestor
-        Commit headCommit = Commit.fromUID(HEAD);
+        Commit headCommit = Commit.fromUID(getHeadCommitUID());
         while (headCommit != null) {
             Commit otherCommit = Commit.fromUID(Branch.getCommitUID(branchName));
             while (otherCommit != null) {
@@ -81,5 +82,23 @@ public class Branch implements Dumpable {
             headCommit = Commit.fromUID(headCommit.getParent());
         }
         return null;
+    }
+
+    /** Return the commit UID that the current HEAD points. */
+    public static String getHeadCommitUID() {
+        String headBranchName = readObject(Repository.HEAD_FILE, String.class);
+        return Branch.getCommitUID(headBranchName);
+    }
+
+    /** Update current HEAD branch. */
+    public static void updateHEAD(String commitUID) {
+        String headBranchName = readObject(Repository.HEAD_FILE, String.class);
+        Branch branch = new Branch(headBranchName, commitUID);
+        branch.dump();
+    }
+
+    /** Change the HEAD to the given branchName. */
+    public static void changeHEAD(String branchName) {
+        Utils.writeObject(Repository.HEAD_FILE, branchName);
     }
 }

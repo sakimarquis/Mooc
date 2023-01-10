@@ -12,9 +12,9 @@ import static gitlet.Utils.*;
 /** Represents a gitlet repository.
  * .gitlet/  (repository directory).
  * .gitlet/objects/  (metadata for commits and the blobs objects)
- * .gitlet/HEAD  (current HEAD)
+ * .gitlet/HEAD  (current HEAD branch, only stores the name of the branch, default is master)
  * .gitlet/index  (staging area)
- * .gitlet/refs/heads/  (branch pointers including the master branch)
+ * .gitlet/refs/heads/  (branch (pointers) including the master branch)
  *  @author hdx
  */
 public class Repository {
@@ -23,7 +23,7 @@ public class Repository {
     /** The .gitlet directory as File (DIR). */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
     /** The current HEAD. */
-    public static final File HEAD_DIR = join(CWD, ".gitlet/HEAD");
+    public static final File HEAD_FILE = join(CWD, ".gitlet/HEAD");
     /** The branch directory. */
     public static final File BRANCH_DIR = join(CWD, ".gitlet/refs/heads");
     public static final File OBJECT_DIR = join(CWD, ".gitlet/objects");
@@ -37,9 +37,9 @@ public class Repository {
         }
         // Get the current working directory
         Commit initial = new Commit("initial commit", null, null);
-        Utils.writeObject(HEAD_DIR, initial.getUID());
         Branch master = new Branch("master", initial.getUID());
         initial.dump();
+        Utils.writeObject(HEAD_FILE, "master");
         master.dump();
         StagingArea.clear();
     }
@@ -52,10 +52,8 @@ public class Repository {
             return;
         }
         Blob blob = new Blob(file);
-        // read the current HEAD
-        String HEAD = readObject(HEAD_DIR, String.class);
-        // get the last commit
-        Commit lastCommit = Commit.fromUID(HEAD);
+        // get the HEAD commit
+        Commit lastCommit = Commit.fromUID(Branch.getHeadCommitUID());
         // get the staging area
         StagingArea STAGING_AREA = StagingArea.load();
         // If the Blob has the different filename with all the blobs in the last commit
@@ -98,10 +96,9 @@ public class Repository {
         }
 
         // creates a new commit and dumps it.
-        String HEAD = readObject(HEAD_DIR, String.class);
-        Commit commit = Commit.fromUID(HEAD);
+        Commit commit = Commit.fromUID(Branch.getHeadCommitUID());
         commit.update(STAGING_AREA.getStagedBlobs(), message);
-        Utils.writeObject(HEAD_DIR, commit.getUID());  //update the HEAD
+        Branch.updateHEAD(commit.getUID());  //update the commitUID that HEAD branch points
         StagingArea.clear();
     }
 
@@ -119,8 +116,7 @@ public class Repository {
         }
 
         // If the file is tracked in the current commit, stage it for removal.
-        String HEAD = readObject(HEAD_DIR, String.class);
-        Commit commit = Commit.fromUID(HEAD);
+        Commit commit = Commit.fromUID(Branch.getHeadCommitUID());
         if (commit.getTrackedBlobs().containsKey(filename)) {
             STAGING_AREA.removeBlob(blob);
             STAGING_AREA.dump();
@@ -138,7 +134,7 @@ public class Repository {
      * ignoring any second parents found in merge commits. For every node in this history, the information
      * it should display is the commit id, the time the commit was made, and the commit message.*/
     public static void log() {
-        String parent = readObject(HEAD_DIR, String.class);
+        String parent = Branch.getHeadCommitUID();
         while (parent != null) {
             Commit commit = Commit.fromUID(parent);
             commit.printLog();
@@ -192,7 +188,7 @@ public class Repository {
         System.out.println("=== Branches ===");
         List<String> branches = Utils.plainFilenamesIn(BRANCH_DIR);
         for (String branch : branches) {
-            if (Branch.getCommitUID(branch).equals(readObject(HEAD_DIR, String.class))) {
+            if (branch.equals(readObject(HEAD_FILE, String.class))) {
                 System.out.println("*" + branch);
             } else {
                 System.out.println(branch);
@@ -227,8 +223,7 @@ public class Repository {
      * Takes the version of the file as it exists in the head commit and puts it in the working directory, overwriting
      * the version of the file that’s already there if there is one. The new version of the file is not staged. */
     public static void checkoutFile(String filename) {
-        String HEAD = readObject(HEAD_DIR, String.class);
-        Commit commit = Commit.fromUID(HEAD);
+        Commit commit = Commit.fromUID(Branch.getHeadCommitUID());
         if (!commit.getTrackedBlobs().containsKey(filename)) {
             System.out.println("File does not exist in that commit.");
             return;
@@ -264,7 +259,10 @@ public class Repository {
      * checked-out branch is the current branch. */
     public static void checkoutBranch(String branchName) {
         Branch.checkExists(branchName);
-        Branch.checkCurrentBranch(branchName);
+        if (Branch.isBranchHEAD(branchName)) {
+            System.out.println("No need to checkout the current branch.");
+            return;
+        }
 
         deleteTrackedFiles();  // delete files that are tracked in the current branch
 
@@ -272,23 +270,23 @@ public class Repository {
         String commitUID = Branch.getCommitUID(branchName);
         checkoutFilesInCommit(commitUID);
 
-        // update the current HEAD pointer
-        writeObject(HEAD_DIR, commitUID);
+        // update HEAD, first change HEAD than update the commitUID that HEAD branch points
+        Branch.changeHEAD(branchName);
+        Branch.updateHEAD(commitUID);
 
         StagingArea.clear();
     }
 
     /** Creates a new branch with the given name, and points it at the current head commit. */
     public static void branch(String branchName) {
-        String HEAD = readObject(HEAD_DIR, String.class);
-        Branch branch = new Branch(branchName, HEAD);
+        Branch branch = new Branch(branchName, Branch.getHeadCommitUID());
         branch.dump();
     }
 
     /** Deletes the branch with the given name. This only means to delete the pointer associated with the branch;
      * it does not mean to delete all commits that were created under the branch, or anything like that. */
     public static void rmBranch(String branchName) {
-        if (Branch.getCommitUID(branchName).equals(readObject(HEAD_DIR, String.class))) {
+        if (Branch.isBranchHEAD(branchName)) {
             System.out.println("Cannot remove the current branch.");
             return;
         }
@@ -307,7 +305,7 @@ public class Repository {
         checkoutFilesInCommit(commitUID);
 
         // update the current HEAD pointer
-        writeObject(HEAD_DIR, commitUID);
+        Branch.updateHEAD(commitUID);
 
         StagingArea.clear();
     }
@@ -327,11 +325,10 @@ public class Repository {
     public static void merge(String branchName) {
         Branch.checkExists(branchName);
 
-        String HEAD = readObject(HEAD_DIR, String.class);  // current commit
         String givenCommitUID = Branch.getCommitUID(branchName);
 
         // If attempting to merge a branch with itself
-        if (givenCommitUID.equals(HEAD)) {
+        if (Branch.isBranchHEAD(branchName)) {
             Utils.exitWithError("Cannot merge a branch with itself.");
         }
 
@@ -351,13 +348,13 @@ public class Repository {
         // If the split point is the current branch, then the effect is to check out the given branch
         // In other words, if the current branch has no new commits and the other branch has new commits,
         // simply "fast-forward" the current branch to the other branch
-        if (splitCommitUID.equals(HEAD)) {
+        if (splitCommitUID.equals(Branch.getHeadCommitUID())) {
             checkoutBranch(branchName);
             System.out.println("Current branch fast-forwarded.");
             return;
         }
 
-        Commit currentCommit = Commit.fromUID(HEAD);
+        Commit currentCommit = Commit.fromUID(Branch.getHeadCommitUID());
         Commit givenCommit = Commit.fromUID(givenCommitUID);
         Commit splitCommit = Commit.fromUID(splitCommitUID);
         HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
@@ -463,12 +460,13 @@ public class Repository {
         }
 
         // Finally, make the commit and dump it, change the HEAD and dump it
-        String msg = "Merged " + branchName + " into " + Branch.getBranchNameFromUID(HEAD) + ".";
-        Commit mergedCommit = new Commit(msg, mergedTrackedBlobs, HEAD, givenCommitUID);
+        String msg = "Merged " + branchName + " into " + Branch.getBranchNameFromUID(Branch.getHeadCommitUID()) + ".";
+        Commit mergedCommit = new Commit(msg, mergedTrackedBlobs, givenCommitUID, Branch.getHeadCommitUID());
         mergedCommit.dump();
         STAGING_AREA.dump();
         checkoutFilesInCommit(mergedCommit.getUID());  // update CWD
-        Utils.writeObject(HEAD_DIR, mergedCommit.getUID());  // update the HEAD
+        Branch.changeHEAD(branchName);  // update the HEAD
+        Branch.updateHEAD(mergedCommit.getUID());
     }
 
 
@@ -476,8 +474,7 @@ public class Repository {
 
     /** Delete files that are tracked in the current branch */
     public static void deleteTrackedFiles() {
-        String HEAD = readObject(HEAD_DIR, String.class);
-        Commit currentCommit = Commit.fromUID(HEAD);
+        Commit currentCommit = Commit.fromUID(Branch.getHeadCommitUID());
         HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
         for (String filename : currentTrackedBlobs.keySet()) {
             if (!currentTrackedBlobs.containsKey(filename)) {
