@@ -311,7 +311,15 @@ public class Repository {
         StagingArea.clear();
     }
 
-    /** Merges files from the given branch into the current branch. */
+    /** Merges files from the given branch into the current branch.
+     * 1, From Split point, files modified in the other but not modified in the HEAD branch: -> other branch, stage
+     * 2, From Split point, files modified in the HEAD but not modified in the other branch: -> HEAD branch
+     * 3, From Split point, files modified in both branches
+     * 3.1, in the same way: nothing to do
+     * 3.2, in the different ways: CONFLICT
+     * 4, From Split point, files removed in the other but not removed in the HEAD branch: -> remove, stage
+     * 5, From Split point, files removed in the HEAD but not modified in the other branch: -> remove
+     * */
     public static void merge(String branchName) {
         Branch.checkExists(branchName);
 
@@ -355,18 +363,10 @@ public class Repository {
         HashMap<String, String> mergedTrackedBlobs = new HashMap<>();
         StagingArea STAGING_AREA = StagingArea.load();
 
-        // 1, From Split point, files modified in the other but not modified in the HEAD branch: -> other branch, stage
-        // 2, From Split point, files modified in the HEAD but not modified in the other branch: -> HEAD branch
-        // 3, From Split point, files modified in both branches
-        // 3.1, in the same way: nothing to do
-        // 3.2, in the different ways: CONFLICT
-        // 4, From Split point, files removed in the other but not removed in the HEAD branch: -> remove, stage
-        // 5, From Split point, files removed in the HEAD but not modified in the other branch: -> remove
-
         // For files in the split point commit
         for (String key : splitTrackedBlobs.keySet()) {
-            Boolean currentHasFile = currentTrackedBlobs.containsKey(key);
-            Boolean givenHasFile = givenTrackedBlobs.containsKey(key);
+            boolean currentHasFile = currentTrackedBlobs.containsKey(key);
+            boolean givenHasFile = givenTrackedBlobs.containsKey(key);
 
             // 3.1, in the same way (a file was removed from both the current and given branch)
             if (!currentHasFile && !givenHasFile) {
@@ -387,9 +387,7 @@ public class Repository {
                     mergedTrackedBlobs.put(key, currentTrackedBlobs.get(key));
                 }
                 // 3.1, in the same way: nothing to do
-                else if (fileUIDInSplit.equals(fileUIDInGiven) && fileUIDInSplit.equals(fileUIDInCurrent)) {
-                    break;
-                }
+
                 // 3.2, in the different ways: CONFLICT
                 else if (!fileUIDInSplit.equals(fileUIDInGiven) && !fileUIDInSplit.equals(fileUIDInCurrent)) {
                     String blobUID = givenTrackedBlobs.get(key);
@@ -404,11 +402,9 @@ public class Repository {
                 break;
             }
             // 5, files removed in the HEAD but not modified in the other branch: -> remove
-            else if (currentHasFile && !givenHasFile) {
-                break;
-            }
+
         }
-        
+
         // 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch, stage
         // 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch
 
