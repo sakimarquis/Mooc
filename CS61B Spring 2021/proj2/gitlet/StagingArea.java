@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 
 /** Staging area for gitlet.
@@ -17,12 +18,12 @@ public class StagingArea implements Dumpable {
     /** The location of the staging area. */
     private static final File INDEX_DIR = new File(".gitlet/index");
     /** The files that are in the staging area. key is the filename, value is the blob*/
-    private final HashMap<String, Blob> blobs;
+    private final HashMap<String, Blob> addedBlobs;
 
     public StagingArea() {
         this.additionUID = new HashSet<>();
         this.removalUID = new HashSet<>();
-        this.blobs = new HashMap<>();
+        this.addedBlobs = new HashMap<>();
     }
 
     public HashSet<String> getAdditionUID() {
@@ -34,7 +35,7 @@ public class StagingArea implements Dumpable {
     }
 
     public HashSet<Blob> getStagedBlobs() {
-        Collection<Blob> blobs = this.blobs.values();
+        Collection<Blob> blobs = this.addedBlobs.values();
         return new HashSet<>(blobs);
     }
 
@@ -44,7 +45,7 @@ public class StagingArea implements Dumpable {
             removalUID.remove(UID);
         }
         additionUID.add(UID);
-        blobs.put(blob.getFilename(), blob);
+        addedBlobs.put(blob.getFilename(), blob);
     }
 
     public void removeBlob(Blob blob) {
@@ -67,7 +68,7 @@ public class StagingArea implements Dumpable {
         String UID = blob.getUID();
         if (additionUID.contains(UID)) {
             additionUID.remove(UID);
-            blobs.remove(blob.getFilename());
+            addedBlobs.remove(blob.getFilename());
         } else if (removalUID.contains(UID)) {
             removalUID.remove(UID);
         }
@@ -102,6 +103,14 @@ public class StagingArea implements Dumpable {
     }
 
     public boolean containsFilename(String filename) {
-        return blobs.containsKey(filename);
+        return addedBlobs.containsKey(filename);
+    }
+
+    public Blob getBlob(String filename) {
+        return addedBlobs.get(filename);
+    }
+
+    public Set<String> getFilename() {
+        return addedBlobs.keySet();
     }
 }

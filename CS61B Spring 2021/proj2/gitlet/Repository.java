@@ -214,6 +214,9 @@ public class Repository {
         // print out all the files that have been modified but not staged for commit
         System.out.println();
         System.out.println("=== Modifications Not Staged For Commit ===");
+        for (String filename : getModifiedFiles()) {
+            System.out.println(filename);
+        }
 
         // print out all the files that are untracked
         System.out.println();
@@ -515,6 +518,58 @@ public class Repository {
             }
         }
         return untrackedFiles;
+    }
+
+    /** get all modified but not staged files present in CWD.
+     * Tracked in the current commit, changed in the working directory, but not staged; or
+     * Staged for addition, but with different contents than in the working directory; or
+     * Staged for addition, but deleted in the working directory; or
+     * Not staged for removal, but tracked in the current commit and deleted from the working directory.
+     * "I should have unified the API!" */
+    public static List<String> getModifiedFiles() {
+        Commit currentCommit = Commit.fromUID(Branch.getHeadCommitUID());
+        HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
+        StagingArea STAGING_AREA = StagingArea.load();
+        List<String> modifiedFiles = new ArrayList<>();
+        File[] files = CWD.listFiles();
+
+        // Tracked in the current commit, changed in the working directory, but not staged;
+        for (String filename : currentTrackedBlobs.keySet()) {
+            boolean inCWD = false;
+            for (File file : files) {
+                if (file.isFile() && file.getName().equals(filename)) {
+                    inCWD = true;
+                    Blob blob = Blob.fromUID(currentTrackedBlobs.get(filename));
+                    if (!blob.hasEqualContent(file)) {
+                        modifiedFiles.add(filename);
+                    }
+                }
+            }
+            // Not staged for removal, but tracked in the current commit and deleted from the working directory.
+            if (!inCWD && !STAGING_AREA.containsFilename(filename)) {
+                modifiedFiles.add(filename);
+            }
+        }
+
+        // Staged for addition, but with different contents than in the working directory
+        for (String filename : STAGING_AREA.getFilename()) {
+            boolean inCWD = false;
+            for (File file : files) {
+                if (file.isFile() && file.getName().equals(filename)) {
+                    inCWD = true;
+                    Blob blob = STAGING_AREA.getBlob(filename);
+                    if (!blob.hasEqualContent(file)) {
+                        modifiedFiles.add(filename);
+                    }
+                }
+            }
+            // Staged for addition, but deleted in the working directory;
+            if (!inCWD) {
+                modifiedFiles.add(filename);
+            }
+        }
+
+        return modifiedFiles;
     }
 
 }

@@ -2,6 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 /** Represents a gitlet blob object.
  * It is a file in the .gitlet/object directory. It has a file name and content.
@@ -77,5 +78,11 @@ public class Blob implements Dumpable {
         Blob mergedBlob = new Blob(filename, mergedContent.getBytes());
         mergedBlob.dump();
         return mergedBlob.getUID();
+    }
+
+    // Compare the content of this blob with the other file
+    public boolean hasEqualContent(File file) {
+        byte[] fileContent = Utils.readContents(file);
+        return Arrays.equals(fileContent, this.content);
     }
 }
