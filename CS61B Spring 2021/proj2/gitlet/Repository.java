@@ -393,15 +393,14 @@ public class Repository {
                     String blobUID = givenTrackedBlobs.get(key);
                     Blob blob = Blob.fromUID(blobUID);
                     String blobContent = blob.getContent();
-                    String conflictContent = "<<<<<<< HEAD
+                    String conflictContent = "<<<<<<< HEAD" + System.lineSeparator() + blobContent + "=======" + System.lineSeparator() + blobContent + ">>>>>>>" + System.lineSeparator();
                 }
             }
             // 4, files removed in the other but not removed in the HEAD branch: -> remove, stage
             else if (!currentHasFile && givenHasFile) {
                 STAGING_AREA.removeBlob(givenTrackedBlobs.get(key));
-                break;
             }
-            // 5, files removed in the HEAD but not modified in the other branch: -> remove
+            // 5, files removed in the HEAD but not modified in the other branch: -> remove (nothing to do)
 
         }
 
