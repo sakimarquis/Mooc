@@ -362,6 +362,11 @@ public class Repository {
         HashMap<String, String> givenTrackedBlobs = givenCommit.getTrackedBlobs();
         HashMap<String, String> splitTrackedBlobs = splitCommit.getTrackedBlobs();
 
+        // Current branch and the given branch are equal, no commit should be made
+        if (currentTrackedBlobs.equals(givenTrackedBlobs)) {
+            Utils.exitWithError("No changes added to the commit.");
+        }
+
         HashMap<String, String> mergedTrackedBlobs = new HashMap<>();
         StagingArea STAGING_AREA = StagingArea.load();
 
@@ -439,6 +444,7 @@ public class Repository {
         String msg = "Merged " + branchName + " into " + Branch.getBranchNameFromUID(HEAD) + ".";
         Commit mergedCommit = new Commit(msg, mergedTrackedBlobs, HEAD, givenCommitUID);
         mergedCommit.dump();
+        checkoutFilesInCommit(mergedCommit.getUID());
         Utils.writeObject(HEAD_DIR, mergedCommit.getUID());  //update the HEAD
     }
 
