@@ -55,6 +55,13 @@ public class StagingArea implements Dumpable {
         removalUID.add(UID);
     }
 
+    public void removeBlob(String UID) {
+        if (additionUID.contains(UID)) {
+            additionUID.remove(UID);
+        }
+        removalUID.add(UID);
+    }
+
     /** Remove the blob from the staging area. */
     public void removeFromStagingArea(Blob blob) {
         String UID = blob.getUID();

@@ -55,6 +55,17 @@ public class Branch implements Dumpable {
         }
     }
 
+    public static String getBranchNameFromUID(String branchUID) {
+        File folder = Repository.BRANCH_DIR;
+        for (File file : folder.listFiles()) {
+            Branch branch = readObject(file, Branch.class);
+            if (branch.commitUID.equals(branchUID)) {
+                return branch.branchName;
+            }
+        }
+        return null;
+    }
+
     public static String findSplitPoint(String branchName) {
         String HEAD = readObject(Repository.HEAD_DIR, String.class);
         // use DFS to search the latest common ancestor

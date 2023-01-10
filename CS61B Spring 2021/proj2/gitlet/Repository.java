@@ -315,7 +315,7 @@ public class Repository {
     public static void merge(String branchName) {
         Branch.checkExists(branchName);
 
-        String HEAD = readObject(HEAD_DIR, String.class);
+        String HEAD = readObject(HEAD_DIR, String.class);  // current commit
         String givenCommitUID = Branch.getCommitUID(branchName);
 
         // If attempting to merge a branch with itself
@@ -352,6 +352,9 @@ public class Repository {
         HashMap<String, String> givenTrackedBlobs = givenCommit.getTrackedBlobs();
         HashMap<String, String> splitTrackedBlobs = splitCommit.getTrackedBlobs();
 
+        HashMap<String, String> mergedTrackedBlobs = new HashMap<>();
+        StagingArea STAGING_AREA = StagingArea.load();
+
         // 1, From Split point, files modified in the other but not modified in the HEAD branch: -> other branch, stage
         // 2, From Split point, files modified in the HEAD but not modified in the other branch: -> HEAD branch
         // 3, From Split point, files modified in both branches
@@ -360,41 +363,58 @@ public class Repository {
         // 4, From Split point, files removed in the other but not removed in the HEAD branch: -> remove, stage
         // 5, From Split point, files removed in the HEAD but not modified in the other branch: -> remove
 
-        // For files in the split point
+        // For files in the split point commit
         for (String key : splitTrackedBlobs.keySet()) {
-            if (givenTrackedBlobs.containsKey(key) && currentTrackedBlobs.containsKey(key)) {
-                // 1, files modified in the other but not modified in the HEAD branch: -> other branch, stage
-                if (!splitTrackedBlobs.get(key).equals(givenTrackedBlobs.get(key))
-                        && splitTrackedBlobs.get(key).equals(currentTrackedBlobs.get(key))) {
-                    StagingArea.add(key);
-                }
-                // 2, files modified in the HEAD but not modified in the other branch: -> HEAD branch
-                else if (splitTrackedBlobs.get(key).equals(givenTrackedBlobs.get(key))
-                        && !splitTrackedBlobs.get(key).equals(currentTrackedBlobs.get(key))) {
-                    checkoutFileInCommit(HEAD, key);
-                }
-                // 3.1, in the same way: nothing to do
-                else if (splitTrackedBlobs.get(key).equals(givenTrackedBlobs.get(key))
-                        && splitTrackedBlobs.get(key).equals(currentTrackedBlobs.get(key))) {
-                    continue;
-                }
+            Boolean currentHasFile = currentTrackedBlobs.containsKey(key);
+            Boolean givenHasFile = givenTrackedBlobs.containsKey(key);
+
+            // 3.1, in the same way (a file was removed from both the current and given branch)
+            if (!currentHasFile && !givenHasFile) {
                 break;
             }
+            else if (currentHasFile && givenHasFile) {
+                String fileUIDInSplit = splitTrackedBlobs.get(key);
+                String fileUIDInGiven = givenTrackedBlobs.get(key);
+                String fileUIDInCurrent = currentTrackedBlobs.get(key);
+                // 1, files modified in the given but not modified in the HEAD branch: -> other branch, stage
+                if (!fileUIDInSplit.equals(fileUIDInGiven) && fileUIDInSplit.equals(fileUIDInCurrent)) {
+                    String blobUID = givenTrackedBlobs.get(key);
+                    mergedTrackedBlobs.put(key, blobUID);
+                    STAGING_AREA.addBlob(Blob.fromUID(blobUID));
+                }
+                // 2, files modified in the HEAD but not modified in the other branch: -> HEAD branch
+                else if (fileUIDInSplit.equals(fileUIDInGiven) && !fileUIDInSplit.equals(fileUIDInCurrent)) {
+                    mergedTrackedBlobs.put(key, currentTrackedBlobs.get(key));
+                }
+                // 3.1, in the same way: nothing to do
+                else if (fileUIDInSplit.equals(fileUIDInGiven) && fileUIDInSplit.equals(fileUIDInCurrent)) {
+                    break;
+                }
+                // 3.2, in the different ways: CONFLICT
+                else if (!fileUIDInSplit.equals(fileUIDInGiven) && !fileUIDInSplit.equals(fileUIDInCurrent)) {
+                    String blobUID = givenTrackedBlobs.get(key);
+                    Blob blob = Blob.fromUID(blobUID);
+                    String blobContent = blob.getContent();
+                    String conflictContent = "<<<<<<< HEAD
+                }
+            }
             // 4, files removed in the other but not removed in the HEAD branch: -> remove, stage
-            else if (!givenTrackedBlobs.containsKey(key) && currentTrackedBlobs.containsKey(key)) {
+            else if (!currentHasFile && givenHasFile) {
+                STAGING_AREA.removeBlob(givenTrackedBlobs.get(key));
                 break;
             }
             // 5, files removed in the HEAD but not modified in the other branch: -> remove
-            else if (givenTrackedBlobs.containsKey(key) && !currentTrackedBlobs.containsKey(key)) {
+            else if (currentHasFile && !givenHasFile) {
                 break;
             }
         }
-
-
+        
         // 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch, stage
         // 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch
 
-
+        String msg = "Merged " + branchName + " into " + Branch.getBranchNameFromUID(HEAD) + ".";
+        Commit mergedCommit = new Commit(msg, mergedTrackedBlobs, HEAD, givenCommitUID);
+        mergedCommit.dump();
     }
 
 

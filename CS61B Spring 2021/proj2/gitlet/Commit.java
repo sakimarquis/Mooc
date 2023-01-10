@@ -42,6 +42,13 @@ public class Commit implements Dumpable {
         }
     }
 
+    public Commit(String message, HashMap<String, String> trackedBlobs, String parent, String secondParent) {
+        this.message = message;
+        this.trackedBlobs = trackedBlobs;
+        this.parent = parent;
+        this.secondParent = secondParent;
+    }
+
     public String getMessage() {
         return this.message;
     }
