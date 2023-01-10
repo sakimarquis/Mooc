@@ -375,6 +375,9 @@ tramp
 
 # Project 2 test txt files
 **/proj2/*.txt
+!**/proj2/testing/*
+!**/proj2/testing/student_tests/*
+!**/proj2/testing/samples/*
 
 # Project 3 Image/Audio/Video Files
 !**/proj3/**/*.png
