@@ -320,6 +320,7 @@ public class Repository {
      * 3.2, in the different ways: CONFLICT
      * 4, From Split point, files removed in the other but not removed in the HEAD branch: -> remove, stage
      * 5, From Split point, files removed in the HEAD but not modified in the other branch: -> remove
+     * "I must confess that I wrote Fortran in Java."
      * */
     public static void merge(String branchName) {
         Branch.checkExists(branchName);
@@ -387,10 +388,12 @@ public class Repository {
                 else if (fileUIDInSplit.equals(fileUIDInGiven) && !fileUIDInSplit.equals(fileUIDInCurrent)) {
                     mergedTrackedBlobs.put(key, currentTrackedBlobs.get(key));
                 }
-                // 3.1, in the same way: nothing to do
-
-                // 3.2, in the different ways: CONFLICT
-                else if (!fileUIDInSplit.equals(fileUIDInGiven) && !fileUIDInSplit.equals(fileUIDInCurrent)) {
+                // 3.1, files modified in the same way: nothing to do
+                else if (fileUIDInCurrent.equals(fileUIDInGiven)) {
+                    break;
+                }
+                // 3.2, files modified in the different ways: CONFLICT
+                else if (!fileUIDInCurrent.equals(fileUIDInGiven)) {
                     String blobUID = givenTrackedBlobs.get(key);
                     Blob blob = Blob.fromUID(blobUID);
                     String blobContent = blob.getContent();
@@ -402,7 +405,9 @@ public class Repository {
                 STAGING_AREA.removeBlob(givenTrackedBlobs.get(key));
             }
             // 5, files removed in the HEAD but not modified in the other branch: -> remove (nothing to do)
-
+            else if (currentHasFile && !givenHasFile) {
+                break;
+            }
         }
 
         // 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch, stage
