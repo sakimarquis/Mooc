@@ -50,7 +50,7 @@ public class Branch implements Dumpable {
     }
 
     public static void checkCurrentBranch(String branchName) {
-        if (branchName.equals(readObject(Repository.HEAD_DIR, String.class))) {
+        if (Branch.getCommitUID(branchName).equals(readObject(Repository.HEAD_DIR, String.class))) {
             Utils.exitWithError("No need to checkout the current branch.");
         }
     }
