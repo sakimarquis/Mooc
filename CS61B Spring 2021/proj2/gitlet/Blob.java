@@ -58,4 +58,17 @@ public class Blob implements Dumpable {
         }
         return Blob.fromFile(file);
     }
+
+
+
+    // Merge conflict files for Case 3.2, save the merged blob and return the UID.
+    public static String merge(String currentBlobUID, String givenBlobUID) {
+        Blob currentBlob = Blob.fromUID(currentBlobUID);
+        Blob givenBlob = Blob.fromUID(givenBlobUID);
+        String currentContent = currentBlob.getContentAsString();
+        String givenContent = givenBlob.getContentAsString();
+        String mergedContent = "<<<<<<< HEAD" + System.lineSeparator() + currentContent + "======="
+                + System.lineSeparator() + givenContent + ">>>>>>>" + System.lineSeparator();
+        return new Blob(mergedContent);
+    }
 }

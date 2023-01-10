@@ -376,15 +376,15 @@ public class Repository {
         for (String key : splitTrackedBlobs.keySet()) {
             boolean currentHasFile = currentTrackedBlobs.containsKey(key);
             boolean givenHasFile = givenTrackedBlobs.containsKey(key);
+            String fileUIDInSplit = splitTrackedBlobs.get(key);
+            String fileUIDInGiven = givenTrackedBlobs.get(key);
+            String fileUIDInCurrent = currentTrackedBlobs.get(key);
 
             // 3.1, in the same way (a file was removed from both the current and given branch)
             if (!currentHasFile && !givenHasFile) {
                 break;
             }
             else if (currentHasFile && givenHasFile) {
-                String fileUIDInSplit = splitTrackedBlobs.get(key);
-                String fileUIDInGiven = givenTrackedBlobs.get(key);
-                String fileUIDInCurrent = currentTrackedBlobs.get(key);
                 // 1, files modified in the given but not modified in the HEAD branch: -> other branch, stage
                 if (!fileUIDInSplit.equals(fileUIDInGiven) && fileUIDInSplit.equals(fileUIDInCurrent)) {
                     String blobUID = givenTrackedBlobs.get(key);
@@ -401,20 +401,16 @@ public class Repository {
                 }
                 // 3.2, files modified in the different ways: CONFLICT
                 else if (!fileUIDInCurrent.equals(fileUIDInGiven)) {
-                    Blob currentBlob = Blob.fromUID(givenTrackedBlobs.get(key));
-                    Blob givenBlob = Blob.fromUID(currentTrackedBlobs.get(key));
-                    String currentContent = currentBlob.getContentAsString();
-                    String givenContent = givenBlob.getContentAsString();
-                    String mergedContent = "<<<<<<< HEAD" + System.lineSeparator() + currentContent + "======="
-                            + System.lineSeparator() + givenContent + ">>>>>>>" + System.lineSeparator();
+                    String mergedBlobUID = Blob.merge(givenTrackedBlobs.get(key), currentTrackedBlobs.get(key));
+                    mergedTrackedBlobs.put(key, mergedBlobUID);
                 }
             }
             // 4, files removed in the other but not removed in the HEAD branch: -> remove, stage
-            else if (!currentHasFile && givenHasFile) {
+            else if (!currentHasFile && givenHasFile && fileUIDInSplit.equals(fileUIDInGiven)) {
                 STAGING_AREA.removeBlob(givenTrackedBlobs.get(key));
             }
             // 5, files removed in the HEAD but not modified in the other branch: -> remove (nothing to do)
-            else if (currentHasFile && !givenHasFile) {
+            else if (currentHasFile && !givenHasFile && fileUIDInSplit.equals(fileUIDInCurrent)) {
                 break;
             }
         }
@@ -443,13 +439,6 @@ public class Repository {
                 mergedTrackedBlobs.put(key, blobUID);
             }
         }
-
-        // 3.2 Files different in HEAD and other branch
-        HashSet<String> intersectionFiles = new HashSet<>(currentTrackedBlobs.keySet());
-        intersectionFiles.retainAll(givenTrackedBlobs.keySet());
-
-
-
 
         // Finally, make the commit and dump it, change the HEAD and dump it
         String msg = "Merged " + branchName + " into " + Branch.getBranchNameFromUID(HEAD) + ".";
