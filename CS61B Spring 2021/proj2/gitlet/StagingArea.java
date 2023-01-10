@@ -100,4 +100,8 @@ public class StagingArea implements Dumpable {
         StagingArea stagingArea = Utils.readObject(INDEX_DIR, StagingArea.class);
         return stagingArea.getAdditionUID().isEmpty() && stagingArea.getRemovalUID().isEmpty();
     }
+
+    public boolean containsFilename(String filename) {
+        return blobs.containsKey(filename);
+    }
 }

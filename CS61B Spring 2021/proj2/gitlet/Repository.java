@@ -3,6 +3,7 @@ package gitlet;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.HashMap;
@@ -217,6 +218,9 @@ public class Repository {
         // print out all the files that are untracked
         System.out.println();
         System.out.println("=== Untracked Files ===");
+        for (String filename : getUntrackedFiles()) {
+            System.out.println(filename);
+        }
      }
 
     /** checkout -- [file name]:
@@ -262,6 +266,11 @@ public class Repository {
         if (Branch.isBranchHEAD(branchName)) {
             System.out.println("No need to checkout the current branch.");
             return;
+        }
+
+        if (!getUntrackedFiles().isEmpty()) {
+            System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+            // return;
         }
 
         deleteTrackedFiles();  // delete files that are tracked in the current branch
@@ -490,12 +499,25 @@ public class Repository {
         for (String filename : trackedBlobs.keySet()) {
             Blob blob = Blob.fromUID(trackedBlobs.get(filename));
             // If a working file is untracked in the current branch and would be overwritten by the checkout
-            File file = new File(filename);
-            if (file.exists()) {
-                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
-                return;
-            }
             blob.writeToFile(filename);
         }
     }
+
+    /** get allfiles present in CWD but neither staged for addition nor tracked. */
+    public static List<String> getUntrackedFiles() {
+        Commit currentCommit = Commit.fromUID(Branch.getHeadCommitUID());
+        HashMap<String, String> currentTrackedBlobs = currentCommit.getTrackedBlobs();
+        StagingArea STAGING_AREA = StagingArea.load();
+
+        List<String> untrackedFiles = new ArrayList<>();
+        File[] files = CWD.listFiles();
+        for (File file : files) {
+            if (file.isFile() && !STAGING_AREA.containsFilename(file.getName())
+                    && !currentTrackedBlobs.containsKey(file.getName())) {
+                untrackedFiles.add(file.getName());
+            }
+        }
+        return untrackedFiles;
+    }
+
 }
