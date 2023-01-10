@@ -3,6 +3,7 @@ package gitlet;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 import java.util.HashMap;
 
@@ -405,11 +406,35 @@ public class Repository {
         }
 
         // 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch, stage
-        // 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch
+        HashSet<String> currentUniqueFiles = new HashSet<>(currentTrackedBlobs.keySet());
+        currentUniqueFiles.removeAll(splitTrackedBlobs.keySet());
+        currentUniqueFiles.removeAll(givenTrackedBlobs.keySet());
 
+        if (!currentUniqueFiles.isEmpty()) {
+            for (String key : currentUniqueFiles) {
+                String blobUID = currentTrackedBlobs.get(key);
+                mergedTrackedBlobs.put(key, blobUID);
+                STAGING_AREA.addBlob(Blob.fromUID(blobUID));
+            }
+        }
+
+        // 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch
+        HashSet<String> givenUniqueFiles = new HashSet<>(givenTrackedBlobs.keySet());
+        givenUniqueFiles.removeAll(splitTrackedBlobs.keySet());
+        givenUniqueFiles.removeAll(currentTrackedBlobs.keySet());
+
+        if (!givenUniqueFiles.isEmpty()) {
+            for (String key : givenUniqueFiles) {
+                String blobUID = givenTrackedBlobs.get(key);
+                mergedTrackedBlobs.put(key, blobUID);
+            }
+        }
+
+        // Finally, make the commit and dump it, change the HEAD and dump it
         String msg = "Merged " + branchName + " into " + Branch.getBranchNameFromUID(HEAD) + ".";
         Commit mergedCommit = new Commit(msg, mergedTrackedBlobs, HEAD, givenCommitUID);
         mergedCommit.dump();
+        Utils.writeObject(HEAD_DIR, mergedCommit.getUID());  //update the HEAD
     }
 
 
