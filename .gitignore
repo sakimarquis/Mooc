@@ -3,6 +3,7 @@
 !**.java
 !**.txt
 !**.json
+!**.md
 !**/pom.xml
 !.fatweleminus
 !.gitignore
