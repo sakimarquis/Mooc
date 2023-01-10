@@ -450,6 +450,18 @@ public class Repository {
             }
         }
 
+        // 3.2, Files not in Split point, but different in the HEAD and given branch : CONFLICT
+        HashSet<String> conflictFiles = new HashSet<>(currentTrackedBlobs.keySet());
+        conflictFiles.retainAll(givenTrackedBlobs.keySet());
+        conflictFiles.removeAll(splitTrackedBlobs.keySet());
+
+        if (!conflictFiles.isEmpty()) {
+            for (String key : conflictFiles) {
+                String blobUID = givenTrackedBlobs.get(key);
+                mergedTrackedBlobs.put(key, blobUID);
+            }
+        }
+
         // Finally, make the commit and dump it, change the HEAD and dump it
         String msg = "Merged " + branchName + " into " + Branch.getBranchNameFromUID(HEAD) + ".";
         Commit mergedCommit = new Commit(msg, mergedTrackedBlobs, HEAD, givenCommitUID);
