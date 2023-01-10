@@ -412,8 +412,8 @@ public class Repository {
                 }
                 // 3.2, files removed in the other but changed in the HEAD branch: CONFLICT
                 else {
-                    String blobUID = givenTrackedBlobs.get(key);
-                    mergedTrackedBlobs.put(key, blobUID);
+                    String mergedBlobUID = Blob.merge(givenTrackedBlobs.get(key), currentTrackedBlobs.get(key));
+                    mergedTrackedBlobs.put(key, mergedBlobUID);
                 }
             } else if (currentHasFile && !givenHasFile) {
                 // 5, files removed in the HEAD but not modified in the other branch: -> remove (nothing to do)
@@ -422,8 +422,8 @@ public class Repository {
                 }
                 // 3.2, files removed in the HEAD but changed in the other branch: CONFLICT
                 else {
-                    String blobUID = givenTrackedBlobs.get(key);
-                    mergedTrackedBlobs.put(key, blobUID);
+                    String mergedBlobUID = Blob.merge(givenTrackedBlobs.get(key), currentTrackedBlobs.get(key));
+                    mergedTrackedBlobs.put(key, mergedBlobUID);
                 }
             }
         }
@@ -459,8 +459,8 @@ public class Repository {
 
         if (!conflictFiles.isEmpty()) {
             for (String key : conflictFiles) {
-                String blobUID = givenTrackedBlobs.get(key);
-                mergedTrackedBlobs.put(key, blobUID);
+                String mergedBlobUID = Blob.merge(givenTrackedBlobs.get(key), currentTrackedBlobs.get(key));
+                mergedTrackedBlobs.put(key, mergedBlobUID);
             }
         }
 
