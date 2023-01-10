@@ -320,8 +320,8 @@ public class Repository {
      * 3.2, in the different ways: CONFLICT
      * 4, Files in Split point, files removed in the other but not removed in the HEAD branch: -> remove, stage
      * 5, Files in Split point, files removed in the HEAD but not modified in the other branch: -> remove
-     * 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch, stage
-     * 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch
+     * 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch
+     * 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch, stage
      * "I must confess that I wrote Fortran in Java."
      * */
     public static void merge(String branchName) {
@@ -388,7 +388,6 @@ public class Repository {
                 // 1, files modified in the given but not modified in the HEAD branch: -> other branch, stage
                 if (!fileUIDInSplit.equals(fileUIDInGiven) && fileUIDInSplit.equals(fileUIDInCurrent)) {
                     String blobUID = givenTrackedBlobs.get(key);
-                    mergedTrackedBlobs.put(key, blobUID);
                     STAGING_AREA.addBlob(Blob.fromUID(blobUID));
                 }
                 // 2, files modified in the HEAD but not modified in the other branch: -> HEAD branch
@@ -399,23 +398,35 @@ public class Repository {
                 else if (fileUIDInCurrent.equals(fileUIDInGiven)) {
                     break;
                 }
-                // 3.2, files modified in the different ways: CONFLICT
+                // 3.2, files in split point and modified in the different ways: CONFLICT
                 else if (!fileUIDInCurrent.equals(fileUIDInGiven)) {
                     String mergedBlobUID = Blob.merge(givenTrackedBlobs.get(key), currentTrackedBlobs.get(key));
                     mergedTrackedBlobs.put(key, mergedBlobUID);
                 }
-            }
-            // 4, files removed in the other but not removed in the HEAD branch: -> remove, stage
-            else if (!currentHasFile && givenHasFile && fileUIDInSplit.equals(fileUIDInGiven)) {
-                STAGING_AREA.removeBlob(givenTrackedBlobs.get(key));
-            }
-            // 5, files removed in the HEAD but not modified in the other branch: -> remove (nothing to do)
-            else if (currentHasFile && !givenHasFile && fileUIDInSplit.equals(fileUIDInCurrent)) {
-                break;
+            } else if (currentHasFile && !givenHasFile) {
+                // 4, files removed in the other but stay the same the HEAD branch: -> remove, stage
+                if (fileUIDInSplit.equals(currentHasFile)) {
+                    STAGING_AREA.removeBlob(currentTrackedBlobs.get(key));
+                }
+                // 3.2, files removed in the other but changed in the HEAD branch: CONFLICT
+                else {
+                    String blobUID = givenTrackedBlobs.get(key);
+                    mergedTrackedBlobs.put(key, blobUID);
+                }
+            } else if (currentHasFile && !givenHasFile) {
+                // 5, files removed in the HEAD but not modified in the other branch: -> remove (nothing to do)
+                if (fileUIDInSplit.equals(fileUIDInCurrent)) {
+                    break;
+                }
+                // 3.2, files removed in the HEAD but changed in the other branch: CONFLICT
+                else {
+                    String blobUID = givenTrackedBlobs.get(key);
+                    mergedTrackedBlobs.put(key, blobUID);
+                }
             }
         }
 
-        // 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch, stage
+        // 6, Files not in Split point nor the other branch, but in the HEAD branch: -> HEAD branch
         HashSet<String> currentUniqueFiles = new HashSet<>(currentTrackedBlobs.keySet());
         currentUniqueFiles.removeAll(splitTrackedBlobs.keySet());
         currentUniqueFiles.removeAll(givenTrackedBlobs.keySet());
@@ -424,11 +435,10 @@ public class Repository {
             for (String key : currentUniqueFiles) {
                 String blobUID = currentTrackedBlobs.get(key);
                 mergedTrackedBlobs.put(key, blobUID);
-                STAGING_AREA.addBlob(Blob.fromUID(blobUID));
             }
         }
 
-        // 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch
+        // 7, Files not in Split point nor the HEAD branch, but in the other branch: -> other branch, stage
         HashSet<String> givenUniqueFiles = new HashSet<>(givenTrackedBlobs.keySet());
         givenUniqueFiles.removeAll(splitTrackedBlobs.keySet());
         givenUniqueFiles.removeAll(currentTrackedBlobs.keySet());
@@ -436,7 +446,7 @@ public class Repository {
         if (!givenUniqueFiles.isEmpty()) {
             for (String key : givenUniqueFiles) {
                 String blobUID = givenTrackedBlobs.get(key);
-                mergedTrackedBlobs.put(key, blobUID);
+                STAGING_AREA.addBlob(Blob.fromUID(blobUID));
             }
         }
 
@@ -444,6 +454,7 @@ public class Repository {
         String msg = "Merged " + branchName + " into " + Branch.getBranchNameFromUID(HEAD) + ".";
         Commit mergedCommit = new Commit(msg, mergedTrackedBlobs, HEAD, givenCommitUID);
         mergedCommit.dump();
+        STAGING_AREA.dump();
         checkoutFilesInCommit(mergedCommit.getUID());  // update CWD
         Utils.writeObject(HEAD_DIR, mergedCommit.getUID());  // update the HEAD
     }
